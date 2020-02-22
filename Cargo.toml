@@ -1,0 +1,33 @@
+[package]
+name = "visual-size-ls"
+version = "0.6.2"
+authors = ["Aram Drevekenin <aram@poor.dev>"]
+description = """
+"""
+license = "MIT"
+edition = "2018"
+
+[dependencies]
+tui = "0.5"
+bitflags = "1.0"
+cassowary = "0.3"
+itertools = "0.8"
+log = "0.4"
+either = "1.5"
+unicode-segmentation = "1.2"
+unicode-width = "0.1"
+termion = "1.5"
+failure = "0.1"
+async-std = "*"
+futures = "*"
+walkdir = "2"
+jwalk = "0.3"
+
+[dev-dependencies]
+stderrlog = "0.4"
+rand = "0.6"
+failure = "0.1"
+structopt = "0.2"
+insta = "0.12.0"
+cargo-insta = "0.11.0"
+uuid = { version = "0.8", features = ["v4"] }
