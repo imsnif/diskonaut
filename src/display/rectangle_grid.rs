@@ -9,6 +9,7 @@ pub struct RectWithText {
     pub rect: Rect,
     pub text: String,
     pub selected: bool,
+    pub file_name: String, // TODO: better
 }
 
 #[derive(Clone)]

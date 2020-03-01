@@ -9,24 +9,13 @@ pub struct RectWithText {
     pub rect: Rect,
     pub text: String,
     pub selected: bool,
+    pub file_name: String, // TODO: better
 }
 
 #[derive(Clone)]
 pub struct RectangleGrid {
     rectangles: Vec<RectWithText>
 }
-
-// impl<'a> Default for RectangleGrid<'a> {
-//     fn default() -> RectangleGrid<'a> {
-//         RectangleGrid {
-//             title: None,
-//             title_style: Default::default(),
-//             borders: Borders::NONE,
-//             border_style: Default::default(),
-//             style: Default::default(),
-//         }
-//     }
-// }
 
 pub struct BoundariesToUse {
     pub TOP_RIGHT: String,

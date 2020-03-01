@@ -135,6 +135,14 @@ where
                                 state.lock().unwrap().move_selected_up();
                                 display_handler.unpark();
                             }
+                            Event::Key(Key::Char('\n')) => {
+                                state.lock().unwrap().enter_selected();
+                                display_handler.unpark();
+                            }
+                            Event::Key(Key::Esc) => {
+                                state.lock().unwrap().go_up();
+                                display_handler.unpark();
+                            }
                             _ => (),
                         };
                     }
@@ -145,8 +153,7 @@ where
     active_threads.push(display_handler);
 
     let file_sizes = scan_folder(path);
-    let file_percentages = calculate_percentages(file_sizes);
-    state.lock().unwrap().set_file_percentages(file_percentages);
+    state.lock().unwrap().set_base_folder(file_sizes);
     for thread_handler in active_threads {
         thread_handler.join().unwrap()
     }
