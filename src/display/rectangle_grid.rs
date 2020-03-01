@@ -117,7 +117,8 @@ impl<'a> Widget for RectangleGrid {
             // TODO: we should not accept a rectangle with a width of less than 8 so that the text
             // will be at least partly legible... these rectangles should be created with a small
             // height instead
-            let display_text = truncate_middle(&rect_with_text.text, max_text_length);
+            let text = if rect_with_text.selected { format!("=> {} <=", rect_with_text.text) } else { rect_with_text.text.to_owned() }; // TODO: better
+            let display_text = truncate_middle(&text, max_text_length);
             let text_length = display_text.len(); // TODO: better
 
             let text_start_position = ((rect.width - text_length as u16) as f64 / 2.0).ceil() as u16 + rect.x;

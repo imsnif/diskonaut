@@ -73,7 +73,6 @@ impl Backend for TestBackend {
     where
         I: Iterator<Item = (u16, u16, &'a Cell)>,
     {
-        // use std::fmt::Write;
         self.events.lock().unwrap().push(TerminalEvent::Draw);
         let mut string = String::with_capacity(content.size_hint().0 * 3);
         let mut coordinates = HashMap::new();
