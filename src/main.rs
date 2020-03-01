@@ -6,8 +6,8 @@ mod tests;
 
 use std::env;
 use std::io;
-use ::std::{thread, time};
-use ::std::thread::park_timeout;
+use ::std::thread;
+use ::std::thread::park;
 
 use ::std::io::stdin;
 use ::termion::input::TermRead;
@@ -33,7 +33,7 @@ mod filesystem;
 mod display;
 
 use filesystem::scan_folder;
-use display::state::{State, calculate_percentages};
+use display::state::State;
 use display::RectangleGrid;
 
 fn main() {
@@ -89,6 +89,7 @@ where
             let running = running.clone();
             let state = state.clone();
             move || {
+                park();
                 while running.load(Ordering::Acquire) {
                     terminal.draw(|mut f| {
                         let mut full_screen = f.size();
@@ -97,7 +98,7 @@ where
                         state.lock().unwrap().set_tiles(full_screen);
                         RectangleGrid::new((*state.lock().unwrap().tiles).to_vec()).render(&mut f, full_screen);
                     }).expect("failed to draw");
-                    park_timeout(time::Duration::from_millis(1000)); // TODO: we might not need this... we can trigger the display on events
+                    park();
                 }
                 terminal.clear().unwrap();
             }
@@ -137,6 +138,8 @@ where
                             }
                             Event::Key(Key::Char('\n')) => {
                                 state.lock().unwrap().enter_selected();
+                                // TODO: do not unpark display_handler if the state did not change
+                                // eg. we tried to enter a file
                                 display_handler.unpark();
                             }
                             Event::Key(Key::Esc) => {
@@ -150,10 +153,12 @@ where
             })
             .unwrap(),
     );
+    let display_handler_thread = display_handler.thread().clone(); // TODO: better
     active_threads.push(display_handler);
 
     let file_sizes = scan_folder(path);
     state.lock().unwrap().set_base_folder(file_sizes);
+    display_handler_thread.unpark();
     for thread_handler in active_threads {
         thread_handler.join().unwrap()
     }
