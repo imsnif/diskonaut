@@ -142,6 +142,10 @@ impl Folder {
 //            println!("\r*****");
 //            println!("\rfolders_to_traverse {:?}, next_name {:?}", folders_to_traverse, next_name);
 //            println!("\rname {:?}", &self.name);
+            match &self.contents.get(&next_name) {
+                Some(_) => {},
+                None => println!("\rcould not find next_name {:?}", next_name),
+            };
             match &self.contents.get(&next_name).expect("could not find folder in path") {
                 FileOrFolder::Folder(folder) => {
                     // folders_to_traverse.reverse(); // TODO: get rid of this

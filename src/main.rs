@@ -38,7 +38,7 @@ use display::RectangleGrid;
 
 fn main() {
     if let Err(err) = try_main() {
-        eprintln!("Error: {}", err);
+        println!("Error: {}", err);
         process::exit(2);
     }
 }
@@ -71,6 +71,10 @@ impl Iterator for KeyboardEvents {
     }
 }
 
+use ::tui::widgets::{Block, Borders, Paragraph, Text};
+use ::tui::layout::{Layout, Constraint, Direction, Alignment};
+use ::tui::style::{Color, Style};
+
 pub fn start<B>(terminal_backend: B, keyboard_events: Box<dyn Iterator<Item = Event> + Send>, path: PathBuf)
 where
     B: Backend + Send + 'static,
@@ -93,9 +97,49 @@ where
                 while running.load(Ordering::Acquire) {
                     terminal.draw(|mut f| {
                         let mut full_screen = f.size();
+                        let mut chunks = Layout::default()
+                            .direction(Direction::Vertical)
+                            .margin(0)
+                            .constraints(
+                                [
+                                    Constraint::Length(3),
+                                    Constraint::Length(10),
+                                ].as_ref()
+                            )
+                            .split(full_screen);
+
                         full_screen.width -= 1;
                         full_screen.height -= 1;
-                        state.lock().unwrap().set_tiles(full_screen);
+                        chunks[1].width -= 1;
+                        chunks[1].height -= 1;
+//                        println!("chunks[1] {:?}", chunks[1]);
+//                        println!("chunks[1] {:?}", chunks[1]);
+//                        println!("full_screen {:?}", full_screen);
+//                        use std::process;
+//                        process::exit(2);
+                        state.lock().unwrap().set_tiles(chunks[1]);
+                        // state.lock().unwrap().set_tiles(full_screen);
+                        // TODO:
+                        // * make a layout that would place the RectangleGrid in the middle of the
+                        // screen
+                        // * place a text box above it with the current path
+                        let current_path = if let Some(current_path) = state.lock().unwrap().get_current_path() {
+                            current_path.into_os_string().into_string().expect("could not convert os string to string")
+                        } else {
+                            String::from("N/A")
+                        };
+                        let text = [
+                            Text::styled("\n", Style::default()),
+                            Text::styled(current_path, Style::default().fg(Color::Green)),
+                            Text::styled("\n", Style::default()),
+                        ];
+                        Paragraph::new(text.iter())
+                            .block(Block::default().borders(Borders::NONE))
+                            .style(Style::default())
+                            .alignment(Alignment::Center)
+                            .wrap(true)
+                            .render(&mut f, chunks[0]);
+                        // RectangleGrid::new((*state.lock().unwrap().tiles).to_vec()).render(&mut f, chunks[1]);
                         RectangleGrid::new((*state.lock().unwrap().tiles).to_vec()).render(&mut f, full_screen);
                     }).expect("failed to draw");
                     park();
@@ -156,8 +200,8 @@ where
     let display_handler_thread = display_handler.thread().clone(); // TODO: better
     active_threads.push(display_handler);
 
-    let file_sizes = scan_folder(path);
-    state.lock().unwrap().set_base_folder(file_sizes);
+    let file_sizes = scan_folder(path.clone()); // TODO: better
+    state.lock().unwrap().set_base_folder(file_sizes, path.into_os_string().into_string().expect("could not convert path to string"));
     display_handler_thread.unpark();
     for thread_handler in active_threads {
         thread_handler.join().unwrap()
