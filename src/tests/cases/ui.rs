@@ -193,7 +193,7 @@ fn move_down_and_enter_folder() {
 
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
-    let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
+    let mut events: Vec<Option<Event>> = iter::repeat(None).take(2).collect();
     events.push(Some(Event::Key(Key::Char('j'))));
     events.push(None);
     events.push(Some(Event::Key(Key::Char('\n'))));
