@@ -2,8 +2,10 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[3]"
 ---
+                                                                                                                                                                                              
+                                                                  /tmp/bandwhich_tests/noop wh n_pressing_esc_at base_folder                                                                  
+                                                                                                                                                                                              
                                                                                                                               ┬                                                               
-                                                                                                                              │                                                               
                                                                                                                               │                                                               
                                                                                                                               │                                                               
                                                                                                                               │                                                               
@@ -37,9 +39,7 @@ expression: "&terminal_draw_events_mirror[3]"
                                                                                                                               │                                                               
                                                                                                                               │                                                               
                                                                                                                               │                                                               
-                                                                                                                              │                                                               
                                                        file3 4.1K (33%)                                                       │                                                               
-                                                                                                                              │                                                               
                                                                                                                               │                                                               
                                                                                                                               │                                                               
                                                                                                                               │                                                               

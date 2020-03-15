@@ -2,8 +2,10 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[0]"
 ---
+                                                                                                                                                                                              
+                                                                       /tmp/bandwhich_tests/move_right_and_enter_folder                                                                       
+                                                                                                                                                                                              
 ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┬──────────────────────────────────────────────────────────────┐
-│                                                                                                                             │                                                              │
 │                                                                                                                             │                                                              │
 │                                                                                                                             │                                                              │
 │                                                                                                                             │                                                              │
@@ -37,9 +39,7 @@ expression: "&terminal_draw_events_mirror[0]"
 │                                                                                                                             │                                                              │
 │                                                                                                                             │                                                              │
 │                                                                                                                             │                                                              │
-│                                                                                                                             │                                                              │
 │                                                      file3 4.1K (33%)                                                       │                                                              │
-│                                                                                                                             │                                                              │
 │                                                                                                                             │                                                              │
 │                                                                                                                             │                                                              │
 │                                                                                                                             │                                                              │

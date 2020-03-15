@@ -1,7 +1,9 @@
 ---
 source: src/tests/cases/ui.rs
-expression: "&terminal_draw_events_mirror[2]"
+expression: "&terminal_draw_events_mirror[1]"
 ---
+                                                                                                                                                                                              
+                                                                                                                                                                                              
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
@@ -37,9 +39,7 @@ expression: "&terminal_draw_events_mirror[2]"
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
-                                                                                                                                                                                              
                                                               => subfolder1/ 8.2K (40%) <=                                                                                                    
-                                                                                                                                                                                              
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               

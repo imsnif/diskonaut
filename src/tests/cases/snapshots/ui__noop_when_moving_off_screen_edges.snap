@@ -2,8 +2,10 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[0]"
 ---
+                                                                                                                                                                                              
+                                                                    /tmp/bandwhich_tests/noop_when_moving_off_screen_edges                                                                    
+                                                                                                                                                                                              
 ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┬──────────────────────────────────────────────────────────────┐
-│                                                                                                                             │                                                              │
 │                                                                                                                             │                                                              │
 │                                                                                                                             │                                                              │
 │                                                                                                                             │                                                              │
@@ -37,9 +39,7 @@ expression: "&terminal_draw_events_mirror[0]"
 │                                                                                                                             │                                                              │
 │                                                                                                                             │                                                              │
 │                                                                                                                             │                                                              │
-│                                                                                                                             │                                                              │
 │                                                      file2 4.1K (33%)                                                       │                                                              │
-│                                                                                                                             │                                                              │
 │                                                                                                                             │                                                              │
 │                                                                                                                             │                                                              │
 │                                                                                                                             │                                                              │

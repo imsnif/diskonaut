@@ -1,34 +1,11 @@
 ---
 source: src/tests/cases/ui.rs
-expression: "&terminal_draw_events_mirror[4]"
+expression: "&terminal_draw_events_mirror[1]"
 ---
                                                                                                                                                                                               
-                                                                  /tmp/bandwhich_tests/move_left_and_enter folder/subfolder1                                                                  
+                                                                         /tmp/bandwhich_tests/enter_folder/subfolder1                                                                         
                                                                                                                                                                                               
-                                                                                                                              ─                                                               
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-│                                                                                  => file1 4.1K (100%) <=                                                                                    
+                                                                                                                                              ─                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
@@ -51,5 +28,28 @@ expression: "&terminal_draw_events_mirror[4]"
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
-                                                                                                                              ─                                                               
+                                                                                   => file1 8.2K (100%) <=                                                                                    
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+│                                                                                                                                                                                             
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                                                                              ─                                               
 

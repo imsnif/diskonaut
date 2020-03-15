@@ -1,7 +1,10 @@
 ---
 source: src/tests/cases/ui.rs
-expression: "&terminal_draw_events_mirror[3]"
+expression: "&terminal_draw_events_mirror[2]"
 ---
+                                                                                                                                                                                              
+                                                                  /tmp/bandwhich_tests/move_down_and_enter folder/subfolder1                                                                  
+                                                                                                                                                                                              
                                                                                                                                                        ─                                      
                                                                                                                                                                                               
                                                                                                                                                                                               
@@ -25,10 +28,7 @@ expression: "&terminal_draw_events_mirror[3]"
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
-                                                                                                                                                                                              
 │                                                                                  => file3 8.2K (100%) <=                                                                                    
-                                                                                                                                                                                              
-                                                                                                                                                                                              
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               

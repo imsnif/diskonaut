@@ -14,7 +14,13 @@ expression: "&terminal_draw_events_mirror[2]"
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
-                                                    => file2 4.1K (33%) <=                                                                                                                    
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                         => subfolder1/ 8.2K (50%) <=                                                                                                         
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
@@ -22,13 +28,7 @@ expression: "&terminal_draw_events_mirror[2]"
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                   subfolder1/ 4.1K (33%)                     
-                                                                                                                                                                                              
-                                                                                                                                                                                              
+                                                                                                                                                              file3 4.1K (25%)                
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
