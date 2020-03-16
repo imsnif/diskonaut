@@ -1,7 +1,7 @@
 use tui::layout::Rect;
 
 use crate::display::rectangle_grid::{RectWithText, RectFloat};
-use crate::filesystem::{FileOrFolder, Folder};
+use crate::input::{FileOrFolder, Folder};
 use ::std::fmt;
 use std::path::PathBuf;
 

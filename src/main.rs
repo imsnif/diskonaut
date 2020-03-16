@@ -1,38 +1,31 @@
-#[allow(dead_code)]
-mod util;
-
 #[cfg(test)]
 mod tests;
 
-use std::env;
-use std::io;
+mod display;
+mod input;
+
+use ::std::env;
+use ::std::io;
 use ::std::thread;
 use ::std::thread::park;
-
-use ::std::io::stdin;
-use ::termion::input::TermRead;
 use ::termion::event::Event;
 use ::std::sync::atomic::{AtomicBool, Ordering};
-
-use failure;
-
-use termion::event::Key;
-use termion::raw::IntoRawMode;
-use tui::backend::TermionBackend;
-use tui::widgets::Widget;
-use tui::Terminal;
-
-use std::process;
-
-use std::path::PathBuf;
-
+use ::failure;
+use ::termion::raw::IntoRawMode;
+use ::tui::backend::TermionBackend;
+use ::tui::widgets::Widget;
+use ::tui::Terminal;
+use ::std::process;
+use ::std::path::PathBuf;
 use ::tui::backend::Backend;
 use ::std::sync::{Arc, Mutex};
+use ::tui::widgets::{Block, Borders, Paragraph, Text};
+use ::tui::layout::{Layout, Constraint, Direction, Alignment};
+use ::tui::style::{Color, Style};
 
-mod filesystem;
-mod display;
-
-use filesystem::scan_folder;
+use input::scan_folder;
+use input::handle_keypress;
+use input::KeyboardEvents;
 use display::state::State;
 use display::RectangleGrid;
 
@@ -57,24 +50,6 @@ fn try_main() -> Result<(), failure::Error> {
     Ok(())
 }
 
-
-#[derive(Clone)]
-pub struct KeyboardEvents;
-
-impl Iterator for KeyboardEvents {
-    type Item = Event;
-    fn next(&mut self) -> Option<Event> {
-        match stdin().events().next() {
-            Some(Ok(ev)) => Some(ev),
-            _ => None,
-        }
-    }
-}
-
-use ::tui::widgets::{Block, Borders, Paragraph, Text};
-use ::tui::layout::{Layout, Constraint, Direction, Alignment};
-use ::tui::style::{Color, Style};
-
 pub fn start<B>(terminal_backend: B, keyboard_events: Box<dyn Iterator<Item = Event> + Send>, path: PathBuf)
 where
     B: Backend + Send + 'static,
@@ -95,8 +70,9 @@ where
             move || {
                 park();
                 while running.load(Ordering::Acquire) {
+                    // TODO: move below to render
                     terminal.draw(|mut f| {
-                        let mut full_screen = f.size();
+                        let full_screen = f.size();
                         let mut chunks = Layout::default()
                             .direction(Direction::Vertical)
                             .margin(0)
@@ -108,21 +84,10 @@ where
                             )
                             .split(full_screen);
 
-                        full_screen.width -= 1;
-                        full_screen.height -= 1;
+                        // TODO: find out how to get rid of these
                         chunks[1].width -= 1;
                         chunks[1].height -= 1;
-//                        println!("chunks[1] {:?}", chunks[1]);
-//                        println!("chunks[1] {:?}", chunks[1]);
-//                        println!("full_screen {:?}", full_screen);
-//                        use std::process;
-//                        process::exit(2);
                         state.lock().unwrap().set_tiles(chunks[1]);
-                        // state.lock().unwrap().set_tiles(full_screen);
-                        // TODO:
-                        // * make a layout that would place the RectangleGrid in the middle of the
-                        // screen
-                        // * place a text box above it with the current path
                         let current_path = if let Some(current_path) = state.lock().unwrap().get_current_path() {
                             current_path.into_os_string().into_string().expect("could not convert os string to string")
                         } else {
@@ -139,7 +104,6 @@ where
                             .alignment(Alignment::Center)
                             .wrap(true)
                             .render(&mut f, chunks[0]);
-                        // RectangleGrid::new((*state.lock().unwrap().tiles).to_vec()).render(&mut f, chunks[1]);
                         RectangleGrid::new((*state.lock().unwrap().tiles).to_vec()).render(&mut f, full_screen);
                     }).expect("failed to draw");
                     park();
@@ -149,49 +113,31 @@ where
         })
         .unwrap();
 
+    let stop_running = {
+        let display_handler = display_handler.thread().clone();
+        let running = running.clone();
+        move || {
+            running.store(false, Ordering::Release);
+            display_handler.unpark();
+        }
+    };
+
+    let render = {
+        let display_handler = display_handler.thread().clone();
+        move || {
+            display_handler.unpark();
+        }
+    };
+
     active_threads.push(
         thread::Builder::new()
             .name("stdin_handler".to_string())
             .spawn({
-                let running = running.clone();
                 let state = state.clone();
-                let display_handler = display_handler.thread().clone();
                 move || {
                     for evt in keyboard_events {
-                        match evt {
-                            Event::Key(Key::Ctrl('c')) | Event::Key(Key::Char('q')) => {
-                                running.store(false, Ordering::Release);
-                                display_handler.unpark();
-                                break;
-                            }
-                            Event::Key(Key::Char('l')) => {
-                                state.lock().unwrap().move_selected_right();
-                                display_handler.unpark();
-                            }
-                            Event::Key(Key::Char('h')) => {
-                                state.lock().unwrap().move_selected_left();
-                                display_handler.unpark();
-                            }
-                            Event::Key(Key::Char('j')) => {
-                                state.lock().unwrap().move_selected_down();
-                                display_handler.unpark();
-                            }
-                            Event::Key(Key::Char('k')) => {
-                                state.lock().unwrap().move_selected_up();
-                                display_handler.unpark();
-                            }
-                            Event::Key(Key::Char('\n')) => {
-                                state.lock().unwrap().enter_selected();
-                                // TODO: do not unpark display_handler if the state did not change
-                                // eg. we tried to enter a file
-                                display_handler.unpark();
-                            }
-                            Event::Key(Key::Esc) => {
-                                state.lock().unwrap().go_up();
-                                display_handler.unpark();
-                            }
-                            _ => (),
-                        };
+                        let mut state = state.lock().expect("could not get state");
+                        handle_keypress(evt, &stop_running, &render, &mut state);
                     }
                 }
             })

@@ -1,37 +1,11 @@
 #[allow(dead_code)]
 
-use std::collections::{HashMap, HashSet, VecDeque};
-use std::env;
-use std::io;
+use std::collections::{HashMap, VecDeque};
 use std::fs;
 use std::os::unix::fs::MetadataExt; // TODO: support other OSs
-use ::std::{thread, time};
-
-use ::std::sync::atomic::{AtomicBool, Ordering};
-
-use failure;
-
-use termion::event::Key;
-use termion::raw::IntoRawMode;
-use tui::backend::TermionBackend;
-use tui::layout::Rect;
-use tui::widgets::Widget;
-use tui::Terminal;
-
-use std::process;
 
 use walkdir::WalkDir;
-
-use ::std::fmt;
-
 use std::path::PathBuf;
-
-use ::tui::backend::Backend;
-use ::std::sync::Arc;
-
-use ::std::io::stdin;
-use ::termion::input::TermRead;
-use ::termion::event::Event;
 
 #[derive(Debug)]
 pub enum FileOrFolder {
@@ -152,7 +126,7 @@ impl Folder {
                     folder.path(&Vec::from(folders_to_traverse)) // TODO: less allocations
                 },
                 // FileOrFolder::File(file) => panic!("got a file in the middle of a path")
-                FileOrFolder::File(file) => None
+                FileOrFolder::File(_) => None
             }
         }
 
