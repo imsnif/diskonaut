@@ -2,7 +2,9 @@ use ::std::io::stdin;
 use ::termion::input::TermRead;
 use ::termion::event::Event;
 use termion::event::Key;
-use crate::display::state::State;
+use crate::App;
+
+use ::tui::backend::Backend;
 
 #[derive(Clone)]
 pub struct KeyboardEvents;
@@ -18,36 +20,30 @@ impl Iterator for KeyboardEvents {
 }
 
 
-pub fn handle_keypress(evt: Event, stop_running: &dyn Fn(), render: &dyn Fn(), state: &mut State) {
+pub fn handle_keypress<B>(evt: Event, app: &mut App<B>)
+where B: Backend // TODO: better
+{
     match evt {
         Event::Key(Key::Ctrl('c')) | Event::Key(Key::Char('q')) => {
-            stop_running();
+            app.exit();
         }
         Event::Key(Key::Char('l')) => {
-            state.move_selected_right();
-            render();
+            app.move_selected_right();
         }
         Event::Key(Key::Char('h')) => {
-            state.move_selected_left();
-            render();
+            app.move_selected_left();
         }
         Event::Key(Key::Char('j')) => {
-            state.move_selected_down();
-            render();
+            app.move_selected_down();
         }
         Event::Key(Key::Char('k')) => {
-            state.move_selected_up();
-            render();
+            app.move_selected_up();
         }
         Event::Key(Key::Char('\n')) => {
-            state.enter_selected();
-            // TODO: do not unpark display_handler if the state did not change
-            // eg. we tried to enter a file
-            render();
+            app.enter_selected();
         }
         Event::Key(Key::Esc) => {
-            state.go_up();
-            render();
+            app.go_up();
         }
         _ => (),
     };
