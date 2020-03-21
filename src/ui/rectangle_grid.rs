@@ -1,8 +1,7 @@
 use tui::buffer::Buffer;
 use tui::layout::Rect;
-use tui::style::{Style, Color, Modifier};
-use tui::symbols::line;
-use tui::widgets::{Borders, Widget};
+use tui::style::{Style, Color};
+use tui::widgets::{Widget};
 
 #[derive(Clone, Debug)]
 pub struct RectWithText {
@@ -25,20 +24,6 @@ pub struct RectangleGrid {
     rectangles: Vec<RectWithText>
 }
 
-pub struct BoundariesToUse {
-    pub TOP_RIGHT: String,
-    pub VERTICAL: String,
-    pub HORIZONTAL: String,
-    pub TOP_LEFT: String,
-    pub BOTTOM_RIGHT: String,
-    pub BOTTOM_LEFT: String,
-    pub VERTICAL_LEFT: String,
-    pub VERTICAL_RIGHT: String,
-    pub HORIZONTAL_DOWN: String,
-    pub HORIZONTAL_UP: String,
-    pub CROSS: String,
-}
-
 pub mod boundaries {
     pub const TOP_RIGHT: &str = "┐";
     pub const VERTICAL: &str = "│";
@@ -53,21 +38,6 @@ pub mod boundaries {
     pub const CROSS: &str = "┼";
 }
 
-
-pub mod selected_boundaries {
-    pub const TOP_RIGHT: &str = "╗";
-    pub const VERTICAL: &str = "║";
-    pub const HORIZONTAL: &str = "═";
-    pub const TOP_LEFT: &str = "╔";
-    pub const BOTTOM_RIGHT: &str = "╝";
-    pub const BOTTOM_LEFT: &str = "╚";
-    pub const VERTICAL_LEFT: &str = "╣";
-    pub const VERTICAL_RIGHT: &str = "╠";
-    pub const HORIZONTAL_DOWN: &str = "╦";
-    pub const HORIZONTAL_UP: &str = "╩";
-    pub const CROSS: &str = "╬";
-}
-
 impl<'a> RectangleGrid {
     pub fn new (rectangles: Vec<RectWithText>) -> Self {
         RectangleGrid { rectangles }
@@ -77,14 +47,133 @@ impl<'a> RectangleGrid {
 fn truncate_middle(row: &str, max_length: u16) -> String {
     if max_length <= 6 {
         String::from(".") // TODO: make sure this never happens
-//    } else if max_length == 4 {
-//        String::from("[..]")
     } else if row.len() as u16 > max_length {
         let first_slice = &row[0..(max_length as usize / 2) - 2];
         let second_slice = &row[(row.len() - (max_length / 2) as usize + 2)..row.len()];
         format!("{}[..]{}", first_slice, second_slice)
     } else {
         row.to_string()
+    }
+}
+
+fn combine_symbols(current_symbol: &str, next_symbol: &str) -> Option<&'static str> {
+    match (current_symbol, next_symbol) {
+        (boundaries::TOP_RIGHT, boundaries::TOP_RIGHT) => Some(boundaries::TOP_RIGHT), // (┐, ┐) => Some(┐)
+        (boundaries::TOP_RIGHT, boundaries::VERTICAL) => Some(boundaries::VERTICAL_LEFT), // (┐, │) => Some(┤)
+        (boundaries::TOP_RIGHT, boundaries::HORIZONTAL) => Some(boundaries::HORIZONTAL_DOWN), // (┐, ─) => Some(┬)
+        (boundaries::TOP_RIGHT, boundaries::TOP_LEFT) => Some(boundaries::HORIZONTAL_DOWN), // (┐, ┌) => Some(┬)
+        (boundaries::TOP_RIGHT, boundaries::BOTTOM_RIGHT) => Some(boundaries::VERTICAL_LEFT), // (┐, ┘) => Some(┤)
+        (boundaries::TOP_RIGHT, boundaries::BOTTOM_LEFT) => Some(boundaries::CROSS), // (┐, └) => Some(┼)
+        (boundaries::TOP_RIGHT, boundaries::VERTICAL_LEFT) => Some(boundaries::VERTICAL_LEFT), // (┐, ┤) => Some(┤)
+        (boundaries::TOP_RIGHT, boundaries::VERTICAL_RIGHT) => Some(boundaries::CROSS), // (┐, ├) => Some(┼)
+        (boundaries::TOP_RIGHT, boundaries::HORIZONTAL_DOWN) => Some(boundaries::HORIZONTAL_DOWN), // (┐, ┬) => Some(┬)
+        (boundaries::TOP_RIGHT, boundaries::HORIZONTAL_UP) => Some(boundaries::CROSS), // (┐, ┴) => Some(┼)
+        (boundaries::TOP_RIGHT, boundaries::CROSS) => Some(boundaries::CROSS), // (┐, ┼) => Some(┼)
+
+        (boundaries::HORIZONTAL, boundaries::HORIZONTAL) => Some(boundaries::HORIZONTAL), // (─, ─) => Some(─)
+        (boundaries::HORIZONTAL, boundaries::VERTICAL) => Some(boundaries::CROSS), // (─, │) => Some(┼)
+        (boundaries::HORIZONTAL, boundaries::TOP_LEFT) => Some(boundaries::HORIZONTAL_DOWN), // (─, ┌) => Some(┬)
+        (boundaries::HORIZONTAL, boundaries::BOTTOM_RIGHT) => Some(boundaries::HORIZONTAL_UP), // (─, ┘) => Some(┴)
+        (boundaries::HORIZONTAL, boundaries::BOTTOM_LEFT) => Some(boundaries::HORIZONTAL_UP), // (─, └) => Some(┴)
+        (boundaries::HORIZONTAL, boundaries::VERTICAL_LEFT) => Some(boundaries::CROSS), // (─, ┤) => Some(┼)
+        (boundaries::HORIZONTAL, boundaries::VERTICAL_RIGHT) => Some(boundaries::CROSS), // (─, ├) => Some(┼)
+        (boundaries::HORIZONTAL, boundaries::HORIZONTAL_DOWN) => Some(boundaries::HORIZONTAL_DOWN), // (─, ┬) => Some(┬)
+        (boundaries::HORIZONTAL, boundaries::HORIZONTAL_UP) => Some(boundaries::HORIZONTAL_UP), // (─, ┴) => Some(┴)
+        (boundaries::HORIZONTAL, boundaries::CROSS) => Some(boundaries::CROSS), // (─, ┼) => Some(┼)
+
+        (boundaries::VERTICAL, boundaries::VERTICAL) => Some(boundaries::VERTICAL), // (│, │) => Some(│)
+        (boundaries::VERTICAL, boundaries::TOP_LEFT) => Some(boundaries::VERTICAL_RIGHT), // (│, ┌) => Some(├)
+        (boundaries::VERTICAL, boundaries::BOTTOM_RIGHT) => Some(boundaries::VERTICAL_LEFT), // (│, ┘) => Some(┤)
+        (boundaries::VERTICAL, boundaries::BOTTOM_LEFT) => Some(boundaries::VERTICAL_RIGHT), // (│, └) => Some(├)
+        (boundaries::VERTICAL, boundaries::VERTICAL_LEFT) => Some(boundaries::VERTICAL_LEFT), // (│, ┤) => Some(┤)
+        (boundaries::VERTICAL, boundaries::VERTICAL_RIGHT) => Some(boundaries::VERTICAL_RIGHT), // (│, ├) => Some(├)
+        (boundaries::VERTICAL, boundaries::HORIZONTAL_DOWN) => Some(boundaries::CROSS), // (│, ┬) => Some(┼)
+        (boundaries::VERTICAL, boundaries::HORIZONTAL_UP) => Some(boundaries::CROSS), // (│, ┴) => Some(┼)
+        (boundaries::VERTICAL, boundaries::CROSS) => Some(boundaries::CROSS), // (│, ┼) => Some(┼)
+
+        (boundaries::TOP_LEFT, boundaries::TOP_LEFT) => Some(boundaries::TOP_LEFT), // (┌, ┌) => Some(┌)
+        (boundaries::TOP_LEFT, boundaries::BOTTOM_RIGHT) => Some(boundaries::CROSS), // (┌, ┘) => Some(┼)
+        (boundaries::TOP_LEFT, boundaries::BOTTOM_LEFT) => Some(boundaries::VERTICAL_RIGHT), // (┌, └) => Some(├)
+        (boundaries::TOP_LEFT, boundaries::VERTICAL_LEFT) => Some(boundaries::CROSS), // (┌, ┤) => Some(┼)
+        (boundaries::TOP_LEFT, boundaries::VERTICAL_RIGHT) => Some(boundaries::VERTICAL_RIGHT), // (┌, ├) => Some(├)
+        (boundaries::TOP_LEFT, boundaries::HORIZONTAL_DOWN) => Some(boundaries::HORIZONTAL_DOWN), // (┌, ┬) => Some(┬)
+        (boundaries::TOP_LEFT, boundaries::HORIZONTAL_UP) => Some(boundaries::CROSS), // (┌, ┴) => Some(┼)
+        (boundaries::TOP_LEFT, boundaries::CROSS) => Some(boundaries::CROSS), // (┌, ┼) => Some(┼)
+
+        (boundaries::BOTTOM_RIGHT, boundaries::BOTTOM_RIGHT) => Some(boundaries::BOTTOM_RIGHT), // (┘, ┘) => Some(┘)
+        (boundaries::BOTTOM_RIGHT, boundaries::BOTTOM_LEFT) => Some(boundaries::HORIZONTAL_UP), // (┘, └) => Some(┴)
+        (boundaries::BOTTOM_RIGHT, boundaries::VERTICAL_LEFT) => Some(boundaries::VERTICAL_LEFT), // (┘, ┤) => Some(┤)
+        (boundaries::BOTTOM_RIGHT, boundaries::VERTICAL_RIGHT) => Some(boundaries::CROSS), // (┘, ├) => Some(┼)
+        (boundaries::BOTTOM_RIGHT, boundaries::HORIZONTAL_DOWN) => Some(boundaries::CROSS), // (┘, ┬) => Some(┼)
+        (boundaries::BOTTOM_RIGHT, boundaries::HORIZONTAL_UP) => Some(boundaries::HORIZONTAL_UP), // (┘, ┴) => Some(┴)
+        (boundaries::BOTTOM_RIGHT, boundaries::CROSS) => Some(boundaries::CROSS), // (┘, ┼) => Some(┼)
+
+        (boundaries::BOTTOM_LEFT, boundaries::BOTTOM_LEFT) => Some(boundaries::BOTTOM_LEFT), // (└, └) => Some(└)
+        (boundaries::BOTTOM_LEFT, boundaries::VERTICAL_LEFT) => Some(boundaries::CROSS), // (└, ┤) => Some(┼)
+        (boundaries::BOTTOM_LEFT, boundaries::VERTICAL_RIGHT) => Some(boundaries::VERTICAL_RIGHT), // (└, ├) => Some(├)
+        (boundaries::BOTTOM_LEFT, boundaries::HORIZONTAL_DOWN) => Some(boundaries::CROSS), // (└, ┬) => Some(┼)
+        (boundaries::BOTTOM_LEFT, boundaries::HORIZONTAL_UP) => Some(boundaries::HORIZONTAL_UP), // (└, ┴) => Some(┴)
+        (boundaries::BOTTOM_LEFT, boundaries::CROSS) => Some(boundaries::CROSS), // (└, ┼) => Some(┼)
+
+        (boundaries::VERTICAL_LEFT, boundaries::VERTICAL_LEFT) => Some(boundaries::VERTICAL_LEFT), // (┤, ┤) => Some(┤)
+        (boundaries::VERTICAL_LEFT, boundaries::VERTICAL_RIGHT) => Some(boundaries::CROSS), // (┤, ├) => Some(┼)
+        (boundaries::VERTICAL_LEFT, boundaries::HORIZONTAL_DOWN) => Some(boundaries::CROSS), // (┤, ┬) => Some(┼)
+        (boundaries::VERTICAL_LEFT, boundaries::HORIZONTAL_UP) => Some(boundaries::HORIZONTAL_UP), // (┤, ┴) => Some(┼)
+        (boundaries::VERTICAL_LEFT, boundaries::CROSS) => Some(boundaries::CROSS), // (┤, ┼) => Some(┼)
+
+        (boundaries::VERTICAL_RIGHT, boundaries::VERTICAL_RIGHT) => Some(boundaries::VERTICAL_RIGHT), // (├, ├) => Some(├)
+        (boundaries::VERTICAL_RIGHT, boundaries::HORIZONTAL_DOWN) => Some(boundaries::CROSS), // (├, ┬) => Some(┼)
+        (boundaries::VERTICAL_RIGHT, boundaries::HORIZONTAL_UP) => Some(boundaries::CROSS), // (├, ┴) => Some(┼)
+        (boundaries::VERTICAL_RIGHT, boundaries::CROSS) => Some(boundaries::CROSS), // (├, ┼) => Some(┼)
+
+        (boundaries::HORIZONTAL_DOWN, boundaries::HORIZONTAL_DOWN) => Some(boundaries::HORIZONTAL_DOWN), // (┬, ┬) => Some(┬)
+        (boundaries::HORIZONTAL_DOWN, boundaries::HORIZONTAL_UP) => Some(boundaries::CROSS), // (┬, ┴) => Some(┼)
+        (boundaries::HORIZONTAL_DOWN, boundaries::CROSS) => Some(boundaries::CROSS), // (┬, ┼) => Some(┼)
+
+        (boundaries::HORIZONTAL_UP, boundaries::HORIZONTAL_UP) => Some(boundaries::HORIZONTAL_UP), // (┴, ┴) => Some(┬)
+        (boundaries::HORIZONTAL_UP, boundaries::CROSS) => Some(boundaries::CROSS), // (┴, ┼) => Some(┼)
+
+        (boundaries::CROSS, boundaries::CROSS) => Some(boundaries::CROSS), // (┼, ┼) => Some(┼)
+
+        (_, _) => None
+    }
+}
+
+fn find_next_symbol (first_symbol: &str, second_symbol: &str) -> Option<&'static str> {
+    if let Some(symbol) = combine_symbols(first_symbol, second_symbol) {
+        Some(symbol)
+    } else {
+        combine_symbols(second_symbol, first_symbol)
+    }
+}
+
+fn set_symbol_on_grid(buf: &mut Buffer, x: u16, y: u16, symbol: &str) {
+    if let Some(next_symbol) = find_next_symbol(&buf.get(x, y).symbol, symbol) {
+        buf.get_mut(x, y).set_symbol(next_symbol);
+    } else {
+        buf.get_mut(x, y).set_symbol(symbol);
+    }
+}
+
+fn draw_rect_on_grid (buf: &mut Buffer, rect: Rect) {
+    // top and bottom
+    for x in rect.x..(rect.x + rect.width + 1) {
+        if x == rect.x {
+            set_symbol_on_grid(buf, x, rect.y, &boundaries::TOP_LEFT);
+            set_symbol_on_grid(buf, x, rect.y + rect.height, &boundaries::BOTTOM_LEFT);
+        } else if x == rect.x + rect.width {
+            set_symbol_on_grid(buf, x, rect.y, &boundaries::TOP_RIGHT);
+            set_symbol_on_grid(buf, x, rect.y + rect.height, &boundaries::BOTTOM_RIGHT);
+        } else {
+            set_symbol_on_grid(buf, x, rect.y, &boundaries::HORIZONTAL);
+            set_symbol_on_grid(buf, x, rect.y + rect.height, &boundaries::HORIZONTAL);
+        }
+    }
+
+    // left and right
+    for y in (rect.y + 1)..(rect.y + rect.height) {
+        set_symbol_on_grid(buf, rect.x, y, &boundaries::VERTICAL);
+        set_symbol_on_grid(buf, rect.x + rect.width, y, &boundaries::VERTICAL);
     }
 }
 
@@ -97,19 +186,6 @@ impl<'a> Widget for RectangleGrid {
 
             if rect_with_text.rect.width > 0.0 && rect_with_text.rect.height > 0.0 {
 
-                let rect_boundary_chars = BoundariesToUse {
-                    TOP_RIGHT: String::from(boundaries::TOP_RIGHT),
-                    VERTICAL: String::from(boundaries::VERTICAL),
-                    HORIZONTAL: String::from(boundaries::HORIZONTAL),
-                    TOP_LEFT: String::from(boundaries::TOP_LEFT),
-                    BOTTOM_RIGHT: String::from(boundaries::BOTTOM_RIGHT),
-                    BOTTOM_LEFT: String::from(boundaries::BOTTOM_LEFT),
-                    VERTICAL_LEFT: String::from(boundaries::VERTICAL_LEFT),
-                    VERTICAL_RIGHT: String::from(boundaries::VERTICAL_RIGHT),
-                    HORIZONTAL_DOWN: String::from(boundaries::HORIZONTAL_DOWN),
-                    HORIZONTAL_UP: String::from(boundaries::HORIZONTAL_UP),
-                    CROSS: String::from(boundaries::CROSS),
-                };
                 let rounded_x = rect_with_text.rect.x.round();
                 let rounded_y = rect_with_text.rect.y.round();
                 let mut rect = Rect {
@@ -128,7 +204,6 @@ impl<'a> Widget for RectangleGrid {
                 }
 
                 if rect.height < 2 || rect.width < 8 {
-                    // println!("\rrect {:?}", rect);
                     for x in rect.x..(rect.x + rect.width + 1) {
                         if x > rect.x {
                             for y in rect.y..(rect.y + rect.height + 1) {
@@ -151,245 +226,17 @@ impl<'a> Widget for RectangleGrid {
 
                     let text_start_position = ((rect.width - text_length as u16) as f64 / 2.0).ceil() as u16 + rect.x;
 
-
-
-
                     let text_style = if rect_with_text.selected {
                         Style::default().bg(Color::White).fg(Color::Black)
                     } else {
                         Style::default()
                     };
                     buf.set_string(text_start_position, rect.height / 2 + rect.y, display_text, text_style);
-
-                    for x in rect.x..(rect.x + rect.width + 1) {
-                        if x == rect.x {
-                            let current_symbol_top = &buf.get(x, rect.y).symbol;
-                            if current_symbol_top == &rect_boundary_chars.CROSS || current_symbol_top == &rect_boundary_chars.HORIZONTAL_DOWN {
-                                // no-op
-                            } else if current_symbol_top == &rect_boundary_chars.TOP_RIGHT || current_symbol_top == &rect_boundary_chars.HORIZONTAL {
-                                buf.get_mut(x, rect.y) // TODO: do not get twice?
-                                    .set_symbol(&rect_boundary_chars.HORIZONTAL_DOWN);
-                            } else if current_symbol_top == &rect_boundary_chars.BOTTOM_LEFT || current_symbol_top == &rect_boundary_chars.VERTICAL || current_symbol_top == &rect_boundary_chars.VERTICAL_RIGHT {
-                                buf.get_mut(x, rect.y) // TODO: do not get twice?
-                                    .set_symbol(&rect_boundary_chars.VERTICAL_RIGHT);
-                            } else if current_symbol_top == &rect_boundary_chars.HORIZONTAL_UP || current_symbol_top == &rect_boundary_chars.BOTTOM_LEFT || current_symbol_top == &rect_boundary_chars.VERTICAL_LEFT {
-                                buf.get_mut(x, rect.y) // TODO: do not get twice?
-                                    .set_symbol(&rect_boundary_chars.CROSS);
-                            } else {
-                                buf.get_mut(x, rect.y)
-                                    .set_symbol(&rect_boundary_chars.TOP_LEFT);
-                                    // .set_style(self.border_style);
-                            }
-
-                            let current_symbol_bottom = &buf.get(x, rect.y + rect.height).symbol;
-                            if current_symbol_bottom == &rect_boundary_chars.BOTTOM_RIGHT || current_symbol_bottom == &rect_boundary_chars.HORIZONTAL {
-                                buf.get_mut(x, rect.y + rect.height)
-                                    .set_symbol(&rect_boundary_chars.HORIZONTAL_UP);
-                            } else if current_symbol_bottom == &rect_boundary_chars.VERTICAL {
-                                buf.get_mut(x, rect.y + rect.height)
-                                    .set_symbol(&rect_boundary_chars.VERTICAL_RIGHT);
-                            } else {
-                                buf.get_mut(x, rect.y + rect.height)
-                                    .set_symbol(&rect_boundary_chars.BOTTOM_LEFT);
-                            }
-                        } else if x == rect.x + rect.width {
-                            let current_symbol_top = &buf.get(x, rect.y).symbol;
-                            if current_symbol_top == &rect_boundary_chars.CROSS {
-                                // no-op
-                            } else if current_symbol_top == &rect_boundary_chars.TOP_LEFT || current_symbol_top == &rect_boundary_chars.TOP_RIGHT || current_symbol_top == &rect_boundary_chars.HORIZONTAL {
-                                buf.get_mut(x, rect.y)
-                                    .set_symbol(&rect_boundary_chars.HORIZONTAL_DOWN);
-                            } else if current_symbol_top == &rect_boundary_chars.HORIZONTAL_UP {
-                                buf.get_mut(x, rect.y)
-                                    .set_symbol(&rect_boundary_chars.CROSS);
-                            } else if current_symbol_top == &rect_boundary_chars.BOTTOM_RIGHT {
-                                buf.get_mut(x, rect.y)
-                                    .set_symbol(&rect_boundary_chars.VERTICAL_LEFT);
-                            } else {
-                                buf.get_mut(x, rect.y)
-                                    .set_symbol(&rect_boundary_chars.TOP_RIGHT);
-                            }
-                            let current_symbol_bottom = &buf.get(x, rect.y + rect.height).symbol;
-                            if current_symbol_bottom == &rect_boundary_chars.BOTTOM_LEFT || current_symbol_bottom == &rect_boundary_chars.BOTTOM_RIGHT || current_symbol_bottom == &rect_boundary_chars.HORIZONTAL {
-                                buf.get_mut(x, rect.y + rect.height)
-                                    .set_symbol(&rect_boundary_chars.HORIZONTAL_UP);
-                            } else {
-                                buf.get_mut(x, rect.y + rect.height)
-                                    .set_symbol(&rect_boundary_chars.BOTTOM_RIGHT);
-                            }
-                        } else {
-                            let current_symbol_top = &buf.get(x, rect.y).symbol;
-                            if current_symbol_top == &rect_boundary_chars.CROSS || current_symbol_top == &rect_boundary_chars.HORIZONTAL_UP {
-                                // no-op
-                            } else if current_symbol_top == &rect_boundary_chars.TOP_LEFT || current_symbol_top == &rect_boundary_chars.TOP_RIGHT {
-                                buf.get_mut(x, rect.y)
-                                    .set_symbol(&rect_boundary_chars.HORIZONTAL_DOWN);
-                            } else if current_symbol_top == &rect_boundary_chars.BOTTOM_LEFT || current_symbol_top == &rect_boundary_chars.BOTTOM_RIGHT {
-                                buf.get_mut(x, rect.y)
-                                    .set_symbol(&rect_boundary_chars.HORIZONTAL_UP);
-                            } else if current_symbol_top == &rect_boundary_chars.VERTICAL {
-                                buf.get_mut(x, rect.y)
-                                    .set_symbol(&rect_boundary_chars.CROSS);
-                            } else {
-                                buf.get_mut(x, rect.y)
-                                    .set_symbol(&rect_boundary_chars.HORIZONTAL);
-                            }
-                            let current_symbol_bottom = &buf.get(x, rect.y + rect.height).symbol;
-                            if current_symbol_bottom == &rect_boundary_chars.BOTTOM_LEFT || current_symbol_bottom == &rect_boundary_chars.BOTTOM_RIGHT {
-                                buf.get_mut(x, rect.y + rect.height)
-                                    .set_symbol(&rect_boundary_chars.HORIZONTAL_UP);
-                            } else if current_symbol_bottom == &rect_boundary_chars.VERTICAL {
-                                buf.get_mut(x, rect.y + rect.height)
-                                    .set_symbol(&rect_boundary_chars.CROSS);
-                            } else {
-                                buf.get_mut(x, rect.y + rect.height)
-                                    .set_symbol(&rect_boundary_chars.HORIZONTAL);
-                            }
-                        }
-                    }
-
-                    // sides
-                    for y in (rect.y + 1)..(rect.y + rect.height) {
-                        let current_symbol_left = &buf.get(rect.x, y).symbol;
-                        if current_symbol_left == &rect_boundary_chars.HORIZONTAL {
-                            buf.get_mut(rect.x, y)
-                                .set_symbol(&rect_boundary_chars.CROSS);
-                        } else {
-                            buf.get_mut(rect.x, y)
-                                .set_symbol(&rect_boundary_chars.VERTICAL);
-                        }
-                        let current_symbol_right = &buf.get(rect.x + rect.width, y).symbol;
-                        if current_symbol_right == &rect_boundary_chars.HORIZONTAL {
-                            buf.get_mut(rect.x + rect.width, y)
-                                .set_symbol(&rect_boundary_chars.CROSS);
-                        } else {
-                            buf.get_mut(rect.x + rect.width, y)
-                                .set_symbol(&rect_boundary_chars.VERTICAL);
-                        }
-                    }
+                    draw_rect_on_grid(buf, rect);
                 }
 
             }
         }
-
-                let rect_boundary_chars = BoundariesToUse {
-                    TOP_RIGHT: String::from(boundaries::TOP_RIGHT),
-                    VERTICAL: String::from(boundaries::VERTICAL),
-                    HORIZONTAL: String::from(boundaries::HORIZONTAL),
-                    TOP_LEFT: String::from(boundaries::TOP_LEFT),
-                    BOTTOM_RIGHT: String::from(boundaries::BOTTOM_RIGHT),
-                    BOTTOM_LEFT: String::from(boundaries::BOTTOM_LEFT),
-                    VERTICAL_LEFT: String::from(boundaries::VERTICAL_LEFT),
-                    VERTICAL_RIGHT: String::from(boundaries::VERTICAL_RIGHT),
-                    HORIZONTAL_DOWN: String::from(boundaries::HORIZONTAL_DOWN),
-                    HORIZONTAL_UP: String::from(boundaries::HORIZONTAL_UP),
-                    CROSS: String::from(boundaries::CROSS),
-                };
-                    for x in (area.x + 1)..(area.x + area.width + 1) {
-                        if x == area.x {
-                            let current_symbol_top = &buf.get(x, area.y).symbol;
-                            if current_symbol_top == &rect_boundary_chars.CROSS || current_symbol_top == &rect_boundary_chars.HORIZONTAL_DOWN {
-                                // no-op
-                            } else if current_symbol_top == &rect_boundary_chars.TOP_RIGHT || current_symbol_top == &rect_boundary_chars.HORIZONTAL {
-                                buf.get_mut(x, area.y) // TODO: do not get twice?
-                                    .set_symbol(&rect_boundary_chars.HORIZONTAL_DOWN);
-                            } else if current_symbol_top == &rect_boundary_chars.BOTTOM_LEFT || current_symbol_top == &rect_boundary_chars.VERTICAL || current_symbol_top == &rect_boundary_chars.VERTICAL_RIGHT {
-                                buf.get_mut(x, area.y) // TODO: do not get twice?
-                                    .set_symbol(&rect_boundary_chars.VERTICAL_RIGHT);
-                            } else if current_symbol_top == &rect_boundary_chars.HORIZONTAL_UP || current_symbol_top == &rect_boundary_chars.BOTTOM_LEFT || current_symbol_top == &rect_boundary_chars.VERTICAL_LEFT {
-                                buf.get_mut(x, area.y) // TODO: do not get twice?
-                                    .set_symbol(&rect_boundary_chars.CROSS);
-                            } else {
-                                buf.get_mut(x, area.y)
-                                    .set_symbol(&rect_boundary_chars.TOP_LEFT);
-                                    // .set_style(self.border_style);
-                            }
-
-                            let current_symbol_bottom = &buf.get(x, area.y + area.height).symbol;
-                            if current_symbol_bottom == &rect_boundary_chars.BOTTOM_RIGHT || current_symbol_bottom == &rect_boundary_chars.HORIZONTAL {
-                                buf.get_mut(x, area.y + area.height)
-                                    .set_symbol(&rect_boundary_chars.HORIZONTAL_UP);
-                            } else if current_symbol_bottom == &rect_boundary_chars.VERTICAL {
-                                buf.get_mut(x, area.y + area.height)
-                                    .set_symbol(&rect_boundary_chars.VERTICAL_RIGHT);
-                            } else {
-                                buf.get_mut(x, area.y + area.height)
-                                    .set_symbol(&rect_boundary_chars.BOTTOM_LEFT);
-                            }
-                        } else if x == area.x + area.width {
-                            let current_symbol_top = &buf.get(x, area.y).symbol;
-                            if current_symbol_top == &rect_boundary_chars.CROSS {
-                                // no-op
-                            } else if current_symbol_top == &rect_boundary_chars.TOP_LEFT || current_symbol_top == &rect_boundary_chars.TOP_RIGHT || current_symbol_top == &rect_boundary_chars.HORIZONTAL {
-                                buf.get_mut(x, area.y)
-                                    .set_symbol(&rect_boundary_chars.HORIZONTAL_DOWN);
-                            } else if current_symbol_top == &rect_boundary_chars.HORIZONTAL_UP {
-                                buf.get_mut(x, area.y)
-                                    .set_symbol(&rect_boundary_chars.CROSS);
-                            } else if current_symbol_top == &rect_boundary_chars.BOTTOM_RIGHT {
-                                buf.get_mut(x, area.y)
-                                    .set_symbol(&rect_boundary_chars.VERTICAL_LEFT);
-                            } else {
-                                buf.get_mut(x, area.y)
-                                    .set_symbol(&rect_boundary_chars.TOP_RIGHT);
-                            }
-                            let current_symbol_bottom = &buf.get(x, area.y + area.height).symbol;
-                            if current_symbol_bottom == &rect_boundary_chars.BOTTOM_LEFT || current_symbol_bottom == &rect_boundary_chars.BOTTOM_RIGHT || current_symbol_bottom == &rect_boundary_chars.HORIZONTAL {
-                                buf.get_mut(x, area.y + area.height)
-                                    .set_symbol(&rect_boundary_chars.HORIZONTAL_UP);
-                            } else {
-                                buf.get_mut(x, area.y + area.height)
-                                    .set_symbol(&rect_boundary_chars.BOTTOM_RIGHT);
-                            }
-                        } else {
-                            let current_symbol_top = &buf.get(x, area.y).symbol;
-                            if current_symbol_top == &rect_boundary_chars.CROSS || current_symbol_top == &rect_boundary_chars.HORIZONTAL_UP {
-                                // no-op
-                            } else if current_symbol_top == &rect_boundary_chars.TOP_LEFT || current_symbol_top == &rect_boundary_chars.TOP_RIGHT {
-                                buf.get_mut(x, area.y)
-                                    .set_symbol(&rect_boundary_chars.HORIZONTAL_DOWN);
-                            } else if current_symbol_top == &rect_boundary_chars.BOTTOM_LEFT || current_symbol_top == &rect_boundary_chars.BOTTOM_RIGHT {
-                                buf.get_mut(x, area.y)
-                                    .set_symbol(&rect_boundary_chars.HORIZONTAL_UP);
-                            } else if current_symbol_top == &rect_boundary_chars.VERTICAL {
-                                buf.get_mut(x, area.y)
-                                    .set_symbol(&rect_boundary_chars.CROSS);
-                            } else {
-                                buf.get_mut(x, area.y)
-                                    .set_symbol(&rect_boundary_chars.HORIZONTAL);
-                            }
-                            let current_symbol_bottom = &buf.get(x, area.y + area.height).symbol;
-                            if current_symbol_bottom == &rect_boundary_chars.BOTTOM_LEFT || current_symbol_bottom == &rect_boundary_chars.BOTTOM_RIGHT {
-                                buf.get_mut(x, area.y + area.height)
-                                    .set_symbol(&rect_boundary_chars.HORIZONTAL_UP);
-                            } else if current_symbol_bottom == &rect_boundary_chars.VERTICAL {
-                                buf.get_mut(x, area.y + area.height)
-                                    .set_symbol(&rect_boundary_chars.CROSS);
-                            } else {
-                                buf.get_mut(x, area.y + area.height)
-                                    .set_symbol(&rect_boundary_chars.HORIZONTAL);
-                            }
-                        }
-                    }
-
-                    // sides
-                    for y in (area.y + 1)..(area.y + area.height) {
-                        let current_symbol_left = &buf.get(area.x, y).symbol;
-                        if current_symbol_left == &rect_boundary_chars.HORIZONTAL {
-                            buf.get_mut(area.x, y)
-                                .set_symbol(&rect_boundary_chars.CROSS);
-                        } else {
-                            buf.get_mut(area.x, y)
-                                .set_symbol(&rect_boundary_chars.VERTICAL);
-                        }
-                        let current_symbol_right = &buf.get(area.x + area.width, y).symbol;
-                        if current_symbol_right == &rect_boundary_chars.HORIZONTAL {
-                            buf.get_mut(area.x + area.width, y)
-                                .set_symbol(&rect_boundary_chars.CROSS);
-                        } else {
-                            buf.get_mut(area.x + area.width, y)
-                                .set_symbol(&rect_boundary_chars.VERTICAL);
-                        }
-                    }
+        draw_rect_on_grid(buf, area); // we draw a frame around the whole area to make up for the "small files" block not having a frame of its own
     }
 }
