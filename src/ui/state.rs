@@ -138,7 +138,7 @@ impl TreeMap {
             let size = val.percentage * self.total_size;
             let first_side = (size / sum) * length;
             let second_side = size / first_side;
-            if first_side >= 2.0 && second_side >= 2.0 {
+            if first_side >= 5.0 && second_side >= 5.0 {
                 let val_aspect_ratio = if first_side < second_side {
                     first_side / second_side
                 } else {
@@ -149,6 +149,8 @@ impl TreeMap {
                 } else if val_aspect_ratio < worst_aspect_ratio {
                     worst_aspect_ratio = val_aspect_ratio;
                 }
+            } else {
+                return 0.0
             }
         }
         worst_aspect_ratio
@@ -172,9 +174,14 @@ impl TreeMap {
             for per in row.iter() {
                 nums.push(per.percentage * self.total_size);
             }
-           let current_row_worst_ratio = self.worst(row.clone(), length);
-           let row_with_child_worst_ratio = self.worst(row_with_first_child.clone(), length);
-            if row.len() == 1 || current_row_worst_ratio <= row_with_child_worst_ratio || current_row_worst_ratio == 0.0 {
+
+            let current_row_worst_ratio = self.worst(row.clone(), length);
+            let row_with_child_worst_ratio = self.worst(row_with_first_child.clone(), length);
+
+            if current_row_worst_ratio != 0.0 && row_with_child_worst_ratio == 0.0 {
+                self.layoutrow(row);
+                self.squarify(children, vec![]);
+            } else if row.len() == 1 || current_row_worst_ratio <= row_with_child_worst_ratio || current_row_worst_ratio == 0.0 {
                 children.remove(0);
                 self.squarify(children, row_with_first_child.clone());
             } else {
@@ -233,7 +240,8 @@ impl State {
             let mut too_small = vec![];
             for file in file_percentages {
                 let size = file.percentage * total_space_area;
-                if size >= 30.0 { // TODO: this number should be reconsidered
+                // if size >= 30.0 { // TODO: this number should be reconsidered
+                if size >= 0.0 { // TODO: this number should be reconsidered
                     files_to_render.push(file);
                 } else {
                     too_small.push(file);
@@ -248,7 +256,7 @@ impl State {
                 small_files.percentage += file.percentage;
             }
             small_files.file_name = format!("Small files ({:.0?}%)", small_files.percentage * 100.0);
-            files_to_render.push(small_files);
+            // files_to_render.push(small_files);
             files_to_render.sort_by(|a, b| {
                 if a.percentage == b.percentage {
                     a.file_name.partial_cmp(&b.file_name).unwrap()
@@ -443,6 +451,10 @@ impl State {
             });
             match candidates.get(0) {
                 Some(next_rect) => Some(String::from(&next_rect.text)),
+//                Some(next_rect) => {
+//                    println!("\rnext_rect {:?}", next_rect);
+//                    Some(String::from(&next_rect.text))
+//                },
                 None => None,
             }
         };

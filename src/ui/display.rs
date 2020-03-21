@@ -58,7 +58,8 @@ where B: Backend
                 .alignment(Alignment::Center)
                 .wrap(true)
                 .render(&mut f, chunks[0]);
-            RectangleGrid::new((*state.tiles).to_vec()).render(&mut f, full_screen);
+            RectangleGrid::new((*state.tiles).to_vec()).render(&mut f, chunks[1]);
+            // RectangleGrid::new((*state.tiles).to_vec()).render(&mut f, full_screen);
         }).expect("failed to draw");
     }
 }

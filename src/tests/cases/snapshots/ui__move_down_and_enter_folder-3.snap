@@ -5,7 +5,6 @@ expression: "&terminal_draw_events_mirror[2]"
                                                                                                                                                                                               
                                                                   /tmp/bandwhich_tests/move_down_and_enter folder/subfolder1                                                                  
                                                                                                                                                                                               
-                                                                                                                                                       ─                                      
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
@@ -28,7 +27,8 @@ expression: "&terminal_draw_events_mirror[2]"
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
-│                                                                                  => file3 8.2K (100%) <=                                                                                    
+                                                                                                                                                                                              
+                                                                                   => file3 8.2K (100%) <=                                                                                    
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
@@ -51,5 +51,5 @@ expression: "&terminal_draw_events_mirror[2]"
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
-                                                                                                                                                       ─                                      
+                                                                                                                                                                                              
 

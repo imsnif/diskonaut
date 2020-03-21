@@ -9,7 +9,6 @@ use crate::start;
 use std::env;
 use std::fs::{File, create_dir, create_dir_all, remove_dir_all};
 use std::io::prelude::*;
-use uuid::Uuid;
 
 use std::iter;
 use ::termion::event::{Event, Key};
@@ -186,6 +185,92 @@ fn enter_folder() {
     assert_eq!(terminal_draw_events_mirror.len(), 2);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
     assert_snapshot!(&terminal_draw_events_mirror[1]);
+}
+
+#[test]
+fn small_files () {
+
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let keyboard_events = sleep_and_quit_events(1);
+    let temp_dir_path = create_root_temp_dir("small_files").expect("failed to create temp dir");
+
+    let mut file_1_path = PathBuf::from(&temp_dir_path);
+    file_1_path.push("file1");
+    create_temp_file(file_1_path, 400000).expect("failed to create temp file");
+
+    let mut file_2_path = PathBuf::from(&temp_dir_path);
+    file_2_path.push("file2");
+    create_temp_file(file_2_path, 1000000).expect("failed to create temp file");
+
+    let mut file_3_path = PathBuf::from(&temp_dir_path);
+    file_3_path.push("file3");
+    create_temp_file(file_3_path, 1000000).expect("failed to create temp file");
+
+    let mut file_4_path = PathBuf::from(&temp_dir_path);
+    file_4_path.push("file4");
+    create_temp_file(file_4_path, 8000).expect("failed to create temp file");
+
+    let mut file_5_path = PathBuf::from(&temp_dir_path);
+    file_5_path.push("file5");
+    create_temp_file(file_5_path, 8000).expect("failed to create temp file");
+
+    start(backend, keyboard_events, temp_dir_path.clone());
+    std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
+    let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
+
+    let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
+
+    assert_eq!(terminal_draw_events_mirror.len(), 1);
+    assert_snapshot!(&terminal_draw_events_mirror[0]);
+}
+
+#[test]
+fn minimum_tile_sides () {
+    // here we test that tiles are not created with a side_length (height in this case)
+    // that is too small to render while not being designated as a "small file"
+    //
+    // the only case in which this can happen if this is the last tile to be placed
+    // this case might in the future be solved by artificially increasing its size
+    // to the minimum with some sort of asterisk to explain
+
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let keyboard_events = sleep_and_quit_events(1);
+    let temp_dir_path = create_root_temp_dir("minimum_tile_sides").expect("failed to create temp dir");
+
+    for i in 0..7 {
+        let mut file_path = PathBuf::from(&temp_dir_path);
+        file_path.push(format!("big_file{}", i));
+        create_temp_file(file_path, 134000).expect("failed to create temp file");
+    }
+
+    for i in 0..2 {
+        let mut file_path = PathBuf::from(&temp_dir_path);
+        file_path.push(format!("medium_file{}", i));
+        create_temp_file(file_path, 8000).expect("failed to create temp file");
+    }
+
+    for i in 0..50 {
+        let mut file_path = PathBuf::from(&temp_dir_path);
+        file_path.push(format!("file{}", i));
+        create_temp_file(file_path, 4000).expect("failed to create temp file");
+    }
+
+    start(backend, keyboard_events, temp_dir_path.clone());
+    std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
+    let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
+
+    let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
+
+    assert_eq!(terminal_draw_events_mirror.len(), 1);
+    assert_snapshot!(&terminal_draw_events_mirror[0]);
 }
 
 #[test]

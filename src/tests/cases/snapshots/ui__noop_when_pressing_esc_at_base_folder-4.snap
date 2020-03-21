@@ -5,7 +5,7 @@ expression: "&terminal_draw_events_mirror[3]"
                                                                                                                                                                                               
                                                                   /tmp/bandwhich_tests/noop wh n_pressing_esc_at base_folder                                                                  
                                                                                                                                                                                               
-                                                                                                                              ┬                                                               
+                                                                                                                                                                                              
                                                                                                                               │                                                               
                                                                                                                               │                                                               
                                                                                                                               │                                                               
@@ -28,7 +28,7 @@ expression: "&terminal_draw_events_mirror[3]"
                                                                                                                               │                                                               
                                                                                                                               │                                                               
                                                                                                                               │                                                               
-├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────│                    subfolder1/ 4.1K (33%)                     
+ ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────│                    subfolder1/ 4.1K (33%)                     
                                                                                                                               │                                                               
                                                                                                                               │                                                               
                                                                                                                               │                                                               
@@ -51,5 +51,5 @@ expression: "&terminal_draw_events_mirror[3]"
                                                                                                                               │                                                               
                                                                                                                               │                                                               
                                                                                                                               │                                                               
-                                                                                                                              ┴                                                               
+                                                                                                                                                                                              
 
