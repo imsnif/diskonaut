@@ -183,58 +183,52 @@ impl<'a> Widget for RectangleGrid {
             return;
         }
         for rect_with_text in &self.rectangles {
+            let rounded_x = rect_with_text.rect.x.round();
+            let rounded_y = rect_with_text.rect.y.round();
+            let mut rect = Rect {
+                x: rounded_x as u16,
+                y: rounded_y  as u16,
+                width: ((rect_with_text.rect.x - rounded_x) + rect_with_text.rect.width).round() as u16,
+                height: ((rect_with_text.rect.y - rounded_y) + rect_with_text.rect.height).round() as u16,
+            };
 
-            if rect_with_text.rect.width > 0.0 && rect_with_text.rect.height > 0.0 {
+            // fix rounding errors
+            if (rect_with_text.rect.x + rect_with_text.rect.width).round() as u16 > rect.x + rect.width {
+                rect.width += 1;
+            }
+            if (rect_with_text.rect.y + rect_with_text.rect.height).round() as u16 > rect.y + rect.height {
+                rect.height += 1;
+            }
 
-                let rounded_x = rect_with_text.rect.x.round();
-                let rounded_y = rect_with_text.rect.y.round();
-                let mut rect = Rect {
-                    x: rounded_x as u16,
-                    y: rounded_y  as u16,
-                    width: ((rect_with_text.rect.x - rounded_x) + rect_with_text.rect.width).round() as u16,
-                    height: ((rect_with_text.rect.y - rounded_y) + rect_with_text.rect.height).round() as u16,
-                };
-
-                // fix rounding errors
-                if (rect_with_text.rect.x + rect_with_text.rect.width).round() as u16 > rect.x + rect.width {
-                    rect.width += 1;
-                }
-                if (rect_with_text.rect.y + rect_with_text.rect.height).round() as u16 > rect.y + rect.height {
-                    rect.height += 1;
-                }
-
-                if rect.height < 2 || rect.width < 8 {
-                    for x in rect.x..(rect.x + rect.width + 1) {
-                        if x > rect.x {
-                            for y in rect.y..(rect.y + rect.height + 1) {
-                                if y > rect.y {
-                                    let buf = buf.get_mut(x, y);
-                                    buf.set_symbol("▒");
-                                }
+            if rect.height < 2 || rect.width < 8 {
+                for x in rect.x..(rect.x + rect.width + 1) {
+                    if x > rect.x {
+                        for y in rect.y..(rect.y + rect.height + 1) {
+                            if y > rect.y {
+                                let buf = buf.get_mut(x, y);
+                                buf.set_symbol("▒");
                             }
                         }
                     }
-                } else {
-
-                    let max_text_length = if rect.width > 4 { rect.width - 4 } else { 0 };
-                    // TODO: we should not accept a rectangle with a width of less than 8 so that the text
-                    // will be at least partly legible... these rectangles should be created with a small
-                    // height instead
-                    let text = if rect_with_text.selected { format!("=> {} <=", rect_with_text.text) } else { rect_with_text.text.to_owned() }; // TODO: better
-                    let display_text = truncate_middle(&text, max_text_length);
-                    let text_length = display_text.len(); // TODO: better
-
-                    let text_start_position = ((rect.width - text_length as u16) as f64 / 2.0).ceil() as u16 + rect.x;
-
-                    let text_style = if rect_with_text.selected {
-                        Style::default().bg(Color::White).fg(Color::Black)
-                    } else {
-                        Style::default()
-                    };
-                    buf.set_string(text_start_position, rect.height / 2 + rect.y, display_text, text_style);
-                    draw_rect_on_grid(buf, rect);
                 }
+            } else {
+                let max_text_length = if rect.width > 4 { rect.width - 4 } else { 0 };
+                // TODO: we should not accept a rectangle with a width of less than 8 so that the text
+                // will be at least partly legible... these rectangles should be created with a small
+                // height instead
+                let text = if rect_with_text.selected { format!("=> {} <=", rect_with_text.text) } else { rect_with_text.text.to_owned() }; // TODO: better
+                let display_text = truncate_middle(&text, max_text_length);
+                let text_length = display_text.len(); // TODO: better
 
+                let text_start_position = ((rect.width - text_length as u16) as f64 / 2.0).ceil() as u16 + rect.x;
+
+                let text_style = if rect_with_text.selected {
+                    Style::default().bg(Color::White).fg(Color::Black)
+                } else {
+                    Style::default()
+                };
+                buf.set_string(text_start_position, rect.height / 2 + rect.y, display_text, text_style);
+                draw_rect_on_grid(buf, rect);
             }
         }
         draw_rect_on_grid(buf, area); // we draw a frame around the whole area to make up for the "small files" block not having a frame of its own
