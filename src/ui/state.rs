@@ -39,7 +39,7 @@ pub struct RectSize {
 const HEIGHT_WIDTH_RATIO: f64 = 2.5;
 
 pub struct State {
-    pub tiles: Vec<RectWithText>,
+    pub tiles: Option<Tiles>,
     pub base_folder: Option<Folder>,
     pub path_in_filesystem: Option<String>,
     pub current_folder_names: Vec<String>,
@@ -192,10 +192,337 @@ impl TreeMap {
     }
 }
 
+pub struct Tiles {
+    pub rectangles: Vec<RectWithText>,
+    selected_index: usize,
+    area: Rect,
+}
+
+impl Tiles {
+    pub fn new (area: &Rect, file_percentages: Vec<FilePercentage>) -> Self {
+
+        let empty_space = RectFloat { x: area.x as f64, y: area.y as f64, height: area.height as f64, width: area.width as f64 };
+        let mut tree_map = TreeMap::new(empty_space, None);
+        
+        tree_map.squarify(file_percentages, vec![]);
+        let mut rectangles = tree_map.rectangles;
+        let selected_index = 0;
+        if let Some(rect) = rectangles.get_mut(selected_index) {
+            rect.selected = true;
+        }
+        Tiles {
+            rectangles,
+            selected_index,
+            area: area.clone(),
+        }
+    }
+    pub fn set_selected_index (&mut self, next_index: &usize) {
+        {
+            let mut existing_selected = self.rectangles.get_mut(self.selected_index).expect(&format!("could not find selected rect at index {}", self.selected_index));
+            existing_selected.selected = false;
+        }
+        {
+            let mut next_selected = self.rectangles.get_mut(*next_index).expect(&format!("could not find selected rect at index {}", next_index));
+            next_selected.selected = true;
+        }
+        self.selected_index = *next_index;
+    }
+    pub fn currently_selected (&self) -> Option<&RectWithText> {
+        self.rectangles.get(self.selected_index)
+    }
+    pub fn move_selected_right (&mut self) {
+        let currently_selected = self.rectangles.get(self.selected_index).expect(&format!("could not find selected rectangle at index {}", self.selected_index));
+        
+        let mut next_rectangle_index = None;
+        for (candidate_index, candidate) in self.rectangles.iter().enumerate() {
+            if candidate.rect.x >= currently_selected.rect.x + currently_selected.rect.width && (
+                ( candidate.rect.y >= currently_selected.rect.y && candidate.rect.y <= (currently_selected.rect.y + currently_selected.rect.height) ) ||
+                ( (candidate.rect.y + candidate.rect.height) <= (currently_selected.rect.y + currently_selected.rect.height) && (candidate.rect.y + candidate.rect.height) > currently_selected.rect.y) ||
+                (candidate.rect.y <= currently_selected.rect.y && (candidate.rect.y + candidate.rect.height >= (currently_selected.rect.y + currently_selected.rect.height)) ) ||
+                ( currently_selected.rect.y <= candidate.rect.y && (currently_selected.rect.y + currently_selected.rect.height >= (candidate.rect.y + candidate.rect.height)) )
+            ) {
+
+                match next_rectangle_index {
+                    Some(existing_candidate_index) => {
+                        
+                        let existing_candidate: &RectWithText = self.rectangles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
+                        // let existing_candidate: &RectWithText = self.rectangles.get(existing_candidate_index).unwrap();
+                        
+                        if existing_candidate.rect.x.round() == candidate.rect.x.round() {
+                            let existing_candidate_overlap = if existing_candidate.rect.y < currently_selected.rect.y {
+                                if existing_candidate.rect.y + existing_candidate.rect.height >= currently_selected.rect.y + currently_selected.rect.height {
+                                    currently_selected.rect.height
+                                } else {
+                                    existing_candidate.rect.y + existing_candidate.rect.height - currently_selected.rect.y
+                                } 
+                            } else {
+                                if currently_selected.rect.y + currently_selected.rect.height >= existing_candidate.rect.y + existing_candidate.rect.height {
+                                    existing_candidate.rect.height
+                                } else {
+                                    currently_selected.rect.y + currently_selected.rect.height - existing_candidate.rect.y
+                                } 
+                            };
+                            let candidate_overlap = if candidate.rect.y < currently_selected.rect.y {
+                                if candidate.rect.y + candidate.rect.height >= currently_selected.rect.y + currently_selected.rect.height {
+                                    currently_selected.rect.height
+                                } else {
+                                    candidate.rect.y + candidate.rect.height - currently_selected.rect.y
+                                } 
+                            } else {
+                                if currently_selected.rect.y + currently_selected.rect.height >= candidate.rect.y + candidate.rect.height {
+                                    candidate.rect.height
+                                } else {
+                                    currently_selected.rect.y + currently_selected.rect.height - candidate.rect.y
+                                } 
+                            };
+                            if existing_candidate_overlap < candidate_overlap {
+                                next_rectangle_index = Some(candidate_index);
+                            }
+                        } else {
+                            if candidate.rect.x < existing_candidate.rect.x {
+                                next_rectangle_index = Some(candidate_index);
+                            }
+                        }
+                    },
+                    None => next_rectangle_index = Some(candidate_index),
+                };
+            }
+        }
+        if let Some(next_index) = next_rectangle_index {
+            {
+                let mut existing_selected = self.rectangles.get_mut(self.selected_index).expect(&format!("could not find selected rect at index {}", self.selected_index));
+                existing_selected.selected = false;
+            }
+            {
+                let mut next_selected = self.rectangles.get_mut(next_index).expect(&format!("could not find selected rect at index {}", self.selected_index));
+                next_selected.selected = true;
+            }
+            self.selected_index = next_index;
+        }
+
+    }
+    pub fn move_selected_left (&mut self) {
+        let currently_selected = self.rectangles.get(self.selected_index).expect(&format!("could not find selected rectangle at index {}", self.selected_index));
+        
+        let mut next_rectangle_index = None;
+        for (candidate_index, candidate) in self.rectangles.iter().enumerate() {
+
+            if candidate.rect.x + candidate.rect.width <= currently_selected.rect.x && (
+                ( candidate.rect.y >= currently_selected.rect.y && candidate.rect.y <= (currently_selected.rect.y + currently_selected.rect.height) ) ||
+                ( (candidate.rect.y + candidate.rect.height) <= (currently_selected.rect.y + currently_selected.rect.height) && (candidate.rect.y + candidate.rect.height) > currently_selected.rect.y) ||
+                ( candidate.rect.y <= currently_selected.rect.y && (candidate.rect.y + candidate.rect.height >= (currently_selected.rect.y + currently_selected.rect.height)) ) ||
+                ( currently_selected.rect.y <= candidate.rect.y && (currently_selected.rect.y + currently_selected.rect.height >= (candidate.rect.y + candidate.rect.height)) )
+            ) {
+
+                match next_rectangle_index {
+                    Some(existing_candidate_index) => {
+                        
+                        let existing_candidate: &RectWithText = self.rectangles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
+                        
+                        if (existing_candidate.rect.x + existing_candidate.rect.width).round() == (candidate.rect.x + candidate.rect.width).round() {
+                            let existing_candidate_overlap = if existing_candidate.rect.y < currently_selected.rect.y {
+                                if existing_candidate.rect.y + existing_candidate.rect.height >= currently_selected.rect.y + currently_selected.rect.height {
+                                    currently_selected.rect.height
+                                } else {
+                                    existing_candidate.rect.y + existing_candidate.rect.height - currently_selected.rect.y
+                                } 
+                            } else {
+                                if currently_selected.rect.y + currently_selected.rect.height >= existing_candidate.rect.y + existing_candidate.rect.height {
+                                    existing_candidate.rect.height
+                                } else {
+                                    currently_selected.rect.y + currently_selected.rect.height - existing_candidate.rect.y
+                                } 
+                            };
+                            let candidate_overlap = if candidate.rect.y < currently_selected.rect.y {
+                                if candidate.rect.y + candidate.rect.height >= currently_selected.rect.y + currently_selected.rect.height {
+                                    currently_selected.rect.height
+                                } else {
+                                    candidate.rect.y + candidate.rect.height - currently_selected.rect.y
+                                } 
+                            } else {
+                                if currently_selected.rect.y + currently_selected.rect.height >= candidate.rect.y + candidate.rect.height {
+                                    candidate.rect.height
+                                } else {
+                                    currently_selected.rect.y + currently_selected.rect.height - candidate.rect.y
+                                } 
+                            };
+                            if existing_candidate_overlap < candidate_overlap {
+                                next_rectangle_index = Some(candidate_index);
+                            }
+                        } else {
+                            if candidate.rect.x > existing_candidate.rect.x {
+                                next_rectangle_index = Some(candidate_index);
+                            }
+                        }
+                    },
+                    None => next_rectangle_index = Some(candidate_index),
+                };
+            }
+        }
+        if let Some(next_index) = next_rectangle_index {
+            {
+                let mut existing_selected = self.rectangles.get_mut(self.selected_index).expect(&format!("could not find selected rect at index {}", self.selected_index));
+                existing_selected.selected = false;
+            }
+            {
+                let mut next_selected = self.rectangles.get_mut(next_index).expect(&format!("could not find selected rect at index {}", self.selected_index));
+                next_selected.selected = true;
+            }
+            self.selected_index = next_index;
+        }
+    }
+    pub fn move_selected_down (&mut self) {
+
+        let currently_selected = self.rectangles.get(self.selected_index).expect(&format!("could not find selected rectangle at index {}", self.selected_index));
+        
+        let mut next_rectangle_index = None;
+        for (candidate_index, candidate) in self.rectangles.iter().enumerate() {
+
+            if candidate.rect.y >= currently_selected.rect.y + currently_selected.rect.height && (
+                ( candidate.rect.x >= currently_selected.rect.x && candidate.rect.x <= (currently_selected.rect.x + currently_selected.rect.width) ) ||
+                ( (candidate.rect.x + candidate.rect.width) <= (currently_selected.rect.x + currently_selected.rect.width) && (candidate.rect.x + candidate.rect.width) > currently_selected.rect.x) ||
+                ( candidate.rect.x <= currently_selected.rect.x && (candidate.rect.x + candidate.rect.width >= (currently_selected.rect.x + currently_selected.rect.width)) ) ||
+                ( currently_selected.rect.x <= candidate.rect.x && (currently_selected.rect.x + currently_selected.rect.width >= (candidate.rect.x + candidate.rect.width)) )
+            ) {
+
+                match next_rectangle_index {
+                    Some(existing_candidate_index) => {
+                        
+                        let existing_candidate: &RectWithText = self.rectangles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
+                        
+                        if existing_candidate.rect.y.round() == candidate.rect.y.round() {
+                            let existing_candidate_overlap = if existing_candidate.rect.x < currently_selected.rect.x {
+                                if existing_candidate.rect.x + existing_candidate.rect.width >= currently_selected.rect.x + currently_selected.rect.width {
+                                    currently_selected.rect.width
+                                } else {
+                                    existing_candidate.rect.x + existing_candidate.rect.width - currently_selected.rect.x
+                                } 
+                            } else {
+                                if currently_selected.rect.x + currently_selected.rect.width >= existing_candidate.rect.x + existing_candidate.rect.width {
+                                    existing_candidate.rect.width
+                                } else {
+                                    currently_selected.rect.x + currently_selected.rect.width - existing_candidate.rect.x
+                                } 
+                            };
+                            let candidate_overlap = if candidate.rect.x < currently_selected.rect.x {
+                                if candidate.rect.x + candidate.rect.width >= currently_selected.rect.x + currently_selected.rect.width {
+                                    currently_selected.rect.width
+                                } else {
+                                    candidate.rect.x + candidate.rect.width - currently_selected.rect.x
+                                } 
+                            } else {
+                                if currently_selected.rect.x + currently_selected.rect.width >= candidate.rect.x + candidate.rect.width {
+                                    candidate.rect.width
+                                } else {
+                                    currently_selected.rect.x + currently_selected.rect.width - candidate.rect.x
+                                } 
+                            };
+                            if existing_candidate_overlap < candidate_overlap {
+                                next_rectangle_index = Some(candidate_index);
+                            }
+                        } else {
+                            if candidate.rect.y < existing_candidate.rect.y {
+                                next_rectangle_index = Some(candidate_index);
+                            }
+                        }
+                    },
+                    None => next_rectangle_index = Some(candidate_index),
+                };
+            }
+        }
+        if let Some(next_index) = next_rectangle_index {
+            {
+                let mut existing_selected = self.rectangles.get_mut(self.selected_index).expect(&format!("could not find selected rect at index {}", self.selected_index));
+                existing_selected.selected = false;
+            }
+            {
+                let mut next_selected = self.rectangles.get_mut(next_index).expect(&format!("could not find selected rect at index {}", self.selected_index));
+                next_selected.selected = true;
+            }
+            self.selected_index = next_index;
+        }
+    }
+    pub fn move_selected_up (&mut self) {
+
+        let currently_selected = self.rectangles.get(self.selected_index).expect(&format!("could not find selected rectangle at index {}", self.selected_index));
+        
+        let mut next_rectangle_index = None;
+        for (candidate_index, candidate) in self.rectangles.iter().enumerate() {
+
+            if candidate.rect.y + candidate.rect.height <= currently_selected.rect.y && (
+                ( candidate.rect.x >= currently_selected.rect.x && candidate.rect.x <= (currently_selected.rect.x + currently_selected.rect.width) ) ||
+                ( (candidate.rect.x + candidate.rect.width) <= (currently_selected.rect.x + currently_selected.rect.width) && (candidate.rect.x + candidate.rect.width) > currently_selected.rect.x) ||
+                ( candidate.rect.x <= currently_selected.rect.x && (candidate.rect.x + candidate.rect.width >= (currently_selected.rect.x + currently_selected.rect.width)) ) ||
+                ( currently_selected.rect.x <= candidate.rect.x && (currently_selected.rect.x + currently_selected.rect.width >= (candidate.rect.x + candidate.rect.width)) )
+                
+            ) {
+
+                match next_rectangle_index {
+                    Some(existing_candidate_index) => {
+                        
+                        let existing_candidate: &RectWithText = self.rectangles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
+                        
+                        if (existing_candidate.rect.y + existing_candidate.rect.height).round() == (candidate.rect.y + candidate.rect.height).round() {
+
+                        let existing_candidate_overlap = if existing_candidate.rect.x < currently_selected.rect.x {
+                            if existing_candidate.rect.x + existing_candidate.rect.width >= currently_selected.rect.x + currently_selected.rect.width {
+                                currently_selected.rect.width
+                            } else {
+                                existing_candidate.rect.x + existing_candidate.rect.width - currently_selected.rect.x
+                            } 
+                        } else {
+                            if currently_selected.rect.x + currently_selected.rect.width >= existing_candidate.rect.x + existing_candidate.rect.width {
+                                existing_candidate.rect.width
+                            } else {
+                                currently_selected.rect.x + currently_selected.rect.width - existing_candidate.rect.x
+                            } 
+                        };
+                        let candidate_overlap = if candidate.rect.x < currently_selected.rect.x {
+                            if candidate.rect.x + candidate.rect.width >= currently_selected.rect.x + currently_selected.rect.width {
+                                currently_selected.rect.width
+                            } else {
+                                candidate.rect.x + candidate.rect.width - currently_selected.rect.x
+                            } 
+                        } else {
+                            if currently_selected.rect.x + currently_selected.rect.width >= candidate.rect.x + candidate.rect.width {
+                                candidate.rect.width
+                            } else {
+                                currently_selected.rect.x + currently_selected.rect.width - candidate.rect.x
+                            } 
+                        };
+
+                            if existing_candidate_overlap < candidate_overlap {
+                                next_rectangle_index = Some(candidate_index);
+                            }
+                        } else {
+                            if candidate.rect.y > existing_candidate.rect.y {
+                                next_rectangle_index = Some(candidate_index);
+                            }
+                        }
+                    },
+                    None => next_rectangle_index = Some(candidate_index),
+                };
+            }
+        }
+        if let Some(next_index) = next_rectangle_index {
+            {
+                let mut existing_selected = self.rectangles.get_mut(self.selected_index).expect(&format!("could not find selected rect at index {}", self.selected_index));
+                existing_selected.selected = false;
+            }
+            {
+                let mut next_selected = self.rectangles.get_mut(next_index).expect(&format!("could not find selected rect at index {}", self.selected_index));
+                next_selected.selected = true;
+            }
+            self.selected_index = next_index;
+        }
+
+    }
+}
+
 impl State {
     pub fn new() -> Self {
         Self {
-            tiles: Vec::new(),
+            tiles: None,
             base_folder: None,
             path_in_filesystem: None,
             current_folder_names: Vec::new(),
@@ -219,343 +546,69 @@ impl State {
     }
     pub fn set_tiles(&mut self, full_screen: Rect) {
         if let Some(base_folder) = &self.base_folder {
-
-            let current_folder = base_folder.path(&self.current_folder_names);
-            let file_percentages = calculate_percentages(current_folder.expect("could not find have current folder"));
-            let total_space_area = full_screen.width as f64 * full_screen.height as f64;
-
-            let currently_selected = self.tiles.iter().find(|&t| t.selected == true);
-            if let Some(currently_selected) = currently_selected {
-                self.current_selected = String::from(&currently_selected.file_name);
-            }
-
-            let empty_space = RectFloat { x: full_screen.x as f64, y: full_screen.y as f64, height: full_screen.height as f64, width: full_screen.width as f64 };
-            
-            let mut tree_map = if let Some(currently_selected) = currently_selected {
-                TreeMap::new(empty_space, Some(String::from(&currently_selected.text))) // TODO: better
+            if let Some(current_tiles) = &self.tiles {
+                if current_tiles.area != full_screen {
+                    let current_folder = base_folder.path(&self.current_folder_names);
+                    let file_percentages = calculate_percentages(current_folder.expect("could not find have current folder"));
+                    self.tiles = Some(Tiles::new(&full_screen, file_percentages))
+                } else {
+                    let current_selected_index = &self.tiles.as_ref().expect("could not find tiles").selected_index;
+                    let current_folder = base_folder.path(&self.current_folder_names);
+                    let file_percentages = calculate_percentages(current_folder.expect("could not find have current folder"));
+                    let mut new_tiles = Tiles::new(&full_screen, file_percentages);
+                    new_tiles.set_selected_index(current_selected_index);
+                    self.tiles = Some(new_tiles);
+                }
             } else {
-                TreeMap::new(empty_space, None)
-            };
-            let mut files_to_render = vec![];
-            let mut too_small = vec![];
-            for file in file_percentages {
-                let size = file.percentage * total_space_area;
-                // if size >= 30.0 { // TODO: this number should be reconsidered
-                if size >= 0.0 { // TODO: this number should be reconsidered
-                    files_to_render.push(file);
-                } else {
-                    too_small.push(file);
-                }
+                let current_folder = base_folder.path(&self.current_folder_names);
+                let file_percentages = calculate_percentages(current_folder.expect("could not find have current folder"));
+                self.tiles = Some(Tiles::new(&full_screen, file_percentages))
             }
-            let mut small_files = FilePercentage {
-                file_name: String::from("Small files"),
-                actual_file_name: String::from("Small files"),
-                percentage: 0.0,
-            };
-            for file in too_small {
-                small_files.percentage += file.percentage;
-            }
-            small_files.file_name = format!("Small files ({:.0?}%)", small_files.percentage * 100.0);
-            // files_to_render.push(small_files);
-            files_to_render.sort_by(|a, b| {
-                if a.percentage == b.percentage {
-                    a.file_name.partial_cmp(&b.file_name).unwrap()
-                } else {
-                    b.percentage.partial_cmp(&a.percentage).unwrap()
-                }
-            });
-
-            tree_map.squarify(files_to_render, vec![]);
-            self.current_selected = String::from(&tree_map.rectangles.iter().find(|&t| t.selected == true).expect("no selected tile").file_name);
-
-            self.tiles = tree_map.rectangles;
         }
     }
-    pub fn clone_currently_selected(&self) -> RectWithText {
-        self.tiles.iter().find(|t| t.selected == true).expect("could not find selected rect").clone()
-    }
     pub fn move_selected_right (&mut self) {
-        let currently_selected = self.clone_currently_selected();
-        let found_next = {
-            let mut candidates: Vec<&RectWithText> = self.tiles.iter()
-                .filter(|t|
-                    t.rect.x >= currently_selected.rect.x + currently_selected.rect.width &&
-                    (
-                        ( t.rect.y >= currently_selected.rect.y && t.rect.y <= (currently_selected.rect.y + currently_selected.rect.height) ) ||
-                        ( (t.rect.y + t.rect.height) <= (currently_selected.rect.y + currently_selected.rect.height) && (t.rect.y + t.rect.height) > currently_selected.rect.y) ||
-                        ( t.rect.y <= currently_selected.rect.y && (t.rect.y + t.rect.height >= (currently_selected.rect.y + currently_selected.rect.height)) ) ||
-                        ( currently_selected.rect.y <= t.rect.y && (currently_selected.rect.y + currently_selected.rect.height >= (t.rect.y + t.rect.height)) )
-                    )
-                ).collect();
-
-            candidates.sort_by(|a, b| {
-                if a.rect.x.round() == b.rect.x.round() {
-                    let a_overlap = if a.rect.y < currently_selected.rect.y {
-                        if a.rect.y + a.rect.height >= currently_selected.rect.y + currently_selected.rect.height {
-                            currently_selected.rect.height
-                        } else {
-                            a.rect.y + a.rect.height - currently_selected.rect.y
-                        } 
-                    } else {
-                        if currently_selected.rect.y + currently_selected.rect.height >= a.rect.y + a.rect.height {
-                            a.rect.height
-                        } else {
-                            currently_selected.rect.y + currently_selected.rect.height - a.rect.y
-                        } 
-                    };
-                    let b_overlap = if b.rect.y < currently_selected.rect.y {
-                        if b.rect.y + b.rect.height >= currently_selected.rect.y + currently_selected.rect.height {
-                            currently_selected.rect.height
-                        } else {
-                            b.rect.y + b.rect.height - currently_selected.rect.y
-                        } 
-                    } else {
-                        if currently_selected.rect.y + currently_selected.rect.height >= b.rect.y + b.rect.height {
-                            b.rect.height
-                        } else {
-                            currently_selected.rect.y + currently_selected.rect.height - b.rect.y
-                        } 
-                    };
-                    b_overlap.partial_cmp(&a_overlap).expect("could not compare rects")
-                } else {
-                    a.rect.x.partial_cmp(&b.rect.x).expect("could not compare rects")
-                }
-            });
-            match candidates.get(0) {
-                Some(next_rect) => Some(String::from(&next_rect.text)),
-                None => None,
-            }
-        };
-
-        if let Some(next_rect_text) = found_next {
-            for tile in self.tiles.iter_mut() {
-                if tile.text == next_rect_text {
-                    tile.selected = true;
-                    self.current_selected = String::from(tile.file_name.clone());
-                } else if tile.text == currently_selected.text {
-                    tile.selected = false;
-                }
-            }
+        if let Some(tiles) = &mut self.tiles {
+            tiles.move_selected_right();
         }
     }
     pub fn move_selected_left(&mut self) {
-        let currently_selected = self.clone_currently_selected();
-        let found_next = {
-            let mut candidates: Vec<&RectWithText> = self.tiles.iter()
-                .filter(|t|
-                    t.rect.x + t.rect.width <= currently_selected.rect.x &&
-                    (
-                        ( t.rect.y >= currently_selected.rect.y && t.rect.y <= (currently_selected.rect.y + currently_selected.rect.height) ) ||
-                        ( (t.rect.y + t.rect.height) <= (currently_selected.rect.y + currently_selected.rect.height) && (t.rect.y + t.rect.height) > currently_selected.rect.y) ||
-                        ( t.rect.y <= currently_selected.rect.y && (t.rect.y + t.rect.height >= (currently_selected.rect.y + currently_selected.rect.height)) ) ||
-                        ( currently_selected.rect.y <= t.rect.y && (currently_selected.rect.y + currently_selected.rect.height >= (t.rect.y + t.rect.height)) )
-                    )
-                ).collect();
-
-            candidates.sort_by(|a, b| {
-                if a.rect.x.round() == b.rect.x.round() {
-                    let a_overlap = if a.rect.y < currently_selected.rect.y {
-                        if a.rect.y + a.rect.height >= currently_selected.rect.y + currently_selected.rect.height {
-                            currently_selected.rect.height
-                        } else {
-                            a.rect.y + a.rect.height - currently_selected.rect.y
-                        } 
-                    } else {
-                        if currently_selected.rect.y + currently_selected.rect.height >= a.rect.y + a.rect.height {
-                            a.rect.height
-                        } else {
-                            currently_selected.rect.y + currently_selected.rect.height - a.rect.y
-                        } 
-                    };
-                    let b_overlap = if b.rect.y < currently_selected.rect.y {
-                        if b.rect.y + b.rect.height >= currently_selected.rect.y + currently_selected.rect.height {
-                            currently_selected.rect.height
-                        } else {
-                            b.rect.y + b.rect.height - currently_selected.rect.y
-                        } 
-                    } else {
-                        if currently_selected.rect.y + currently_selected.rect.height >= b.rect.y + b.rect.height {
-                            b.rect.height
-                        } else {
-                            currently_selected.rect.y + currently_selected.rect.height - b.rect.y
-                        } 
-                    };
-                    b_overlap.partial_cmp(&a_overlap).expect("could not compare rects")
-                } else {
-                    (b.rect.x + b.rect.width).partial_cmp(&(a.rect.x + a.rect.width)).expect("could not compare rects")
-                }
-            });
-            match candidates.get(0) {
-                Some(next_rect) => Some(String::from(&next_rect.text)),
-                None => None,
-            }
-        };
-
-        if let Some(next_rect_text) = found_next {
-            for tile in self.tiles.iter_mut() {
-                if tile.text == next_rect_text {
-                    tile.selected = true;
-                    self.current_selected = String::from(tile.file_name.clone());
-                } else if tile.text == currently_selected.text {
-                    tile.selected = false;
-                }
-            }
+        if let Some(tiles) = &mut self.tiles {
+            tiles.move_selected_left();
         }
     }
     pub fn move_selected_down(&mut self) {
-        let currently_selected = self.clone_currently_selected();
-        let found_next = {
-            let mut candidates: Vec<&RectWithText> = self.tiles.iter()
-                .filter(|t|
-                    t.rect.y >= currently_selected.rect.y + currently_selected.rect.height &&
-                    (
-                        ( t.rect.x >= currently_selected.rect.x && t.rect.x <= (currently_selected.rect.x + currently_selected.rect.width) ) ||
-                        ( (t.rect.x + t.rect.width) <= (currently_selected.rect.x + currently_selected.rect.width) && (t.rect.x + t.rect.width) > currently_selected.rect.x) ||
-                        ( t.rect.x <= currently_selected.rect.x && (t.rect.x + t.rect.width >= (currently_selected.rect.x + currently_selected.rect.width)) ) ||
-                        ( currently_selected.rect.x <= t.rect.x && (currently_selected.rect.x + currently_selected.rect.width >= (t.rect.x + t.rect.width)) )
-                    )
-                ).collect();
-
-            candidates.sort_by(|a, b| {
-                if a.rect.y.round() == b.rect.y.round() {
-                    let a_overlap = if a.rect.x < currently_selected.rect.x {
-                        if a.rect.x + a.rect.width >= currently_selected.rect.x + currently_selected.rect.width {
-                            currently_selected.rect.width
-                        } else {
-                            a.rect.x + a.rect.width - currently_selected.rect.x
-                        } 
-                    } else {
-                        if currently_selected.rect.x + currently_selected.rect.width >= a.rect.x + a.rect.width {
-                            a.rect.width
-                        } else {
-                            currently_selected.rect.x + currently_selected.rect.width - a.rect.x
-                        } 
-                    };
-                    let b_overlap = if b.rect.x < currently_selected.rect.x {
-                        if b.rect.x + b.rect.width >= currently_selected.rect.x + currently_selected.rect.width {
-                            currently_selected.rect.width
-                        } else {
-                            b.rect.x + b.rect.width - currently_selected.rect.x
-                        } 
-                    } else {
-                        if currently_selected.rect.x + currently_selected.rect.width >= b.rect.x + b.rect.width {
-                            b.rect.width
-                        } else {
-                            currently_selected.rect.x + currently_selected.rect.width - b.rect.x
-                        } 
-                    };
-                    b_overlap.partial_cmp(&a_overlap).expect("could not compare rects")
-                } else {
-                    a.rect.y.partial_cmp(&b.rect.y).expect("could not compare rects")
-                }
-            });
-            match candidates.get(0) {
-                Some(next_rect) => Some(String::from(&next_rect.text)),
-//                Some(next_rect) => {
-//                    println!("\rnext_rect {:?}", next_rect);
-//                    Some(String::from(&next_rect.text))
-//                },
-                None => None,
-            }
-        };
-
-        if let Some(next_rect_text) = found_next {
-            for tile in self.tiles.iter_mut() {
-                if tile.text == next_rect_text {
-                    tile.selected = true;
-                    self.current_selected = String::from(tile.file_name.clone());
-                } else if tile.text == currently_selected.text {
-                    tile.selected = false;
-                }
-            }
+        if let Some(tiles) = &mut self.tiles {
+            tiles.move_selected_down();
         }
     }
     pub fn move_selected_up(&mut self) {
-        let currently_selected = self.clone_currently_selected();
-        let found_next = {
-            let mut candidates: Vec<&RectWithText> = self.tiles.iter()
-                .filter(|t|
-                    t.rect.y + t.rect.height <= currently_selected.rect.y &&
-                    (
-                        ( t.rect.x >= currently_selected.rect.x && t.rect.x <= (currently_selected.rect.x + currently_selected.rect.width) ) ||
-                        ( (t.rect.x + t.rect.width) <= (currently_selected.rect.x + currently_selected.rect.width) && (t.rect.x + t.rect.width) > currently_selected.rect.x) ||
-                        ( t.rect.x <= currently_selected.rect.x && (t.rect.x + t.rect.width >= (currently_selected.rect.x + currently_selected.rect.width)) ) ||
-                        ( currently_selected.rect.x <= t.rect.x && (currently_selected.rect.x + currently_selected.rect.width >= (t.rect.x + t.rect.width)) )
-                    )
-                ).collect();
-            candidates.sort_by(|a, b| {
-                if (a.rect.y + a.rect.height).round() == (b.rect.y + b.rect.height).round() {
-                    let a_overlap = if a.rect.x < currently_selected.rect.x {
-                        if a.rect.x + a.rect.width >= currently_selected.rect.x + currently_selected.rect.width {
-                            currently_selected.rect.width
-                        } else {
-                            a.rect.x + a.rect.width - currently_selected.rect.x
-                        } 
-                    } else {
-                        if currently_selected.rect.x + currently_selected.rect.width >= a.rect.x + a.rect.width {
-                            a.rect.width
-                        } else {
-                            currently_selected.rect.x + currently_selected.rect.width - a.rect.x
-                        } 
-                    };
-                    let b_overlap = if b.rect.x < currently_selected.rect.x {
-                        if b.rect.x + b.rect.width >= currently_selected.rect.x + currently_selected.rect.width {
-                            currently_selected.rect.width
-                        } else {
-                            b.rect.x + b.rect.width - currently_selected.rect.x
-                        } 
-                    } else {
-                        if currently_selected.rect.x + currently_selected.rect.width >= b.rect.x + b.rect.width {
-                            b.rect.width
-                        } else {
-                            currently_selected.rect.x + currently_selected.rect.width - b.rect.x
-                        } 
-                    };
-                    b_overlap.partial_cmp(&a_overlap).expect("could not compare rects")
-                } else {
-                    (b.rect.y + b.rect.height).partial_cmp(&(a.rect.y + a.rect.height)).expect("could not compare rects")
-                }
-            });
-            match candidates.get(0) {
-                Some(next_rect) => Some(String::from(&next_rect.text)),
-                None => None,
-            }
-        };
-
-        if let Some(next_rect_text) = found_next {
-            for tile in self.tiles.iter_mut() {
-                if tile.text == next_rect_text {
-                    tile.selected = true;
-                    self.current_selected = String::from(tile.file_name.clone());
-                } else if tile.text == currently_selected.text {
-                    tile.selected = false;
-                }
-            }
+        if let Some(tiles) = &mut self.tiles {
+            tiles.move_selected_up();
         }
     }
     pub fn enter_selected(&mut self) {
         if let Some(base_folder) = &self.base_folder {
-            let path_to_selected = &mut self.current_folder_names.clone();
-            path_to_selected.push(String::from(&self.current_selected));
-            if &self.current_selected == "Small files" {
-                return;
-            }
-            if let Some(_) = base_folder.path(&path_to_selected) {
-                // there is a folder at this path!
-                self.current_folder_names.push(String::from(&self.current_selected));
-                self.current_selected = String::from("I am a bug waiting to happen fix me");
-                if let Some(selected_tile) = self.tiles.iter_mut().find(|t| t.selected == true) {
-                    selected_tile.selected = false;
+            if let Some(file_percentages) = &self.tiles.as_ref().expect("could not find tiles").currently_selected() {
+                let path_to_selected = &mut self.current_folder_names.clone();
+                path_to_selected.push(String::from(&file_percentages.file_name));
+                if &self.current_selected == "Small files" {
+                    return;
+                }
+                if let Some(_) = base_folder.path(&path_to_selected) {
+                    // there is a folder at this path!
+                    self.current_folder_names.push(String::from(&file_percentages.file_name));
+                    if let Some(tiles) = &mut self.tiles {
+                        tiles.set_selected_index(&0);
+                    }
                 }
             }
         }
     }
     pub fn go_up(&mut self) {
         self.current_folder_names.pop();
-        if let Some(selected_tile) = self.tiles.iter_mut().find(|t| t.selected == true) {
-            selected_tile.selected = false;
+        if let Some(tiles) = &mut self.tiles {
+            tiles.set_selected_index(&0);
         }
-        // self.current_selected = String::from("I am a bug waiting to happen fix me");
     }
 }
 
