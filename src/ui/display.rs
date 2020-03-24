@@ -41,7 +41,7 @@ where B: Backend
             // TODO: find out how to get rid of these
             chunks[1].width -= 1;
             chunks[1].height -= 1;
-            state.set_tiles(chunks[1]);
+            state.change_size(chunks[1]);
             let current_path = if let Some(current_path) = state.get_current_path() {
                 current_path.into_os_string().into_string().expect("could not convert os string to string")
             } else {
@@ -58,8 +58,7 @@ where B: Backend
                 .alignment(Alignment::Center)
                 .wrap(true)
                 .render(&mut f, chunks[0]);
-            RectangleGrid::new((&state.tiles.as_ref().expect("fix this").rectangles).to_vec()).render(&mut f, chunks[1]);
-            // RectangleGrid::new((*state.tiles).to_vec()).render(&mut f, full_screen);
+            RectangleGrid::new((&state.tiles.rectangles).to_vec()).render(&mut f, chunks[1]);
         }).expect("failed to draw");
     }
 }
