@@ -3,6 +3,9 @@ use tui::layout::Rect;
 use tui::style::{Style, Color};
 use tui::widgets::{Widget};
 
+pub const MINIMUM_HEIGHT: u16 = 2;
+pub const MINIMUM_WIDTH: u16 = 8;
+
 #[derive(Clone, Debug)]
 pub struct RectWithText {
     pub rect: RectFloat,
@@ -200,7 +203,7 @@ impl<'a> Widget for RectangleGrid {
                 rect.height += 1;
             }
 
-            if rect.height < 2 || rect.width < 8 {
+            if rect.height < MINIMUM_HEIGHT || rect.width < MINIMUM_WIDTH {
                 for x in rect.x..(rect.x + rect.width + 1) {
                     if x > rect.x {
                         for y in rect.y..(rect.y + rect.height + 1) {

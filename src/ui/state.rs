@@ -1,6 +1,6 @@
 use tui::layout::Rect;
 
-use crate::ui::rectangle_grid::{RectWithText, RectFloat};
+use crate::ui::rectangle_grid::{RectWithText, RectFloat, MINIMUM_HEIGHT, MINIMUM_WIDTH};
 use crate::input::{FileOrFolder, Folder};
 use ::std::fmt;
 use std::path::PathBuf;
@@ -252,7 +252,8 @@ impl Tiles {
             
             let mut next_rectangle_index = None;
             for (candidate_index, candidate) in self.rectangles.iter().enumerate() {
-                if candidate.rect.x >= currently_selected.rect.x + currently_selected.rect.width && (
+                if candidate.rect.height > MINIMUM_HEIGHT as f64 && candidate.rect.width > MINIMUM_WIDTH as f64 &&
+                   candidate.rect.x >= currently_selected.rect.x + currently_selected.rect.width && (
                     ( candidate.rect.y >= currently_selected.rect.y && candidate.rect.y <= (currently_selected.rect.y + currently_selected.rect.height) ) ||
                     ( (candidate.rect.y + candidate.rect.height) <= (currently_selected.rect.y + currently_selected.rect.height) && (candidate.rect.y + candidate.rect.height) > currently_selected.rect.y) ||
                     (candidate.rect.y <= currently_selected.rect.y && (candidate.rect.y + candidate.rect.height >= (currently_selected.rect.y + currently_selected.rect.height)) ) ||
@@ -327,7 +328,8 @@ impl Tiles {
             let mut next_rectangle_index = None;
             for (candidate_index, candidate) in self.rectangles.iter().enumerate() {
 
-                if candidate.rect.x + candidate.rect.width <= currently_selected.rect.x && (
+                if candidate.rect.height > MINIMUM_HEIGHT as f64 && candidate.rect.width > MINIMUM_WIDTH as f64 &&
+                    candidate.rect.x + candidate.rect.width <= currently_selected.rect.x && (
                     ( candidate.rect.y >= currently_selected.rect.y && candidate.rect.y <= (currently_selected.rect.y + currently_selected.rect.height) ) ||
                     ( (candidate.rect.y + candidate.rect.height) <= (currently_selected.rect.y + currently_selected.rect.height) && (candidate.rect.y + candidate.rect.height) > currently_selected.rect.y) ||
                     ( candidate.rect.y <= currently_selected.rect.y && (candidate.rect.y + candidate.rect.height >= (currently_selected.rect.y + currently_selected.rect.height)) ) ||
@@ -400,7 +402,8 @@ impl Tiles {
             let mut next_rectangle_index = None;
             for (candidate_index, candidate) in self.rectangles.iter().enumerate() {
 
-                if candidate.rect.y >= currently_selected.rect.y + currently_selected.rect.height && (
+                if candidate.rect.height > MINIMUM_HEIGHT as f64 && candidate.rect.width > MINIMUM_WIDTH as f64 &&
+                   candidate.rect.y >= currently_selected.rect.y + currently_selected.rect.height && (
                     ( candidate.rect.x >= currently_selected.rect.x && candidate.rect.x <= (currently_selected.rect.x + currently_selected.rect.width) ) ||
                     ( (candidate.rect.x + candidate.rect.width) <= (currently_selected.rect.x + currently_selected.rect.width) && (candidate.rect.x + candidate.rect.width) > currently_selected.rect.x) ||
                     ( candidate.rect.x <= currently_selected.rect.x && (candidate.rect.x + candidate.rect.width >= (currently_selected.rect.x + currently_selected.rect.width)) ) ||
@@ -473,7 +476,8 @@ impl Tiles {
             let mut next_rectangle_index = None;
             for (candidate_index, candidate) in self.rectangles.iter().enumerate() {
 
-                if candidate.rect.y + candidate.rect.height <= currently_selected.rect.y && (
+                if candidate.rect.height > MINIMUM_HEIGHT as f64 && candidate.rect.width > MINIMUM_WIDTH as f64 &&
+                   candidate.rect.y + candidate.rect.height <= currently_selected.rect.y && (
                     ( candidate.rect.x >= currently_selected.rect.x && candidate.rect.x <= (currently_selected.rect.x + currently_selected.rect.width) ) ||
                     ( (candidate.rect.x + candidate.rect.width) <= (currently_selected.rect.x + currently_selected.rect.width) && (candidate.rect.x + candidate.rect.width) > currently_selected.rect.x) ||
                     ( candidate.rect.x <= currently_selected.rect.x && (candidate.rect.x + candidate.rect.width >= (currently_selected.rect.x + currently_selected.rect.width)) ) ||

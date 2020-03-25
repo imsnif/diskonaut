@@ -229,6 +229,73 @@ fn small_files () {
 }
 
 #[test]
+fn cannot_move_into_small_files () {
+
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+
+    let mut events: Vec<Option<Event>> = iter::repeat(None).take(2).collect();
+    events.push(Some(Event::Key(Key::Char('l'))));
+    events.push(None);
+    events.push(Some(Event::Key(Key::Char('j'))));
+    events.push(None);
+    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    let keyboard_events = Box::new(KeyboardEvents::new(events));
+
+    let temp_dir_path = create_root_temp_dir("cannot_move_into_small_files").expect("failed to create temp dir");
+
+    let mut file_1_path = PathBuf::from(&temp_dir_path);
+    file_1_path.push("file1");
+    create_temp_file(file_1_path, 400000).expect("failed to create temp file");
+
+    let mut file_2_path = PathBuf::from(&temp_dir_path);
+    file_2_path.push("file2");
+    create_temp_file(file_2_path, 1000000).expect("failed to create temp file");
+
+    let mut file_3_path = PathBuf::from(&temp_dir_path);
+    file_3_path.push("file3");
+    create_temp_file(file_3_path, 1000000).expect("failed to create temp file");
+
+    let mut file_4_path = PathBuf::from(&temp_dir_path);
+    file_4_path.push("file4");
+    create_temp_file(file_4_path, 8000).expect("failed to create temp file");
+
+    let mut file_5_path = PathBuf::from(&temp_dir_path);
+    file_5_path.push("file5");
+    create_temp_file(file_5_path, 8000).expect("failed to create temp file");
+
+    let mut file_6_path = PathBuf::from(&temp_dir_path);
+    file_6_path.push("file6");
+    create_temp_file(file_6_path, 8000).expect("failed to create temp file");
+
+    let mut file_7_path = PathBuf::from(&temp_dir_path);
+    file_7_path.push("file7");
+    create_temp_file(file_7_path, 8000).expect("failed to create temp file");
+
+    let mut file_8_path = PathBuf::from(&temp_dir_path);
+    file_8_path.push("file8");
+    create_temp_file(file_8_path, 8000).expect("failed to create temp file");
+
+    let mut file_9_path = PathBuf::from(&temp_dir_path);
+    file_9_path.push("file9");
+    create_temp_file(file_9_path, 8000).expect("failed to create temp file");
+
+    start(backend, keyboard_events, temp_dir_path.clone());
+    std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
+    let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
+
+    let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor];
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
+
+    assert_eq!(terminal_draw_events_mirror.len(), 3);
+    assert_snapshot!(&terminal_draw_events_mirror[0]);
+    assert_snapshot!(&terminal_draw_events_mirror[1]);
+    assert_snapshot!(&terminal_draw_events_mirror[2]);
+}
+
+#[test]
 fn minimum_tile_sides () {
     // here we test that tiles are not created with a side_length (height in this case)
     // that is too small to render while not being designated as a "small file"
