@@ -207,7 +207,39 @@ fn vertically_overlap(first: &RectFloat, second: &RectFloat) -> bool {
     ( second.x <= first.x && (second.x + second.width >= (first.x + first.width)) )
 } 
 
-fn is_minimum_size(rect: &RectFloat) -> bool {
+fn get_vertical_overlap (first: &RectFloat, second: &RectFloat) -> f64 {
+    if first.x < second.x {
+        if first.x + first.width >= second.x + second.width {
+            second.width
+        } else {
+            first.x + first.width - second.x
+        } 
+    } else {
+        if second.x + second.width >= first.x + first.width {
+            first.width
+        } else {
+            second.x + second.width - first.x
+        } 
+    }
+}
+
+fn get_horizontal_overlap (first: &RectFloat, second: &RectFloat) -> f64 {
+    if first.y < second.y {
+        if first.y + first.height >= second.y + second.height {
+            second.height
+        } else {
+            first.y + first.height - second.y
+        } 
+    } else {
+        if second.y + second.height >= first.y + first.height {
+            first.height
+        } else {
+            second.y + second.height - first.y
+        } 
+    }
+}
+
+fn is_atleast_minimum_size(rect: &RectFloat) -> bool {
     rect.height > MINIMUM_HEIGHT as f64 && rect.width > MINIMUM_WIDTH as f64
 }
 
@@ -287,7 +319,7 @@ impl Tiles {
             let mut next_rectangle_index = None;
 
             for (candidate_index, candidate) in self.rectangles.iter().enumerate() {
-                if is_minimum_size(&candidate.rect) &&
+                if is_atleast_minimum_size(&candidate.rect) &&
                    first_is_right_of_second(&candidate.rect, &currently_selected.rect) &&
                    horizontally_overlap(&candidate.rect, &currently_selected.rect)
                 {
@@ -296,35 +328,10 @@ impl Tiles {
                         Some(existing_candidate_index) => {
                             
                             let existing_candidate: &RectWithText = self.rectangles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
-                            // let existing_candidate: &RectWithText = self.rectangles.get(existing_candidate_index).unwrap();
                             
                             if existing_candidate.rect.x.round() == candidate.rect.x.round() {
-                                let existing_candidate_overlap = if existing_candidate.rect.y < currently_selected.rect.y {
-                                    if existing_candidate.rect.y + existing_candidate.rect.height >= currently_selected.rect.y + currently_selected.rect.height {
-                                        currently_selected.rect.height
-                                    } else {
-                                        existing_candidate.rect.y + existing_candidate.rect.height - currently_selected.rect.y
-                                    } 
-                                } else {
-                                    if currently_selected.rect.y + currently_selected.rect.height >= existing_candidate.rect.y + existing_candidate.rect.height {
-                                        existing_candidate.rect.height
-                                    } else {
-                                        currently_selected.rect.y + currently_selected.rect.height - existing_candidate.rect.y
-                                    } 
-                                };
-                                let candidate_overlap = if candidate.rect.y < currently_selected.rect.y {
-                                    if candidate.rect.y + candidate.rect.height >= currently_selected.rect.y + currently_selected.rect.height {
-                                        currently_selected.rect.height
-                                    } else {
-                                        candidate.rect.y + candidate.rect.height - currently_selected.rect.y
-                                    } 
-                                } else {
-                                    if currently_selected.rect.y + currently_selected.rect.height >= candidate.rect.y + candidate.rect.height {
-                                        candidate.rect.height
-                                    } else {
-                                        currently_selected.rect.y + currently_selected.rect.height - candidate.rect.y
-                                    } 
-                                };
+                                let existing_candidate_overlap = get_horizontal_overlap(&existing_candidate.rect, &currently_selected.rect);
+                                let candidate_overlap = get_horizontal_overlap(&candidate.rect, &currently_selected.rect);
                                 if existing_candidate_overlap < candidate_overlap {
                                     next_rectangle_index = Some(candidate_index);
                                 }
@@ -360,8 +367,7 @@ impl Tiles {
             let mut next_rectangle_index = None;
             for (candidate_index, candidate) in self.rectangles.iter().enumerate() {
 
-
-                if is_minimum_size(&candidate.rect) &&
+                if is_atleast_minimum_size(&candidate.rect) &&
                     first_is_left_of_second(&candidate.rect, &currently_selected.rect) &&
                     horizontally_overlap(&candidate.rect, &currently_selected.rect)
                 {
@@ -372,32 +378,8 @@ impl Tiles {
                             let existing_candidate: &RectWithText = self.rectangles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
                             
                             if (existing_candidate.rect.x + existing_candidate.rect.width).round() == (candidate.rect.x + candidate.rect.width).round() {
-                                let existing_candidate_overlap = if existing_candidate.rect.y < currently_selected.rect.y {
-                                    if existing_candidate.rect.y + existing_candidate.rect.height >= currently_selected.rect.y + currently_selected.rect.height {
-                                        currently_selected.rect.height
-                                    } else {
-                                        existing_candidate.rect.y + existing_candidate.rect.height - currently_selected.rect.y
-                                    } 
-                                } else {
-                                    if currently_selected.rect.y + currently_selected.rect.height >= existing_candidate.rect.y + existing_candidate.rect.height {
-                                        existing_candidate.rect.height
-                                    } else {
-                                        currently_selected.rect.y + currently_selected.rect.height - existing_candidate.rect.y
-                                    } 
-                                };
-                                let candidate_overlap = if candidate.rect.y < currently_selected.rect.y {
-                                    if candidate.rect.y + candidate.rect.height >= currently_selected.rect.y + currently_selected.rect.height {
-                                        currently_selected.rect.height
-                                    } else {
-                                        candidate.rect.y + candidate.rect.height - currently_selected.rect.y
-                                    } 
-                                } else {
-                                    if currently_selected.rect.y + currently_selected.rect.height >= candidate.rect.y + candidate.rect.height {
-                                        candidate.rect.height
-                                    } else {
-                                        currently_selected.rect.y + currently_selected.rect.height - candidate.rect.y
-                                    } 
-                                };
+                                let existing_candidate_overlap = get_horizontal_overlap(&existing_candidate.rect, &currently_selected.rect);
+                                let candidate_overlap = get_horizontal_overlap(&candidate.rect, &currently_selected.rect);
                                 if existing_candidate_overlap < candidate_overlap {
                                     next_rectangle_index = Some(candidate_index);
                                 }
@@ -432,7 +414,7 @@ impl Tiles {
             let mut next_rectangle_index = None;
             for (candidate_index, candidate) in self.rectangles.iter().enumerate() {
 
-                if is_minimum_size(&candidate.rect) &&
+                if is_atleast_minimum_size(&candidate.rect) &&
                     first_is_below_second(&candidate.rect, &currently_selected.rect) &&
                     vertically_overlap(&candidate.rect, &currently_selected.rect)
                 {
@@ -443,32 +425,10 @@ impl Tiles {
                             let existing_candidate: &RectWithText = self.rectangles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
                             
                             if existing_candidate.rect.y.round() == candidate.rect.y.round() {
-                                let existing_candidate_overlap = if existing_candidate.rect.x < currently_selected.rect.x {
-                                    if existing_candidate.rect.x + existing_candidate.rect.width >= currently_selected.rect.x + currently_selected.rect.width {
-                                        currently_selected.rect.width
-                                    } else {
-                                        existing_candidate.rect.x + existing_candidate.rect.width - currently_selected.rect.x
-                                    } 
-                                } else {
-                                    if currently_selected.rect.x + currently_selected.rect.width >= existing_candidate.rect.x + existing_candidate.rect.width {
-                                        existing_candidate.rect.width
-                                    } else {
-                                        currently_selected.rect.x + currently_selected.rect.width - existing_candidate.rect.x
-                                    } 
-                                };
-                                let candidate_overlap = if candidate.rect.x < currently_selected.rect.x {
-                                    if candidate.rect.x + candidate.rect.width >= currently_selected.rect.x + currently_selected.rect.width {
-                                        currently_selected.rect.width
-                                    } else {
-                                        candidate.rect.x + candidate.rect.width - currently_selected.rect.x
-                                    } 
-                                } else {
-                                    if currently_selected.rect.x + currently_selected.rect.width >= candidate.rect.x + candidate.rect.width {
-                                        candidate.rect.width
-                                    } else {
-                                        currently_selected.rect.x + currently_selected.rect.width - candidate.rect.x
-                                    } 
-                                };
+
+                                let existing_candidate_overlap = get_vertical_overlap(&existing_candidate.rect, &currently_selected.rect);
+                                let candidate_overlap = get_vertical_overlap(&candidate.rect, &currently_selected.rect);
+
                                 if existing_candidate_overlap < candidate_overlap {
                                     next_rectangle_index = Some(candidate_index);
                                 }
@@ -500,10 +460,11 @@ impl Tiles {
 
             let currently_selected = self.rectangles.get(selected_index).expect(&format!("could not find selected rectangle at index {}", selected_index));
         
+
             let mut next_rectangle_index = None;
             for (candidate_index, candidate) in self.rectangles.iter().enumerate() {
 
-                if is_minimum_size(&candidate.rect) &&
+                if is_atleast_minimum_size(&candidate.rect) &&
                     first_is_above_second(&candidate.rect, &currently_selected.rect) &&
                     vertically_overlap(&candidate.rect, &currently_selected.rect)
                 {
@@ -515,32 +476,8 @@ impl Tiles {
                             
                             if (existing_candidate.rect.y + existing_candidate.rect.height).round() == (candidate.rect.y + candidate.rect.height).round() {
 
-                                let existing_candidate_overlap = if existing_candidate.rect.x < currently_selected.rect.x {
-                                    if existing_candidate.rect.x + existing_candidate.rect.width >= currently_selected.rect.x + currently_selected.rect.width {
-                                        currently_selected.rect.width
-                                    } else {
-                                        existing_candidate.rect.x + existing_candidate.rect.width - currently_selected.rect.x
-                                    } 
-                                } else {
-                                    if currently_selected.rect.x + currently_selected.rect.width >= existing_candidate.rect.x + existing_candidate.rect.width {
-                                        existing_candidate.rect.width
-                                    } else {
-                                        currently_selected.rect.x + currently_selected.rect.width - existing_candidate.rect.x
-                                    } 
-                                };
-                                let candidate_overlap = if candidate.rect.x < currently_selected.rect.x {
-                                    if candidate.rect.x + candidate.rect.width >= currently_selected.rect.x + currently_selected.rect.width {
-                                        currently_selected.rect.width
-                                    } else {
-                                        candidate.rect.x + candidate.rect.width - currently_selected.rect.x
-                                    } 
-                                } else {
-                                    if currently_selected.rect.x + currently_selected.rect.width >= candidate.rect.x + candidate.rect.width {
-                                        candidate.rect.width
-                                    } else {
-                                        currently_selected.rect.x + currently_selected.rect.width - candidate.rect.x
-                                    } 
-                                };
+                                let existing_candidate_overlap = get_vertical_overlap(&existing_candidate.rect, &currently_selected.rect);
+                                let candidate_overlap = get_vertical_overlap(&candidate.rect, &currently_selected.rect);
 
                                 if existing_candidate_overlap < candidate_overlap {
                                     next_rectangle_index = Some(candidate_index);
