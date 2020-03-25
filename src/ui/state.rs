@@ -370,7 +370,7 @@ impl Tiles {
                                     next_rectangle_index = Some(candidate_index);
                                 }
                             } else {
-                                if candidate.rect.x > existing_candidate.rect.x {
+                                if candidate.rect.x + candidate.rect.width > existing_candidate.rect.x + existing_candidate.rect.width {
                                     next_rectangle_index = Some(candidate_index);
                                 }
                             }
@@ -488,38 +488,38 @@ impl Tiles {
                             
                             if (existing_candidate.rect.y + existing_candidate.rect.height).round() == (candidate.rect.y + candidate.rect.height).round() {
 
-                            let existing_candidate_overlap = if existing_candidate.rect.x < currently_selected.rect.x {
-                                if existing_candidate.rect.x + existing_candidate.rect.width >= currently_selected.rect.x + currently_selected.rect.width {
-                                    currently_selected.rect.width
+                                let existing_candidate_overlap = if existing_candidate.rect.x < currently_selected.rect.x {
+                                    if existing_candidate.rect.x + existing_candidate.rect.width >= currently_selected.rect.x + currently_selected.rect.width {
+                                        currently_selected.rect.width
+                                    } else {
+                                        existing_candidate.rect.x + existing_candidate.rect.width - currently_selected.rect.x
+                                    } 
                                 } else {
-                                    existing_candidate.rect.x + existing_candidate.rect.width - currently_selected.rect.x
-                                } 
-                            } else {
-                                if currently_selected.rect.x + currently_selected.rect.width >= existing_candidate.rect.x + existing_candidate.rect.width {
-                                    existing_candidate.rect.width
+                                    if currently_selected.rect.x + currently_selected.rect.width >= existing_candidate.rect.x + existing_candidate.rect.width {
+                                        existing_candidate.rect.width
+                                    } else {
+                                        currently_selected.rect.x + currently_selected.rect.width - existing_candidate.rect.x
+                                    } 
+                                };
+                                let candidate_overlap = if candidate.rect.x < currently_selected.rect.x {
+                                    if candidate.rect.x + candidate.rect.width >= currently_selected.rect.x + currently_selected.rect.width {
+                                        currently_selected.rect.width
+                                    } else {
+                                        candidate.rect.x + candidate.rect.width - currently_selected.rect.x
+                                    } 
                                 } else {
-                                    currently_selected.rect.x + currently_selected.rect.width - existing_candidate.rect.x
-                                } 
-                            };
-                            let candidate_overlap = if candidate.rect.x < currently_selected.rect.x {
-                                if candidate.rect.x + candidate.rect.width >= currently_selected.rect.x + currently_selected.rect.width {
-                                    currently_selected.rect.width
-                                } else {
-                                    candidate.rect.x + candidate.rect.width - currently_selected.rect.x
-                                } 
-                            } else {
-                                if currently_selected.rect.x + currently_selected.rect.width >= candidate.rect.x + candidate.rect.width {
-                                    candidate.rect.width
-                                } else {
-                                    currently_selected.rect.x + currently_selected.rect.width - candidate.rect.x
-                                } 
-                            };
+                                    if currently_selected.rect.x + currently_selected.rect.width >= candidate.rect.x + candidate.rect.width {
+                                        candidate.rect.width
+                                    } else {
+                                        currently_selected.rect.x + currently_selected.rect.width - candidate.rect.x
+                                    } 
+                                };
 
                                 if existing_candidate_overlap < candidate_overlap {
                                     next_rectangle_index = Some(candidate_index);
                                 }
                             } else {
-                                if candidate.rect.y > existing_candidate.rect.y {
+                                if candidate.rect.y + candidate.rect.height > existing_candidate.rect.y + existing_candidate.rect.height {
                                     next_rectangle_index = Some(candidate_index);
                                 }
                             }
