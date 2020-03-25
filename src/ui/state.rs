@@ -177,6 +177,40 @@ impl TreeMap {
     }
 }
 
+fn first_is_right_of_second(first: &RectFloat, second: &RectFloat) -> bool {
+    first.x >= second.x + second.width
+}
+
+fn first_is_left_of_second (first: &RectFloat, second: &RectFloat) -> bool {
+    first.x + first.width <= second.x
+}
+
+fn first_is_below_second(first: &RectFloat, second: &RectFloat) -> bool {
+   first.y >= second.y + second.height
+}
+
+fn first_is_above_second(first: &RectFloat, second: &RectFloat) -> bool {
+   first.y + first.height <= second.y
+}
+
+fn horizontally_overlap(first: &RectFloat, second: &RectFloat) -> bool {
+    ( first.y >= second.y && first.y <= (second.y + second.height) ) ||
+    ( (first.y + first.height) <= (second.y + second.height) && (first.y + first.height) > second.y) ||
+    (first.y <= second.y && (first.y + first.height >= (second.y + second.height)) ) ||
+    ( second.y <= first.y && (second.y + second.height >= (first.y + first.height)) )
+}
+
+fn vertically_overlap(first: &RectFloat, second: &RectFloat) -> bool {
+    ( first.x >= second.x && first.x <= (second.x + second.width) ) ||
+    ( (first.x + first.width) <= (second.x + second.width) && (first.x + first.width) > second.x) ||
+    ( first.x <= second.x && (first.x + first.width >= (second.x + second.width)) ) ||
+    ( second.x <= first.x && (second.x + second.width >= (first.x + first.width)) )
+} 
+
+fn is_minimum_size(rect: &RectFloat) -> bool {
+    rect.height > MINIMUM_HEIGHT as f64 && rect.width > MINIMUM_WIDTH as f64
+}
+
 pub struct Tiles {
     pub rectangles: Vec<RectWithText>,
     selected_index: Option<usize>,
@@ -251,14 +285,12 @@ impl Tiles {
             let currently_selected = self.rectangles.get(selected_index).expect(&format!("could not find selected rectangle at index {}", selected_index));
             
             let mut next_rectangle_index = None;
+
             for (candidate_index, candidate) in self.rectangles.iter().enumerate() {
-                if candidate.rect.height > MINIMUM_HEIGHT as f64 && candidate.rect.width > MINIMUM_WIDTH as f64 &&
-                   candidate.rect.x >= currently_selected.rect.x + currently_selected.rect.width && (
-                    ( candidate.rect.y >= currently_selected.rect.y && candidate.rect.y <= (currently_selected.rect.y + currently_selected.rect.height) ) ||
-                    ( (candidate.rect.y + candidate.rect.height) <= (currently_selected.rect.y + currently_selected.rect.height) && (candidate.rect.y + candidate.rect.height) > currently_selected.rect.y) ||
-                    (candidate.rect.y <= currently_selected.rect.y && (candidate.rect.y + candidate.rect.height >= (currently_selected.rect.y + currently_selected.rect.height)) ) ||
-                    ( currently_selected.rect.y <= candidate.rect.y && (currently_selected.rect.y + currently_selected.rect.height >= (candidate.rect.y + candidate.rect.height)) )
-                ) {
+                if is_minimum_size(&candidate.rect) &&
+                   first_is_right_of_second(&candidate.rect, &currently_selected.rect) &&
+                   horizontally_overlap(&candidate.rect, &currently_selected.rect)
+                {
 
                     match next_rectangle_index {
                         Some(existing_candidate_index) => {
@@ -328,13 +360,11 @@ impl Tiles {
             let mut next_rectangle_index = None;
             for (candidate_index, candidate) in self.rectangles.iter().enumerate() {
 
-                if candidate.rect.height > MINIMUM_HEIGHT as f64 && candidate.rect.width > MINIMUM_WIDTH as f64 &&
-                    candidate.rect.x + candidate.rect.width <= currently_selected.rect.x && (
-                    ( candidate.rect.y >= currently_selected.rect.y && candidate.rect.y <= (currently_selected.rect.y + currently_selected.rect.height) ) ||
-                    ( (candidate.rect.y + candidate.rect.height) <= (currently_selected.rect.y + currently_selected.rect.height) && (candidate.rect.y + candidate.rect.height) > currently_selected.rect.y) ||
-                    ( candidate.rect.y <= currently_selected.rect.y && (candidate.rect.y + candidate.rect.height >= (currently_selected.rect.y + currently_selected.rect.height)) ) ||
-                    ( currently_selected.rect.y <= candidate.rect.y && (currently_selected.rect.y + currently_selected.rect.height >= (candidate.rect.y + candidate.rect.height)) )
-                ) {
+
+                if is_minimum_size(&candidate.rect) &&
+                    first_is_left_of_second(&candidate.rect, &currently_selected.rect) &&
+                    horizontally_overlap(&candidate.rect, &currently_selected.rect)
+                {
 
                     match next_rectangle_index {
                         Some(existing_candidate_index) => {
@@ -402,13 +432,10 @@ impl Tiles {
             let mut next_rectangle_index = None;
             for (candidate_index, candidate) in self.rectangles.iter().enumerate() {
 
-                if candidate.rect.height > MINIMUM_HEIGHT as f64 && candidate.rect.width > MINIMUM_WIDTH as f64 &&
-                   candidate.rect.y >= currently_selected.rect.y + currently_selected.rect.height && (
-                    ( candidate.rect.x >= currently_selected.rect.x && candidate.rect.x <= (currently_selected.rect.x + currently_selected.rect.width) ) ||
-                    ( (candidate.rect.x + candidate.rect.width) <= (currently_selected.rect.x + currently_selected.rect.width) && (candidate.rect.x + candidate.rect.width) > currently_selected.rect.x) ||
-                    ( candidate.rect.x <= currently_selected.rect.x && (candidate.rect.x + candidate.rect.width >= (currently_selected.rect.x + currently_selected.rect.width)) ) ||
-                    ( currently_selected.rect.x <= candidate.rect.x && (currently_selected.rect.x + currently_selected.rect.width >= (candidate.rect.x + candidate.rect.width)) )
-                ) {
+                if is_minimum_size(&candidate.rect) &&
+                    first_is_below_second(&candidate.rect, &currently_selected.rect) &&
+                    vertically_overlap(&candidate.rect, &currently_selected.rect)
+                {
 
                     match next_rectangle_index {
                         Some(existing_candidate_index) => {
@@ -476,14 +503,10 @@ impl Tiles {
             let mut next_rectangle_index = None;
             for (candidate_index, candidate) in self.rectangles.iter().enumerate() {
 
-                if candidate.rect.height > MINIMUM_HEIGHT as f64 && candidate.rect.width > MINIMUM_WIDTH as f64 &&
-                   candidate.rect.y + candidate.rect.height <= currently_selected.rect.y && (
-                    ( candidate.rect.x >= currently_selected.rect.x && candidate.rect.x <= (currently_selected.rect.x + currently_selected.rect.width) ) ||
-                    ( (candidate.rect.x + candidate.rect.width) <= (currently_selected.rect.x + currently_selected.rect.width) && (candidate.rect.x + candidate.rect.width) > currently_selected.rect.x) ||
-                    ( candidate.rect.x <= currently_selected.rect.x && (candidate.rect.x + candidate.rect.width >= (currently_selected.rect.x + currently_selected.rect.width)) ) ||
-                    ( currently_selected.rect.x <= candidate.rect.x && (currently_selected.rect.x + currently_selected.rect.width >= (candidate.rect.x + candidate.rect.width)) )
-                    
-                ) {
+                if is_minimum_size(&candidate.rect) &&
+                    first_is_above_second(&candidate.rect, &currently_selected.rect) &&
+                    vertically_overlap(&candidate.rect, &currently_selected.rect)
+                {
 
                     match next_rectangle_index {
                         Some(existing_candidate_index) => {
