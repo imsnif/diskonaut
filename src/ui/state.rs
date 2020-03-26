@@ -243,6 +243,21 @@ fn is_atleast_minimum_size(rect: &RectFloat) -> bool {
     rect.height > MINIMUM_HEIGHT as f64 && rect.width > MINIMUM_WIDTH as f64
 }
 
+fn rects_are_aligned_left (first: &RectFloat, second: &RectFloat) -> bool {
+    first.x.round() == second.x.round()
+}
+fn rects_are_aligned_right (first: &RectFloat, second: &RectFloat) -> bool {
+    (first.x + first.width).round() == (second.x + second.width).round()
+}
+
+fn rects_are_aligned_top (first: &RectFloat, second: &RectFloat) -> bool {
+    first.y.round() == second.y.round()
+}
+
+fn rects_are_aligned_bottom(first: &RectFloat, second: &RectFloat) -> bool {
+    (first.y + first.height).round() == (second.y + second.height).round()
+}
+
 pub struct Tiles {
     pub rectangles: Vec<RectWithText>,
     selected_index: Option<usize>,
@@ -329,7 +344,7 @@ impl Tiles {
                             
                             let existing_candidate: &RectWithText = self.rectangles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
                             
-                            if existing_candidate.rect.x.round() == candidate.rect.x.round() {
+                            if rects_are_aligned_left(&existing_candidate.rect, &candidate.rect) {
                                 let existing_candidate_overlap = get_horizontal_overlap(&existing_candidate.rect, &currently_selected.rect);
                                 let candidate_overlap = get_horizontal_overlap(&candidate.rect, &currently_selected.rect);
                                 if existing_candidate_overlap < candidate_overlap {
@@ -377,7 +392,7 @@ impl Tiles {
                             
                             let existing_candidate: &RectWithText = self.rectangles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
                             
-                            if (existing_candidate.rect.x + existing_candidate.rect.width).round() == (candidate.rect.x + candidate.rect.width).round() {
+                            if rects_are_aligned_right(&existing_candidate.rect, &candidate.rect) {
                                 let existing_candidate_overlap = get_horizontal_overlap(&existing_candidate.rect, &currently_selected.rect);
                                 let candidate_overlap = get_horizontal_overlap(&candidate.rect, &currently_selected.rect);
                                 if existing_candidate_overlap < candidate_overlap {
@@ -424,7 +439,7 @@ impl Tiles {
                             
                             let existing_candidate: &RectWithText = self.rectangles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
                             
-                            if existing_candidate.rect.y.round() == candidate.rect.y.round() {
+                            if rects_are_aligned_top(&existing_candidate.rect, &candidate.rect) {
 
                                 let existing_candidate_overlap = get_vertical_overlap(&existing_candidate.rect, &currently_selected.rect);
                                 let candidate_overlap = get_vertical_overlap(&candidate.rect, &currently_selected.rect);
@@ -474,7 +489,7 @@ impl Tiles {
                             
                             let existing_candidate: &RectWithText = self.rectangles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
                             
-                            if (existing_candidate.rect.y + existing_candidate.rect.height).round() == (candidate.rect.y + candidate.rect.height).round() {
+                            if rects_are_aligned_bottom(&existing_candidate.rect, &candidate.rect) {
 
                                 let existing_candidate_overlap = get_vertical_overlap(&existing_candidate.rect, &currently_selected.rect);
                                 let candidate_overlap = get_vertical_overlap(&candidate.rect, &currently_selected.rect);
