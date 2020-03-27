@@ -28,14 +28,6 @@ pub struct FilePercentage {
     pub actual_file_name: String,
 }
 
-#[derive(Debug, Clone)]
-pub struct RectSize {
-    height: u16,
-    width: u16,
-    file_name: String,
-    actual_file_name: String,
-}
-
 const HEIGHT_WIDTH_RATIO: f64 = 2.5;
 
 pub struct State {
@@ -361,7 +353,7 @@ impl Tiles {
                 }
             }
             if let Some(next_index) = next_rectangle_index {
-                self.change_selected(next_index);
+                self.set_selected_index(&next_index);
             }
         }
 
@@ -401,7 +393,7 @@ impl Tiles {
                 }
             }
             if let Some(next_index) = next_rectangle_index {
-                self.change_selected(next_index);
+                self.set_selected_index(&next_index);
             }
         }
     }
@@ -442,7 +434,7 @@ impl Tiles {
                 }
             }
             if let Some(next_index) = next_rectangle_index {
-                self.change_selected(next_index);
+                self.set_selected_index(&next_index);
             }
         }
     }
@@ -484,23 +476,10 @@ impl Tiles {
                 }
             }
             if let Some(next_index) = next_rectangle_index {
-                self.change_selected(next_index);
+                self.set_selected_index(&next_index);
             }
         }
 
-    }
-    fn change_selected(&mut self, next_index: usize) {
-        if let Some(selected_index) = self.selected_index {
-            {
-                let mut existing_selected = self.rectangles.get_mut(selected_index).expect(&format!("could not find selected rect at index {}", selected_index));
-                existing_selected.selected = false;
-            }
-            {
-                let mut next_selected = self.rectangles.get_mut(next_index).expect(&format!("could not find selected rect at index {}", selected_index));
-                next_selected.selected = true;
-            }
-            self.selected_index = Some(next_index);
-        }
     }
 }
 
@@ -511,11 +490,9 @@ impl State {
             base_folder: None,
             path_in_filesystem: None,
             current_folder_names: Vec::new(),
-            // current_selected: String::new(), // TODO: better
         }
     }
     pub fn set_base_folder(&mut self, base_folder: Folder, path_in_filesystem: String) {
-        // self.current_selected = String::from(&base_folder.name);
         self.base_folder = Some(base_folder);
         self.path_in_filesystem = Some(path_in_filesystem);
         self.update_files();
