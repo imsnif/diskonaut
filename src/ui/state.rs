@@ -361,15 +361,7 @@ impl Tiles {
                 }
             }
             if let Some(next_index) = next_rectangle_index {
-                {
-                    let mut existing_selected = self.rectangles.get_mut(selected_index).expect(&format!("could not find selected rect at index {}", selected_index));
-                    existing_selected.selected = false;
-                }
-                {
-                    let mut next_selected = self.rectangles.get_mut(next_index).expect(&format!("could not find selected rect at index {}", selected_index));
-                    next_selected.selected = true;
-                }
-                self.selected_index = Some(next_index);
+                self.change_selected(next_index);
             }
         }
 
@@ -409,15 +401,7 @@ impl Tiles {
                 }
             }
             if let Some(next_index) = next_rectangle_index {
-                {
-                    let mut existing_selected = self.rectangles.get_mut(selected_index).expect(&format!("could not find selected rect at index {}", selected_index));
-                    existing_selected.selected = false;
-                }
-                {
-                    let mut next_selected = self.rectangles.get_mut(next_index).expect(&format!("could not find selected rect at index {}", selected_index));
-                    next_selected.selected = true;
-                }
-                self.selected_index = Some(next_index);
+                self.change_selected(next_index);
             }
         }
     }
@@ -458,15 +442,7 @@ impl Tiles {
                 }
             }
             if let Some(next_index) = next_rectangle_index {
-                {
-                    let mut existing_selected = self.rectangles.get_mut(selected_index).expect(&format!("could not find selected rect at index {}", selected_index));
-                    existing_selected.selected = false;
-                }
-                {
-                    let mut next_selected = self.rectangles.get_mut(next_index).expect(&format!("could not find selected rect at index {}", selected_index));
-                    next_selected.selected = true;
-                }
-                self.selected_index = Some(next_index);
+                self.change_selected(next_index);
             }
         }
     }
@@ -508,18 +484,23 @@ impl Tiles {
                 }
             }
             if let Some(next_index) = next_rectangle_index {
-                {
-                    let mut existing_selected = self.rectangles.get_mut(selected_index).expect(&format!("could not find selected rect at index {}", selected_index));
-                    existing_selected.selected = false;
-                }
-                {
-                    let mut next_selected = self.rectangles.get_mut(next_index).expect(&format!("could not find selected rect at index {}", selected_index));
-                    next_selected.selected = true;
-                }
-                self.selected_index = Some(next_index);
+                self.change_selected(next_index);
             }
         }
 
+    }
+    fn change_selected(&mut self, next_index: usize) {
+        if let Some(selected_index) = self.selected_index {
+            {
+                let mut existing_selected = self.rectangles.get_mut(selected_index).expect(&format!("could not find selected rect at index {}", selected_index));
+                existing_selected.selected = false;
+            }
+            {
+                let mut next_selected = self.rectangles.get_mut(next_index).expect(&format!("could not find selected rect at index {}", selected_index));
+                next_selected.selected = true;
+            }
+            self.selected_index = Some(next_index);
+        }
     }
 }
 
