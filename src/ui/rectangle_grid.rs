@@ -1,17 +1,42 @@
+use ::std::fmt;
 use tui::buffer::Buffer;
 use tui::layout::Rect;
 use tui::style::{Style, Color};
 use tui::widgets::{Widget};
 
+use crate::ui::{FileMetadata, FileType};
+
 pub const MINIMUM_HEIGHT: u16 = 2;
 pub const MINIMUM_WIDTH: u16 = 8;
 
+pub struct DisplaySize(pub f64);
+
+impl fmt::Display for DisplaySize{
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if self.0 > 999_999_999.0 {
+            write!(f, "{:.1}G", self.0 / 1_000_000_000.0)
+        } else if self.0 > 999_999.0 {
+            write!(f, "{:.1}M", self.0 / 1_000_000.0)
+        } else if self.0 > 999.0 {
+            write!(f, "{:.1}K", self.0 / 1000.0)
+        } else {
+            write!(f, "{}", self.0)
+        }
+    }
+}
+
+// format!("{}/ {} ({:.0}%)", name, DisplaySize(size as f64),percentage * 100.0),
+
 #[derive(Clone, Debug)]
-pub struct RectWithText {
+pub struct FileSizeRect {
     pub rect: RectFloat,
-    pub text: String,
+    pub file_metadata: FileMetadata,
+//    pub text: String, // TODO: removeme
     pub selected: bool,
-    pub file_name: String, // TODO: better
+//    pub file_name: String, // TODO: better
+//    pub file_size: u64, // TODO: better
+//    pub file_percentage: u8, // TODO: better
+//    pub file_type: FileType,
 }
 
 #[derive(Clone, Debug)]
@@ -24,7 +49,7 @@ pub struct RectFloat {
 
 #[derive(Clone)]
 pub struct RectangleGrid {
-    rectangles: Vec<RectWithText>
+    rectangles: Vec<FileSizeRect>
 }
 
 pub mod boundaries {
@@ -42,7 +67,7 @@ pub mod boundaries {
 }
 
 impl<'a> RectangleGrid {
-    pub fn new (rectangles: Vec<RectWithText>) -> Self {
+    pub fn new (rectangles: Vec<FileSizeRect>) -> Self {
         RectangleGrid { rectangles }
     }
 }
@@ -185,21 +210,21 @@ impl<'a> Widget for RectangleGrid {
         if area.width < 2 || area.height < 2 {
             return;
         }
-        for rect_with_text in &self.rectangles {
-            let rounded_x = rect_with_text.rect.x.round();
-            let rounded_y = rect_with_text.rect.y.round();
+        for file_size_rect in &self.rectangles {
+            let rounded_x = file_size_rect.rect.x.round();
+            let rounded_y = file_size_rect.rect.y.round();
             let mut rect = Rect {
                 x: rounded_x as u16,
                 y: rounded_y  as u16,
-                width: ((rect_with_text.rect.x - rounded_x) + rect_with_text.rect.width).round() as u16,
-                height: ((rect_with_text.rect.y - rounded_y) + rect_with_text.rect.height).round() as u16,
+                width: ((file_size_rect.rect.x - rounded_x) + file_size_rect.rect.width).round() as u16,
+                height: ((file_size_rect.rect.y - rounded_y) + file_size_rect.rect.height).round() as u16,
             };
 
             // fix rounding errors
-            if (rect_with_text.rect.x + rect_with_text.rect.width).round() as u16 > rect.x + rect.width {
+            if (file_size_rect.rect.x + file_size_rect.rect.width).round() as u16 > rect.x + rect.width {
                 rect.width += 1;
             }
-            if (rect_with_text.rect.y + rect_with_text.rect.height).round() as u16 > rect.y + rect.height {
+            if (file_size_rect.rect.y + file_size_rect.rect.height).round() as u16 > rect.y + rect.height {
                 rect.height += 1;
             }
 
@@ -219,13 +244,29 @@ impl<'a> Widget for RectangleGrid {
                 // TODO: we should not accept a rectangle with a width of less than 8 so that the text
                 // will be at least partly legible... these rectangles should be created with a small
                 // height instead
-                let text = if rect_with_text.selected { format!("=> {} <=", rect_with_text.text) } else { rect_with_text.text.to_owned() }; // TODO: better
+                let text = if file_size_rect.selected {
+                    let name = &file_size_rect.file_metadata.name;
+                    let size = DisplaySize(file_size_rect.file_metadata.size as f64);
+                    let percentage = file_size_rect.file_metadata.percentage;
+                    match file_size_rect.file_metadata.file_type {
+                        FileType::File => format!("=> {} {} ({:.0}%) <=", name, size, percentage * 100.0),
+                        FileType::Folder => format!("=> {}/ {} ({:.0}%) <=", name, size, percentage * 100.0)
+                    }
+                } else {
+                    let name = &file_size_rect.file_metadata.name;
+                    let size = DisplaySize(file_size_rect.file_metadata.size as f64);
+                    let percentage = file_size_rect.file_metadata.percentage;
+                    match file_size_rect.file_metadata.file_type {
+                        FileType::File => format!("{} {} ({:.0}%)", name, size, percentage * 100.0),
+                        FileType::Folder => format!("{}/ {} ({:.0}%)", name, size, percentage * 100.0)
+                    }
+                };
                 let display_text = truncate_middle(&text, max_text_length);
                 let text_length = display_text.len(); // TODO: better
 
                 let text_start_position = ((rect.width - text_length as u16) as f64 / 2.0).ceil() as u16 + rect.x;
 
-                let text_style = if rect_with_text.selected {
+                let text_style = if file_size_rect.selected {
                     Style::default().bg(Color::White).fg(Color::Black)
                 } else {
                     Style::default()

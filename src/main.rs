@@ -119,7 +119,7 @@ where
 
     let file_sizes = scan_folder(path.clone()); // TODO: better
     {
-        let mut app = app .lock().unwrap();
+        let mut app = app.lock().unwrap();
         app.ui_state.set_base_folder(file_sizes, path.into_os_string().into_string().expect("could not convert path to string"));
         app.render();
     }

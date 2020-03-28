@@ -1,10 +1,10 @@
-use crate::ui::FilePercentage;
-use crate::ui::rectangle_grid::{RectWithText, RectFloat} ;
+use crate::ui::FileMetadata;
+use crate::ui::rectangle_grid::{FileSizeRect, RectFloat} ;
 
 const HEIGHT_WIDTH_RATIO: f64 = 2.5;
 
 pub struct TreeMap {
-    pub rectangles: Vec<RectWithText>,
+    pub rectangles: Vec<FileSizeRect>,
     empty_space: RectFloat,
     total_size: f64,
 }
@@ -17,22 +17,23 @@ impl TreeMap {
             empty_space,
         }
     }
-    fn layoutrow(&mut self, row: Vec<FilePercentage>) {
-        let row_total = row.iter().fold(0.0, |acc, file_percentage| {
-            let size = file_percentage.percentage * self.total_size;
+    fn layoutrow(&mut self, row: Vec<FileMetadata>) {
+        let row_total = row.iter().fold(0.0, |acc, file_metadata| {
+            let size = file_metadata.percentage * self.total_size;
             acc + size
         });
         if self.empty_space.width <= self.empty_space.height * HEIGHT_WIDTH_RATIO {
             let mut x = self.empty_space.x;
             let mut row_height = 0.0;
-            for file_percentage in row {
-                let size = file_percentage.percentage * self.total_size;
+            for file_metadata in row {
+                let size = file_metadata.percentage * self.total_size;
                 let width = (size / row_total) * self.empty_space.width as f64;
                 let height = size / width;
-                let rect_with_text = RectWithText {
+                let rect_with_text = FileSizeRect {
                     rect: RectFloat {x, y: self.empty_space.y, width: width , height: height },
-                    text: file_percentage.file_name.clone(),
-                    file_name: file_percentage.actual_file_name.clone(), // TODO: better
+                    file_metadata,
+//                    text: file_percentage.file_name.clone(),
+//                    file_name: file_percentage.actual_file_name.clone(), // TODO: better
                     selected: false,
                 };
                 x += rect_with_text.rect.width;
@@ -46,16 +47,17 @@ impl TreeMap {
         } else {
           let mut y = self.empty_space.y;
           let mut row_width = 0.0;
-          for file_percentage in row {
-            let size = file_percentage.percentage * self.total_size;
+          for file_metadata in row {
+            let size = file_metadata.percentage * self.total_size;
             let height = (size / row_total) * self.empty_space.height as f64;
             let width = size / height;
 
-            let mut rect_with_text = RectWithText {
+            let mut rect_with_text = FileSizeRect {
                 rect: RectFloat { x: self.empty_space.x, y, width: width, height: height },
-                text: file_percentage.file_name.clone(),
-                file_name: file_percentage.actual_file_name.clone(), // TODO: better
-                selected: false,
+                file_metadata,
+//                text: file_percentage.file_name.clone(),
+//                file_name: file_percentage.actual_file_name.clone(), // TODO: better
+               selected: false,
             };
             y += rect_with_text.rect.height;
             if row_width > width {
@@ -71,9 +73,9 @@ impl TreeMap {
         }
     }
     
-    fn worst (&self, row: Vec<FilePercentage>, length: f64) -> f64 {
-        let sum = row.iter().fold(0.0, |accum, file_percentage| {
-            let size = file_percentage.percentage * self.total_size;
+    fn worst (&self, row: Vec<FileMetadata>, length: f64) -> f64 {
+        let sum = row.iter().fold(0.0, |accum, file_metadata| {
+            let size = file_metadata.percentage * self.total_size;
             accum + size
         });
         let mut worst_aspect_ratio = 0.0;
@@ -99,7 +101,7 @@ impl TreeMap {
         worst_aspect_ratio
     }
     
-    pub fn squarify (&mut self, mut children: Vec<FilePercentage>, row: Vec<FilePercentage>) {
+    pub fn squarify (&mut self, mut children: Vec<FileMetadata>, row: Vec<FileMetadata>) {
         let length = if self.empty_space.height * HEIGHT_WIDTH_RATIO < self.empty_space.width {
             self.empty_space.height * 2.5
         } else {

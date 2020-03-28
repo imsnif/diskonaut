@@ -21,11 +21,18 @@ impl fmt::Display for DisplaySize{
     }
 }
 
+#[derive(Clone, Debug)]
+pub enum FileType {
+    File,
+    Folder,
+}
+
 #[derive(Debug, Clone)]
-pub struct FilePercentage {
-    pub file_name: String,
-    pub percentage: f64,
-    pub actual_file_name: String,
+pub struct FileMetadata {
+    pub name: String,
+    pub size: u64,
+    pub percentage: f64, // 1.0 is 100% (0.5 is 50%, etc.)
+    pub file_type: FileType,
 }
 
 pub struct State {
@@ -53,8 +60,8 @@ impl State {
     pub fn update_files(&mut self) {
         if let Some(base_folder) = &self.base_folder {
             let current_folder = base_folder.path(&self.current_folder_names);
-            let file_percentages = calculate_percentages(current_folder.expect("could not find current folder"));
-            self.tiles.change_files(file_percentages);
+            let file_list = calculate_utilization(current_folder.expect("could not find current folder"));
+            self.tiles.change_files(file_list);
         }
     }
     pub fn get_current_path(&self) -> Option<PathBuf> {
@@ -84,12 +91,12 @@ impl State {
     }
     pub fn enter_selected(&mut self) {
         if let Some(base_folder) = &self.base_folder {
-            if let Some(file_percentage) = &self.tiles.currently_selected() {
+            if let Some(file_size_rect) = &self.tiles.currently_selected() {
                 let path_to_selected = &mut self.current_folder_names.clone();
-                path_to_selected.push(String::from(&file_percentage.file_name));
+                path_to_selected.push(String::from(&file_size_rect.file_metadata.name));
                 if let Some(_) = base_folder.path(&path_to_selected) {
                     // there is a folder at this path!
-                    self.current_folder_names.push(String::from(&file_percentage.file_name));
+                    self.current_folder_names.push(String::from(&file_size_rect.file_metadata.name));
                     self.update_files();
                     self.tiles.set_selected_index(&0);
                 }
@@ -102,40 +109,42 @@ impl State {
     }
 }
 
-pub fn calculate_percentages (folder: &Folder) -> Vec<FilePercentage> {
-    let mut file_percentages = Vec::new();
+pub fn calculate_utilization(folder: &Folder) -> Vec<FileMetadata> {
+    let mut file_list = Vec::new();
     let total_size = folder.size();
     for (name, file_or_folder) in &folder.contents {
         match file_or_folder {
             FileOrFolder::Folder(folder) => {
                 let size = folder.size();
                 let percentage = size as f64 / total_size as f64;
-                let file_percentage = FilePercentage {
-                    file_name: format!("{}/ {} ({:.0}%)", name, DisplaySize(size as f64),percentage * 100.0),
-                    actual_file_name: String::from(name), // TODO: better
+                let file_metadata = FileMetadata {
+                    name: String::from(name),
                     percentage,
+                    size,
+                    file_type: FileType::Folder
                 };
-                file_percentages.push(file_percentage);
+                file_list.push(file_metadata);
             },
             FileOrFolder::File(file) => {
                 let size = file.size;
                 let percentage = size as f64 / total_size as f64;
-                let file_percentage = FilePercentage {
-                    file_name: format!("{} {} ({:.0}%)", name, DisplaySize(size as f64),percentage * 100.0),
-                    actual_file_name: String::from(name),
+                let file_metadata = FileMetadata {
+                    name: String::from(name),
                     percentage,
+                    size,
+                    file_type: FileType::File
                 };
-                file_percentages.push(file_percentage);
+                file_list.push(file_metadata);
             }
         }
     }
 
-    file_percentages.sort_by(|a, b| {
+    file_list.sort_by(|a, b| {
         if a.percentage == b.percentage {
-            a.file_name.partial_cmp(&b.file_name).unwrap()
+            a.name.partial_cmp(&b.name).unwrap()
         } else {
             b.percentage.partial_cmp(&a.percentage).unwrap()
         }
     });
-    file_percentages
+    file_list
 }

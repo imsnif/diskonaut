@@ -1,8 +1,8 @@
 use tui::layout::Rect;
 
 use crate::ui::TreeMap;
-use crate::ui::FilePercentage;
-use crate::ui::rectangle_grid::{RectWithText, RectFloat, MINIMUM_HEIGHT, MINIMUM_WIDTH};
+use crate::ui::FileMetadata;
+use crate::ui::rectangle_grid::{FileSizeRect, RectFloat, MINIMUM_HEIGHT, MINIMUM_WIDTH};
 
 fn first_is_right_of_second(first: &RectFloat, second: &RectFloat) -> bool {
     first.x >= second.x + second.width
@@ -86,10 +86,10 @@ fn rects_are_aligned_bottom(first: &RectFloat, second: &RectFloat) -> bool {
 }
 
 pub struct Tiles {
-    pub rectangles: Vec<RectWithText>,
+    pub rectangles: Vec<FileSizeRect>,
     selected_index: Option<usize>,
     area: Option<Rect>,
-    files: Vec<FilePercentage>,
+    files: Vec<FileMetadata>,
 }
 
 impl Tiles {
@@ -101,8 +101,8 @@ impl Tiles {
             area: None,
         }
     }
-    pub fn change_files(&mut self, file_percentages: Vec<FilePercentage>) {
-        self.files = file_percentages;
+    pub fn change_files(&mut self, file_list: Vec<FileMetadata>) {
+        self.files = file_list;
         self.selected_index = Some(0);
         self.fill();
     }
@@ -147,7 +147,7 @@ impl Tiles {
         next_selected.selected = true;
         self.selected_index = Some(*next_index);
     }
-    pub fn currently_selected (&self) -> Option<&RectWithText> {
+    pub fn currently_selected (&self) -> Option<&FileSizeRect> {
         match &self.selected_index {
             Some(selected_index) => self.rectangles.get(*selected_index),
             None => None,
@@ -169,7 +169,7 @@ impl Tiles {
                     match next_rectangle_index {
                         Some(existing_candidate_index) => {
                             
-                            let existing_candidate: &RectWithText = self.rectangles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
+                            let existing_candidate: &FileSizeRect = self.rectangles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
                             
                             if rects_are_aligned_left(&existing_candidate.rect, &candidate.rect) {
                                 let existing_candidate_overlap = get_horizontal_overlap(&existing_candidate.rect, &currently_selected.rect);
@@ -209,7 +209,7 @@ impl Tiles {
                     match next_rectangle_index {
                         Some(existing_candidate_index) => {
                             
-                            let existing_candidate: &RectWithText = self.rectangles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
+                            let existing_candidate: &FileSizeRect = self.rectangles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
                             
                             if rects_are_aligned_right(&existing_candidate.rect, &candidate.rect) {
                                 let existing_candidate_overlap = get_horizontal_overlap(&existing_candidate.rect, &currently_selected.rect);
@@ -248,7 +248,7 @@ impl Tiles {
                     match next_rectangle_index {
                         Some(existing_candidate_index) => {
                             
-                            let existing_candidate: &RectWithText = self.rectangles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
+                            let existing_candidate: &FileSizeRect = self.rectangles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
                             
                             if rects_are_aligned_top(&existing_candidate.rect, &candidate.rect) {
 
@@ -290,7 +290,7 @@ impl Tiles {
                     match next_rectangle_index {
                         Some(existing_candidate_index) => {
                             
-                            let existing_candidate: &RectWithText = self.rectangles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
+                            let existing_candidate: &FileSizeRect = self.rectangles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
                             
                             if rects_are_aligned_bottom(&existing_candidate.rect, &candidate.rect) {
 
