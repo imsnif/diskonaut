@@ -1,11 +1,8 @@
 ---
 source: src/tests/cases/ui.rs
-expression: "&terminal_draw_events_mirror[3]"
+expression: "&terminal_draw_events_mirror[5]"
 ---
                                                                                                                                                                                               
-                                                         /tmp/bandwhich_tests/noop_when pr ssing_esc_at_base folder/subfolder1 (4.1K)                                                         
-                                                                                                                                                                                              
-                                                                                                                              ─                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
@@ -26,10 +23,6 @@ expression: "&terminal_draw_events_mirror[3]"
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
-                                                                                            file1                                                                                             
-                                                                                                                                                                                              
-│                                                                                                                                                                                             
-                                                                                         4.1K (100%)                                                                                          
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
@@ -50,6 +43,13 @@ expression: "&terminal_draw_events_mirror[3]"
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
-                                                                                                                              ─                                                               
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                                                                                                                              
                                                                                                                                                                                               
 
