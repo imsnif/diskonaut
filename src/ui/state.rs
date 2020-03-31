@@ -2,24 +2,7 @@ use tui::layout::Rect;
 
 use crate::ui::Tiles;
 use crate::input::{FileOrFolder, Folder};
-use ::std::fmt;
 use std::path::PathBuf;
-
-pub struct DisplaySize(pub f64);
-
-impl fmt::Display for DisplaySize{
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        if self.0 > 999_999_999.0 {
-            write!(f, "{:.1}G", self.0 / 1_000_000_000.0)
-        } else if self.0 > 999_999.0 {
-            write!(f, "{:.1}M", self.0 / 1_000_000.0)
-        } else if self.0 > 999.0 {
-            write!(f, "{:.1}K", self.0 / 1000.0)
-        } else {
-            write!(f, "{}", self.0)
-        }
-    }
-}
 
 #[derive(Clone, Debug)]
 pub enum FileType {
@@ -56,6 +39,14 @@ impl State {
         self.path_in_filesystem = Some(path_in_filesystem);
         self.update_files();
 
+    }
+    pub fn get_current_folder_size (&self) -> Option<u64> {
+        if let Some(base_folder) = &self.base_folder {
+            let current_folder = base_folder.path(&self.current_folder_names);
+            Some(current_folder?.size())
+        } else {
+            return None
+        }
     }
     pub fn update_files(&mut self) {
         if let Some(base_folder) = &self.base_folder {
@@ -98,7 +89,7 @@ impl State {
                     // there is a folder at this path!
                     self.current_folder_names.push(String::from(&file_size_rect.file_metadata.name));
                     self.update_files();
-                    self.tiles.set_selected_index(&0);
+                    self.tiles.reset_selected_index();
                 }
             }
         }

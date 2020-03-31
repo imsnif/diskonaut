@@ -103,7 +103,7 @@ impl Tiles {
     }
     pub fn change_files(&mut self, file_list: Vec<FileMetadata>) {
         self.files = file_list;
-        self.selected_index = Some(0);
+        self.selected_index = None;
         self.fill();
     }
     pub fn change_area(&mut self, area: &Rect) {
@@ -111,13 +111,13 @@ impl Tiles {
             Some(current_area) => {
                 if current_area != *area {
                     self.area = Some(area.clone());
-                    self.selected_index = Some(0);
+                    self.selected_index = None;
                     self.fill();
                 }
             },
             None => {
                 self.area = Some(area.clone());
-                self.selected_index = Some(0);
+                self.selected_index = None;
                 self.fill();
             }
         }
@@ -146,6 +146,13 @@ impl Tiles {
         let mut next_selected = self.rectangles.get_mut(*next_index).expect(&format!("could not find selected rect at index {}", next_index));
         next_selected.selected = true;
         self.selected_index = Some(*next_index);
+    }
+    pub fn reset_selected_index (&mut self) {
+        if let Some(selected_index) = self.selected_index {
+            let mut existing_selected = self.rectangles.get_mut(selected_index).expect(&format!("could not find selected rect at index {}", selected_index));
+            existing_selected.selected = false;
+        }
+        self.selected_index = None;
     }
     pub fn currently_selected (&self) -> Option<&FileSizeRect> {
         match &self.selected_index {
@@ -190,6 +197,8 @@ impl Tiles {
             if let Some(next_index) = next_rectangle_index {
                 self.set_selected_index(&next_index);
             }
+        } else {
+            self.set_selected_index(&0);
         }
 
     }
@@ -230,6 +239,8 @@ impl Tiles {
             if let Some(next_index) = next_rectangle_index {
                 self.set_selected_index(&next_index);
             }
+        } else {
+            self.set_selected_index(&0);
         }
     }
     pub fn move_selected_down (&mut self) {
@@ -271,6 +282,8 @@ impl Tiles {
             if let Some(next_index) = next_rectangle_index {
                 self.set_selected_index(&next_index);
             }
+        } else {
+            self.set_selected_index(&0);
         }
     }
     pub fn move_selected_up (&mut self) {
@@ -313,7 +326,8 @@ impl Tiles {
             if let Some(next_index) = next_rectangle_index {
                 self.set_selected_index(&next_index);
             }
+        } else {
+            self.set_selected_index(&0);
         }
-
     }
 }
