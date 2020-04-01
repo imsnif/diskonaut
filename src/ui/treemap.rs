@@ -32,14 +32,12 @@ impl TreeMap {
                 let rect_with_text = FileSizeRect {
                     rect: RectFloat {x, y: self.empty_space.y, width: width , height: height },
                     file_metadata,
-//                    text: file_percentage.file_name.clone(),
-//                    file_name: file_percentage.actual_file_name.clone(), // TODO: better
                     selected: false,
                 };
                 x += rect_with_text.rect.width;
                 self.rectangles.push(rect_with_text);
                 if height > row_height {
-                    row_height = height; // TODO: check if this changes in iterations
+                    row_height = height;
                 }
             }
             self.empty_space.height -= row_height;
@@ -55,9 +53,7 @@ impl TreeMap {
             let mut rect_with_text = FileSizeRect {
                 rect: RectFloat { x: self.empty_space.x, y, width: width, height: height },
                 file_metadata,
-//                text: file_percentage.file_name.clone(),
-//                file_name: file_percentage.actual_file_name.clone(), // TODO: better
-               selected: false,
+                selected: false,
             };
             y += rect_with_text.rect.height;
             if row_width > width {
@@ -73,7 +69,7 @@ impl TreeMap {
         }
     }
     
-    fn worst (&self, row: Vec<FileMetadata>, length: f64) -> f64 {
+    fn worst (&self, row: &Vec<&FileMetadata>, length_of_row: f64) -> f64 {
         let sum = row.iter().fold(0.0, |accum, file_metadata| {
             let size = file_metadata.percentage * self.total_size;
             accum + size
@@ -81,7 +77,7 @@ impl TreeMap {
         let mut worst_aspect_ratio = 0.0;
         for val in row.iter() {
             let size = val.percentage * self.total_size;
-            let first_side = (size / sum) * length;
+            let first_side = (size / sum) * length_of_row;
             let second_side = size / first_side;
             if first_side >= 5.0 && second_side >= 5.0 {
                 let val_aspect_ratio = if first_side < second_side {
@@ -101,8 +97,8 @@ impl TreeMap {
         worst_aspect_ratio
     }
     
-    pub fn squarify (&mut self, mut children: Vec<FileMetadata>, row: Vec<FileMetadata>) {
-        let length = if self.empty_space.height * HEIGHT_WIDTH_RATIO < self.empty_space.width {
+    pub fn squarify (&mut self, mut children: Vec<FileMetadata>, mut row: Vec<FileMetadata>) {
+        let length_of_row = if self.empty_space.height * HEIGHT_WIDTH_RATIO < self.empty_space.width {
             self.empty_space.height * 2.5
         } else {
             self.empty_space.width * 0.6
@@ -113,22 +109,20 @@ impl TreeMap {
         } else if children.len() == 0 {
             return;
         } else {
-            let mut row_with_first_child = row.clone();
-            row_with_first_child.push(children[0].clone());
-            let mut nums = vec![];
-            for per in row.iter() {
-                nums.push(per.percentage * self.total_size);
-            }
 
-            let current_row_worst_ratio = self.worst(row.clone(), length);
-            let row_with_child_worst_ratio = self.worst(row_with_first_child.clone(), length);
+            let mut row_refs: Vec<&FileMetadata> = row.iter().collect();
+
+            let current_row_worst_ratio = self.worst(&row_refs, length_of_row);
+            row_refs.push(&children[0]);
+            let row_with_child_worst_ratio = self.worst(&row_refs, length_of_row);
 
             if current_row_worst_ratio != 0.0 && row_with_child_worst_ratio == 0.0 {
                 self.layoutrow(row);
                 self.squarify(children, vec![]);
             } else if row.len() == 1 || current_row_worst_ratio <= row_with_child_worst_ratio || current_row_worst_ratio == 0.0 {
-                children.remove(0);
-                self.squarify(children, row_with_first_child.clone());
+                let child0 = children.remove(0);
+                row.push(child0);
+                self.squarify(children, row);
             } else {
                 self.layoutrow(row);
                 self.squarify(children, vec![]);
