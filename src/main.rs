@@ -19,6 +19,7 @@ use ::std::sync::{Arc, Mutex};
 use input::scan_folder;
 use input::handle_keypress;
 use input::KeyboardEvents;
+use input::sigwinch;
 use ui::state::State;
 use ui::Display;
 
@@ -99,6 +100,8 @@ where
 
     let app = Arc::new(Mutex::new(App::new(terminal_backend)));
 
+    let (on_sigwinch, cleanup) = sigwinch();
+
     active_threads.push(
         thread::Builder::new()
             .name("stdin_handler".to_string())
@@ -109,6 +112,7 @@ where
                         let mut app = app.lock().expect("could not get app");
                         handle_keypress(evt, &mut app);
                         if !app.is_running {
+                            cleanup();
                             break;
                         }
                     }
@@ -123,6 +127,18 @@ where
         app.ui_state.set_base_folder(file_sizes, path.into_os_string().into_string().expect("could not convert path to string"));
         app.render();
     }
+
+    active_threads.push(
+        thread::Builder::new()
+            .name("resize_handler".to_string())
+            .spawn({
+                let app = app.clone();
+                move || {
+                    on_sigwinch(Box::new(move || { app.lock().unwrap().render() }));
+                }
+            })
+            .unwrap(),
+    );
 
     for thread_handler in active_threads {
         thread_handler.join().unwrap();

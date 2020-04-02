@@ -22,6 +22,7 @@ async-std = "*"
 futures = "*"
 walkdir = "2"
 jwalk = "0.3"
+signal-hook = "0.1.10"
 
 [dev-dependencies]
 stderrlog = "0.4"
