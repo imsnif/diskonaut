@@ -1,0 +1,55 @@
+---
+source: src/tests/cases/ui.rs
+expression: "&terminal_draw_events_mirror[4]"
+---
+                                                  
+                                                  
+                       8.2K)                      
+                                                  
+                                                  
+                                                  
+                                                  
+                                                  
+                                                  
+                                                  
+                                                  
+                                                  
+                                                  
+                                                  
+                                                  
+                                                  
+                                                  
+                                                  
+                                                  
+                                                  
+                         │                        
+                         │                        
+                         │                        
+                         │                        
+          file2          │         file3          
+                         │                        
+                         │                        
+        4.1K (50%)       │      4.1K (50%)        
+                         │                        
+                         │                        
+                         │                        
+                                                  
+                                                  
+│                        │                       │
+                         │                        
+                         │                        
+                         │                        
+                         │                        
+                         │                        
+                         │                        
+                         │                        
+                         │                        
+                         │                        
+                         │                        
+                         │                        
+                         │                        
+                         │                        
+                         │                        
+                         ┴                        
+                                                  
+
