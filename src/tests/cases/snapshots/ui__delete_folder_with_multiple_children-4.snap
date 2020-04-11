@@ -24,10 +24,10 @@ expression: "&terminal_draw_events_mirror[3]"
                                                                                                                                                                                               
                     ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐                   
                     │                                                                                                                                                     │                   
-                    │                                                           Delete folder with 1 children?                                                            │                   
+                    │                                                           Delete folder with 4 children?                                                            │                   
                     │                                                                                                                                                     │                   
                     │                                                                                                                                                     │                   
-                    │                                                    /tmp/bandwhich_tests/delete_folder/subfolder1                                                    │                   
+                    │                                        /tmp/bandwhich_tests/delete_folder_with_multiple_children/subfolder1                                         │                   
                     │                                                                                                                                                     │                   
                     │                                                                                                                                                     │                   
                     │                                                                        (y/n)                                                                        │                   

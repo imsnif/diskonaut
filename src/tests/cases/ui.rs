@@ -864,13 +864,12 @@ fn delete_folder() {
    assert_snapshot!(&terminal_draw_events_mirror[2]);
    assert_snapshot!(&terminal_draw_events_mirror[3]);
    assert_snapshot!(&terminal_draw_events_mirror[4]);
-
 }
 
 #[test]
 fn delete_folder_small_window () {
-   // terminal window with a width of 50 (shorter message window layout)
-   let (terminal_events, terminal_draw_events, backend) = test_backend_factory(50, 50);
+   // terminal window with a width of 60 (shorter message window layout)
+   let (terminal_events, terminal_draw_events, backend) = test_backend_factory(60, 50);
 
    let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
    events.push(Some(Event::Key(Key::Char('j')))); // once to place selected marker on screen
@@ -923,4 +922,183 @@ fn delete_folder_small_window () {
    assert_snapshot!(&terminal_draw_events_mirror[2]);
    assert_snapshot!(&terminal_draw_events_mirror[3]);
    assert_snapshot!(&terminal_draw_events_mirror[4]);
+}
+
+#[test]
+fn delete_folder_with_multiple_children() {
+   let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+
+   let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
+   events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+   events.push(None);
+   events.push(Some(Event::Key(Key::Char('l'))));
+   events.push(None);
+   events.push(Some(Event::Key(Key::Ctrl('d'))));
+   events.push(None);
+   events.push(Some(Event::Key(Key::Char('y'))));
+   events.push(None);
+   events.push(Some(Event::Key(Key::Ctrl('c'))));
+   let keyboard_events = Box::new(KeyboardEvents::new(events));
+
+   let temp_dir_path = create_root_temp_dir("delete_folder_with_multiple_children").expect("failed to create temp dir");
+
+   let mut file_1_path = PathBuf::from(&temp_dir_path);
+   file_1_path.push("file1");
+   create_temp_file(&file_1_path, 16000).expect("failed to create temp file");
+
+   let mut file_2_path = PathBuf::from(&temp_dir_path);
+   file_2_path.push("file2");
+   create_temp_file(&file_2_path, 16000).expect("failed to create temp file");
+
+   let mut subfolder_1_path = PathBuf::from(&temp_dir_path);
+   subfolder_1_path.push("subfolder1");
+   create_dir(&subfolder_1_path).expect("failed to create temporary directory");
+
+   let mut subfolder_2_path = PathBuf::from(&temp_dir_path);
+   subfolder_2_path.push("subfolder1");
+   subfolder_2_path.push("subfolder2");
+   create_dir(&subfolder_2_path).expect("failed to create temporary directory");
+
+   let mut file_3_path = PathBuf::from(&temp_dir_path);
+   file_3_path.push("subfolder1");
+   file_3_path.push("subfolder2");
+   file_3_path.push("file3");
+   create_temp_file(&file_3_path, 4000).expect("failed to create temp file");
+
+   let mut file_4_path = PathBuf::from(&temp_dir_path);
+   file_4_path.push("subfolder1");
+   file_4_path.push("subfolder2");
+   file_4_path.push("file4");
+   create_temp_file(&file_4_path, 4000).expect("failed to create temp file");
+
+   let mut file_5_path = PathBuf::from(&temp_dir_path);
+   file_5_path.push("subfolder1");
+   file_5_path.push("file5");
+   create_temp_file(&file_5_path, 4000).expect("failed to create temp file");
+
+   start(backend, keyboard_events, temp_dir_path.clone());
+   let terminal_draw_events_mirror = terminal_draw_events.lock().expect("could not acquire lock on terminal events");
+
+   let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor];
+   assert_eq!(
+       &terminal_events.lock().expect("could not acquire lock on terminal_events")[..],
+       &expected_terminal_events[..]
+   );
+   assert_eq!(std::fs::metadata(&subfolder_1_path).is_err(), true, "folder successfully deleted");
+   assert_eq!(std::fs::metadata(&subfolder_2_path).is_err(), true, "folder inside deleted folder successfully deleted");
+   assert_eq!(std::fs::metadata(&file_1_path).is_ok(), true, "different file was untouched");
+   assert_eq!(std::fs::metadata(&file_2_path).is_ok(), true, "different file was untouched");
+   assert_eq!(std::fs::metadata(&file_3_path).is_err(), true, "internal file in folder deleted");
+   assert_eq!(std::fs::metadata(&file_4_path).is_err(), true, "internal file in folder deleted");
+   assert_eq!(std::fs::metadata(&file_5_path).is_err(), true, "internal file in folder deleted");
+   std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
+
+   assert_eq!(terminal_draw_events_mirror.len(), 5);
+   assert_snapshot!(&terminal_draw_events_mirror[0]);
+   assert_snapshot!(&terminal_draw_events_mirror[1]);
+   assert_snapshot!(&terminal_draw_events_mirror[2]);
+   assert_snapshot!(&terminal_draw_events_mirror[3]);
+   assert_snapshot!(&terminal_draw_events_mirror[4]);
+}
+
+#[test]
+fn pressing_delete_with_no_selected_tile() {
+   let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+
+   let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
+   events.push(Some(Event::Key(Key::Ctrl('d'))));
+   events.push(None);
+   events.push(Some(Event::Key(Key::Ctrl('c'))));
+   let keyboard_events = Box::new(KeyboardEvents::new(events));
+
+   let temp_dir_path = create_root_temp_dir("pressing_delete_with_no_selected_tile").expect("failed to create temp dir");
+
+   let mut subfolder_1_path = PathBuf::from(&temp_dir_path);
+   subfolder_1_path.push("subfolder1");
+   create_dir(&subfolder_1_path).expect("failed to create temporary directory");
+
+   let mut file_1_path = PathBuf::from(&temp_dir_path);
+   file_1_path.push("subfolder1");
+   file_1_path.push("file1");
+   create_temp_file(&file_1_path, 4000).expect("failed to create temp file");
+
+   let mut file_2_path = PathBuf::from(&temp_dir_path);
+   file_2_path.push("file2");
+   create_temp_file(&file_2_path, 4000).expect("failed to create temp file");
+
+   let mut file_3_path = PathBuf::from(&temp_dir_path);
+   file_3_path.push("file3");
+   create_temp_file(&file_3_path, 4000).expect("failed to create temp file");
+
+   start(backend, keyboard_events, temp_dir_path.clone());
+   let terminal_draw_events_mirror = terminal_draw_events.lock().expect("could not acquire lock on terminal events");
+
+   let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor];
+   assert_eq!(
+       &terminal_events.lock().expect("could not acquire lock on terminal_events")[..],
+       &expected_terminal_events[..]
+   );
+   assert_eq!(std::fs::metadata(&file_2_path).is_ok(), true, "file not deleted");
+   assert_eq!(std::fs::metadata(&subfolder_1_path).is_ok(), true, "different folder stayed the same");
+   assert_eq!(std::fs::metadata(&file_1_path).is_ok(), true, "different file was untoucehd");
+   assert_eq!(std::fs::metadata(&file_3_path).is_ok(), true, "second different file was untouched");
+   std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
+
+   assert_eq!(terminal_draw_events_mirror.len(), 2);
+   assert_snapshot!(&terminal_draw_events_mirror[0]);
+   assert_snapshot!(&terminal_draw_events_mirror[1]);
+}
+
+#[test]
+fn delete_file_press_n() {
+   let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+
+   let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
+   events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+   events.push(None);
+   events.push(Some(Event::Key(Key::Ctrl('d'))));
+   events.push(None);
+   events.push(Some(Event::Key(Key::Char('n'))));
+   events.push(None);
+   events.push(Some(Event::Key(Key::Ctrl('c'))));
+   let keyboard_events = Box::new(KeyboardEvents::new(events));
+
+   let temp_dir_path = create_root_temp_dir("delete_file_press_n").expect("failed to create temp dir");
+
+   let mut subfolder_1_path = PathBuf::from(&temp_dir_path);
+   subfolder_1_path.push("subfolder1");
+   create_dir(&subfolder_1_path).expect("failed to create temporary directory");
+
+   let mut file_1_path = PathBuf::from(&temp_dir_path);
+   file_1_path.push("subfolder1");
+   file_1_path.push("file1");
+   create_temp_file(&file_1_path, 4000).expect("failed to create temp file");
+
+   let mut file_2_path = PathBuf::from(&temp_dir_path);
+   file_2_path.push("file2");
+   create_temp_file(&file_2_path, 4000).expect("failed to create temp file");
+
+   let mut file_3_path = PathBuf::from(&temp_dir_path);
+   file_3_path.push("file3");
+   create_temp_file(&file_3_path, 4000).expect("failed to create temp file");
+
+   start(backend, keyboard_events, temp_dir_path.clone());
+   let terminal_draw_events_mirror = terminal_draw_events.lock().expect("could not acquire lock on terminal events");
+
+   let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor];
+   assert_eq!(
+       &terminal_events.lock().expect("could not acquire lock on terminal_events")[..],
+       &expected_terminal_events[..]
+   );
+   assert_eq!(std::fs::metadata(&file_2_path).is_ok(), true, "file not deleted");
+   assert_eq!(std::fs::metadata(&subfolder_1_path).is_ok(), true, "different folder stayed the same");
+   assert_eq!(std::fs::metadata(&file_1_path).is_ok(), true, "different file was untoucehd");
+   assert_eq!(std::fs::metadata(&file_3_path).is_ok(), true, "second different file was untouched");
+   std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
+
+   assert_eq!(terminal_draw_events_mirror.len(), 4);
+   assert_snapshot!(&terminal_draw_events_mirror[0]);
+   assert_snapshot!(&terminal_draw_events_mirror[1]);
+   assert_snapshot!(&terminal_draw_events_mirror[2]);
+   assert_snapshot!(&terminal_draw_events_mirror[3]);
 }

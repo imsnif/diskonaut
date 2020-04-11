@@ -1,6 +1,6 @@
 ---
 source: src/tests/cases/ui.rs
-expression: "&terminal_draw_events_mirror[3]"
+expression: "&terminal_draw_events_mirror[2]"
 ---
                                                                                                                                                                                               
                                                                                                                                                                                               
@@ -24,10 +24,10 @@ expression: "&terminal_draw_events_mirror[3]"
                                                                                                                                                                                               
                     ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐                   
                     │                                                                                                                                                     │                   
-                    │                                                           Delete folder with 1 children?                                                            │                   
+                    │                                                                  Delete this file?                                                                  │                   
                     │                                                                                                                                                     │                   
                     │                                                                                                                                                     │                   
-                    │                                                    /tmp/bandwhich_tests/delete_folder/subfolder1                                                    │                   
+                    │                                                   /tmp/bandwhich_tests/delete_file_press_n/file2                                                    │                   
                     │                                                                                                                                                     │                   
                     │                                                                                                                                                     │                   
                     │                                                                        (y/n)                                                                        │                   

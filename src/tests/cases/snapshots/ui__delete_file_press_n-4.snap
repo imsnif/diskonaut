@@ -22,17 +22,17 @@ expression: "&terminal_draw_events_mirror[3]"
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
-                    ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐                   
-                    │                                                                                                                                                     │                   
-                    │                                                           Delete folder with 1 children?                                                            │                   
-                    │                                                                                                                                                     │                   
-                    │                                                                                                                                                     │                   
-                    │                                                    /tmp/bandwhich_tests/delete_folder/subfolder1                                                    │                   
-                    │                                                                                                                                                     │                   
-                    │                                                                                                                                                     │                   
-                    │                                                                        (y/n)                                                                        │                   
-                    │                                                                                                                                                     │                   
-                    └─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘                   
+                    GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG│                                                               
+                    GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG│                                                               
+                    GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG│                                                               
+                    GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG│                                                               
+                    GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG│                         subfolder1/                           
+                    GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG│                                                               
+                    ──────────────────────────────────────────────────────────────────────────────────────────────────────────┤                                                               
+                                                                                                                              │                          4.1K (33%)                           
+                                                                                                                              │                                                               
+                                                                                                                              │                                                               
+                                                                                                                              │                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               

@@ -2,54 +2,54 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[1]"
 ---
-                                                  
-                                                  
-                                                  
-                                                  
- GGGGGGGGGGGGGGGGGGGGGGGG                         
- GGGGGGGGGGGGGGGGGGGGGGGG                         
- GGGGGGGGGGGGGGGGGGGGGGGG                         
- GGGGGGGGGGGGGGGGGGGGGGGG                         
- GGGGGGGGGGGGGGGGGGGGGGGG                         
- GGGGGGGGGGGGGGGGGGGGGGGG                         
- GGGGGGGGGGGGGGGGGGGGGGGG                         
- GGGGGGGGGGGGGGGGGGGGGGGG                         
- GGGGGGGGGGGGGGGGGGGGGGGG                         
- GGGGGGGGGGGGGGGGGGGGGGGG                         
- GGGGGGGGGGGGGGGGGGGGGGGG                         
- GGGGGGGGGGGGGGGGGGGGGGGG                         
- GGGGGGGGGGGGGGGGGGGGGGGG                         
- GGGGGGGGGfile2GGGGGGGGGG                         
- GGGGGGGGGGGGGGGGGGGGGGGG                         
- GGGGGGG4.1KG(33%)GGGGGGG                         
- GGGGGGGGGGGGGGGGGGGGGGGG                         
- GGGGGGGGGGGGGGGGGGGGGGGG                         
- GGGGGGGGGGGGGGGGGGGGGGGG                         
- GGGGGGGGGGGGGGGGGGGGGGGG                         
- GGGGGGGGGGGGGGGGGGGGGGGG                         
- GGGGGGGGGGGGGGGGGGGGGGGG                         
- GGGGGGGGGGGGGGGGGGGGGGGG                         
- GGGGGGGGGGGGGGGGGGGGGGGG                         
- GGGGGGGGGGGGGGGGGGGGGGGG                         
- GGGGGGGGGGGGGGGGGGGGGGGG                         
- GGGGGGGGGGGGGGGGGGGGGGGG                         
- GGGGGGGGGGGGGGGGGGGGGGGG                         
- GGGGGGGGGGGGGGGGGGGGGGGG                         
-                                                  
-                                                  
-                                                  
-                                                  
-                                                  
-                                                  
-                                                  
-                                                  
-                                                  
-                                                  
-                                                  
-                                                  
-                                                  
-                                                  
-                                                  
-                                                  
-                                                  
+                                                            
+                                                            
+                                                            
+                                                            
+ GGGGGGGGGGGGGGGGGGGGGGGGGGGGG                              
+ GGGGGGGGGGGGGGGGGGGGGGGGGGGGG                              
+ GGGGGGGGGGGGGGGGGGGGGGGGGGGGG                              
+ GGGGGGGGGGGGGGGGGGGGGGGGGGGGG                              
+ GGGGGGGGGGGGGGGGGGGGGGGGGGGGG                              
+ GGGGGGGGGGGGGGGGGGGGGGGGGGGGG                              
+ GGGGGGGGGGGGGGGGGGGGGGGGGGGGG                              
+ GGGGGGGGGGGGGGGGGGGGGGGGGGGGG                              
+ GGGGGGGGGGGGGGGGGGGGGGGGGGGGG                              
+ GGGGGGGGGGGGGGGGGGGGGGGGGGGGG                              
+ GGGGGGGGGGGGGGGGGGGGGGGGGGGGG                              
+ GGGGGGGGGGGGGGGGGGGGGGGGGGGGG                              
+ GGGGGGGGGGGGGGGGGGGGGGGGGGGGG                              
+ GGGGGGGGGGGGfile2GGGGGGGGGGGG                              
+ GGGGGGGGGGGGGGGGGGGGGGGGGGGGG                              
+ GGGGGGGGG4.1KG(33%)GGGGGGGGGG                              
+ GGGGGGGGGGGGGGGGGGGGGGGGGGGGG                              
+ GGGGGGGGGGGGGGGGGGGGGGGGGGGGG                              
+ GGGGGGGGGGGGGGGGGGGGGGGGGGGGG                              
+ GGGGGGGGGGGGGGGGGGGGGGGGGGGGG                              
+ GGGGGGGGGGGGGGGGGGGGGGGGGGGGG                              
+ GGGGGGGGGGGGGGGGGGGGGGGGGGGGG                              
+ GGGGGGGGGGGGGGGGGGGGGGGGGGGGG                              
+ GGGGGGGGGGGGGGGGGGGGGGGGGGGGG                              
+ GGGGGGGGGGGGGGGGGGGGGGGGGGGGG                              
+ GGGGGGGGGGGGGGGGGGGGGGGGGGGGG                              
+ GGGGGGGGGGGGGGGGGGGGGGGGGGGGG                              
+ GGGGGGGGGGGGGGGGGGGGGGGGGGGGG                              
+ GGGGGGGGGGGGGGGGGGGGGGGGGGGGG                              
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
 

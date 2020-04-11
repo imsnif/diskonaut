@@ -1,8 +1,11 @@
 ---
 source: src/tests/cases/ui.rs
-expression: "&terminal_draw_events_mirror[3]"
+expression: "&terminal_draw_events_mirror[4]"
 ---
                                                                                                                                                                                               
+                                                                                                                          32 8                                                                
+                                                                                                                                                                                              
+                                                                                                                                         ─                                                    
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
@@ -12,6 +15,10 @@ expression: "&terminal_draw_events_mirror[3]"
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
+                                                                                            file1                                                                                             
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                         16.4K (50%)                                                                                          
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
@@ -21,18 +28,7 @@ expression: "&terminal_draw_events_mirror[3]"
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
-                                                                                                                                                                                              
-                    ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐                   
-                    │                                                                                                                                                     │                   
-                    │                                                           Delete folder with 1 children?                                                            │                   
-                    │                                                                                                                                                     │                   
-                    │                                                                                                                                                     │                   
-                    │                                                    /tmp/bandwhich_tests/delete_folder/subfolder1                                                    │                   
-                    │                                                                                                                                                     │                   
-                    │                                                                                                                                                     │                   
-                    │                                                                        (y/n)                                                                        │                   
-                    │                                                                                                                                                     │                   
-                    └─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘                   
+                    ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
@@ -42,6 +38,9 @@ expression: "&terminal_draw_events_mirror[3]"
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
+                                                                                            file2                                                                                             
+                                                                                                                                                                                              
+                                                                                         16.4K (50%)                                                                                          
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
@@ -51,5 +50,6 @@ expression: "&terminal_draw_events_mirror[3]"
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
+                                                                                                                                         ─                                                    
                                                                                                                                                                                               
 
