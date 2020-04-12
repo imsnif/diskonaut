@@ -87,16 +87,16 @@ fn rects_are_aligned_bottom(first: &RectFloat, second: &RectFloat) -> bool {
 
 pub struct Tiles {
     pub rectangles: Vec<FileSizeRect>,
-    selected_index: Option<usize>,
+    selected_index: Option<usize>, // None means nothing is selected
     area: Option<Rect>,
     files: Vec<FileMetadata>,
 }
 
 impl Tiles {
-    pub fn new () -> Self {
+    pub fn new (files: Vec<FileMetadata>) -> Self {
         Tiles {
             rectangles: vec![],
-            files: vec![],
+            files,
             selected_index: None,
             area: None,
         }

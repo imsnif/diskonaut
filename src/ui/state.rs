@@ -4,6 +4,11 @@ use crate::ui::Tiles;
 use crate::input::{FileOrFolder, Folder};
 use std::path::PathBuf;
 
+pub enum UiMode {
+    Normal,
+    DeleteFile,
+}
+
 #[derive(Clone, Debug)]
 pub enum FileType {
     File,
@@ -20,50 +25,68 @@ pub struct FileMetadata {
 
 pub struct State {
     pub tiles: Tiles,
-    pub base_folder: Option<Folder>,
-    pub path_in_filesystem: Option<String>,
+    pub base_folder: Folder,
+    pub path_in_filesystem: String,
     pub current_folder_names: Vec<String>,
+    pub ui_mode: UiMode,
 }
 
 impl State {
-    pub fn new() -> Self {
+    pub fn new(base_folder: Folder, path_in_filesystem: String) -> Self {
+        let file_list = calculate_utilization(&base_folder);
+        let tiles = Tiles::new(file_list);
         Self {
-            tiles: Tiles::new(),
-            base_folder: None,
-            path_in_filesystem: None,
+            tiles,
+            base_folder,
+            path_in_filesystem,
             current_folder_names: Vec::new(),
+            ui_mode: UiMode::Normal,
         }
     }
-    pub fn set_base_folder(&mut self, base_folder: Folder, path_in_filesystem: String) {
-        self.base_folder = Some(base_folder);
-        self.path_in_filesystem = Some(path_in_filesystem);
-        self.update_files();
-
-    }
-    pub fn get_current_folder_size (&self) -> Option<u64> {
-        if let Some(base_folder) = &self.base_folder {
-            let current_folder = base_folder.path(&self.current_folder_names);
-            Some(current_folder?.size())
+    pub fn get_current_folder_size (&self) -> u64 {
+        if self.current_folder_names.is_empty() {
+            self.base_folder.size()
+        } else if let Some(FileOrFolder::Folder(current_folder)) = self.base_folder.path(&self.current_folder_names) {
+            current_folder.size()
         } else {
-            return None
+            // here we have something in current_folder_names but the last
+            // one is somehow not a folder... this is a corrupted state
+            unreachable!("couldn't find current folder size")
         }
     }
     pub fn update_files(&mut self) {
-        if let Some(base_folder) = &self.base_folder {
-            let current_folder = base_folder.path(&self.current_folder_names);
-            let file_list = calculate_utilization(current_folder.expect("could not find current folder"));
+        if self.current_folder_names.is_empty() {
+            let file_list = calculate_utilization(&self.base_folder);
+            self.tiles.change_files(file_list);
+        } else if let Some(FileOrFolder::Folder(next_folder)) = self.base_folder.path(&self.current_folder_names) {
+            let file_list = calculate_utilization(&next_folder);
             self.tiles.change_files(file_list);
         }
     }
-    pub fn get_current_path(&self) -> Option<PathBuf> {
-        if let Some(path_in_filesystem) = &self.path_in_filesystem {
-            let mut full_path = PathBuf::from(&path_in_filesystem);
-            for folder in &self.current_folder_names {
-                full_path.push(&folder)
-            }
-            return Some(full_path);
+    pub fn get_current_path(&self) -> PathBuf {
+        let mut full_path = PathBuf::from(&self.path_in_filesystem);
+        for folder in &self.current_folder_names {
+            full_path.push(&folder)
         }
-        None
+        return full_path;
+    }
+    pub fn get_path_of_file_to_delete(&self) -> Option<PathBuf> {
+        let file_to_delete = &self.get_file_to_delete()?;
+        let mut full_path = PathBuf::from(&self.path_in_filesystem);
+        for folder in &self.current_folder_names {
+            full_path.push(&folder);
+        };
+        full_path.push(file_to_delete.name());
+        Some(full_path)
+    }
+    pub fn get_file_to_delete(&self) -> Option<&FileOrFolder> {
+        if let Some(file_size_rect) = &self.tiles.currently_selected() {
+            let path_to_selected = &mut self.current_folder_names.clone();
+            path_to_selected.push(String::from(&file_size_rect.file_metadata.name));
+            self.base_folder.path(&path_to_selected)
+        } else {
+            None
+        }
     }
     pub fn change_size(&mut self, full_screen: Rect) {
         self.tiles.change_area(&full_screen); // TODO: move?
@@ -80,22 +103,47 @@ impl State {
     pub fn move_selected_up(&mut self) {
         self.tiles.move_selected_up();
     }
+    pub fn get_currently_selected(&self) -> Option<String> {
+        if let Some(file_size_rect) = &self.tiles.currently_selected() {
+            Some(String::from(&file_size_rect.file_metadata.name))
+        } else {
+            None
+        }
+    }
     pub fn enter_selected(&mut self) {
-        if let Some(base_folder) = &self.base_folder {
-            if let Some(file_size_rect) = &self.tiles.currently_selected() {
-                let path_to_selected = &mut self.current_folder_names.clone();
-                path_to_selected.push(String::from(&file_size_rect.file_metadata.name));
-                if let Some(_) = base_folder.path(&path_to_selected) {
-                    // there is a folder at this path!
-                    self.current_folder_names.push(String::from(&file_size_rect.file_metadata.name));
-                    self.update_files();
-                    self.tiles.reset_selected_index();
+        if let Some(file_size_rect) = &self.tiles.currently_selected() {
+            let path_to_selected = &mut self.current_folder_names.clone();
+            path_to_selected.push(String::from(&file_size_rect.file_metadata.name));
+            if let Some(file_or_folder) = self.base_folder.path(&path_to_selected) { // TODO: CONTINUE HERE (11/04 - make this work with the FileOrFolder.path stuff, and then implement the TODO in get_file_to_delete)
+                // there is a folder at this path!
+                match file_or_folder {
+                    FileOrFolder::Folder(_) => {
+                        self.current_folder_names.push(String::from(&file_size_rect.file_metadata.name));
+                        self.update_files();
+                        self.tiles.reset_selected_index();
+                    },
+                    FileOrFolder::File(_) => {}
                 }
             }
         }
     }
     pub fn go_up(&mut self) {
         self.current_folder_names.pop();
+        self.update_files();
+    }
+    pub fn prompt_file_deletion (&mut self) {
+        if let Some(_) = self.get_file_to_delete() {
+            self.ui_mode = UiMode::DeleteFile;
+        }
+    }
+    pub fn normal_mode (&mut self) {
+        self.ui_mode = UiMode::Normal;
+    }
+    pub fn delete_file (&mut self) {
+        let file_to_delete = self.get_file_to_delete().expect("could not find file to delete");
+        let path_to_delete = &mut self.current_folder_names.clone();
+        path_to_delete.push(String::from(file_to_delete.name()));
+        self.base_folder.delete_path(&path_to_delete);
         self.update_files();
     }
 }
@@ -132,9 +180,9 @@ pub fn calculate_utilization(folder: &Folder) -> Vec<FileMetadata> {
 
     file_list.sort_by(|a, b| {
         if a.percentage == b.percentage {
-            a.name.partial_cmp(&b.name).unwrap()
+            a.name.partial_cmp(&b.name).expect("could not compare name")
         } else {
-            b.percentage.partial_cmp(&a.percentage).unwrap()
+            b.percentage.partial_cmp(&a.percentage).expect("could not compare percentage")
         }
     });
     file_list

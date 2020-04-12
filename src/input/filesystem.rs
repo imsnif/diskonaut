@@ -13,6 +13,15 @@ pub enum FileOrFolder {
     File(File),
 }
 
+impl FileOrFolder {
+    pub fn name (&self) -> &str {
+        match self {
+            FileOrFolder::Folder(folder) => &folder.name,
+            FileOrFolder::File(file) => &file.name,
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct File {
     pub name: String,
@@ -102,37 +111,44 @@ impl Folder {
         }
         total_size
     }
-    pub fn path(&self, folder_names: &Vec<String>) -> Option<&Folder> {
-        let mut folders_to_traverse: VecDeque<String> = VecDeque::from(folder_names.to_owned());
-        // folders_to_traverse.reverse();
-        // let next_name = folders_to_traverse.pop().expect("got empty path");
-        // let self_name = folders_to_traverse.pop_front().expect("got empty path");
-        if folders_to_traverse.is_empty() {
-            Some(&self)
-            // self.contents.get(&next_name).expect("could not find path")
-        } else {
-            let next_name = folders_to_traverse.pop_front().expect("could not find next path folder");
-            // &self.contents.get(next_name).expect("could not find path").path(folders_to_traverse)
-//            println!("\r*****");
-//            println!("\rfolders_to_traverse {:?}, next_name {:?}", folders_to_traverse, next_name);
-//            println!("\rname {:?}", &self.name);
-            match &self.contents.get(&next_name) {
-                Some(_) => {},
-                None => println!("\rcould not find next_name {:?}", next_name),
-            };
-            match &self.contents.get(&next_name).expect("could not find folder in path") {
-                FileOrFolder::Folder(folder) => {
-                    // folders_to_traverse.reverse(); // TODO: get rid of this
-                    folder.path(&Vec::from(folders_to_traverse)) // TODO: less allocations
-                },
-                // FileOrFolder::File(file) => panic!("got a file in the middle of a path")
-                FileOrFolder::File(_) => None
+    pub fn num_descendants (&self) -> u64 {
+        let mut total_descendants = 0;
+        for (_, descendant) in &self.contents {
+            total_descendants += 1;
+            if let FileOrFolder::Folder(folder) = descendant {
+                total_descendants += folder.num_descendants();
             }
         }
-
-
-
-
+        total_descendants
+    }
+    pub fn path(&self, folder_names: &Vec<String>) -> Option<&FileOrFolder> {
+        let mut folders_to_traverse: VecDeque<String> = VecDeque::from(folder_names.to_owned());
+        let next_name = folders_to_traverse.pop_front().expect("could not find next path folder1");
+        let next_in_path = &self.contents.get(&next_name)?;
+        if folders_to_traverse.is_empty() {
+            Some(next_in_path)
+        } else if let FileOrFolder::Folder(next_folder) = next_in_path {
+            next_folder.path(&Vec::from(folders_to_traverse)) // TODO: less allocations
+        } else {
+            Some(next_in_path)
+        }
+    }
+    pub fn delete_path(&mut self, folder_names: &Vec<String>) {
+        let mut folders_to_traverse: VecDeque<String> = VecDeque::from(folder_names.to_owned()); // TODO: better
+        if folder_names.len() == 1 {
+            &self.contents.remove(folder_names.last().expect("could not find last item in path"));
+        } else {
+            let next_name = folders_to_traverse.pop_front().expect("could not find next path folder");
+            let next_item = &mut self.contents.get_mut(&next_name).expect("could not find folder in path"); // TODO: better
+            match next_item {
+                FileOrFolder::Folder(folder) => {
+                    folder.delete_path(&Vec::from(folders_to_traverse)); // TODO: better
+                },
+                FileOrFolder::File(_) => {
+                    panic!("got a file in the middle of a path");
+                }
+            }
+        }
     }
 }
 

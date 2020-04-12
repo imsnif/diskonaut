@@ -20,12 +20,15 @@ impl Iterator for KeyboardEvents {
 }
 
 
-pub fn handle_keypress<B>(evt: Event, app: &mut App<B>)
+pub fn handle_keypress_normal_mode<B>(evt: Event, app: &mut App<B>)
 where B: Backend // TODO: better
 {
     match evt {
         Event::Key(Key::Ctrl('c')) | Event::Key(Key::Char('q')) => {
             app.exit();
+        }
+        Event::Key(Key::Ctrl('d')) => {
+            app.prompt_file_deletion();
         }
         Event::Key(Key::Char('l')) => {
             app.move_selected_right();
@@ -44,6 +47,20 @@ where B: Backend // TODO: better
         }
         Event::Key(Key::Esc) => {
             app.go_up();
+        }
+        _ => (),
+    };
+}
+
+pub fn handle_keypress_delete_file_mode<B>(evt: Event, app: &mut App<B>)
+where B: Backend // TODO: better
+{
+    match evt {
+        Event::Key(Key::Ctrl('c')) | Event::Key(Key::Char('q')) | Event::Key(Key::Esc) | Event::Key(Key::Char('n')) => {
+            app.normal_mode();
+        }
+        Event::Key(Key::Char('y')) => {
+            app.delete_file();
         }
         _ => (),
     };
