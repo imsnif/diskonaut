@@ -117,6 +117,19 @@ fn draw_rect_text_on_grid(buf: &mut Buffer, rect: &Rect, file_size_rect: &FileSi
     let second_line_length = second_line.len(); // TODO: better
     let second_line_start_position = ((rect.width - second_line_length as u16) as f64 / 2.0).ceil() as u16 + rect.x;
 
+
+    let first_line_style = if file_size_rect.selected {
+        match file_size_rect.file_metadata.file_type {
+            FileType::File => Style::default().bg(Color::Green).fg(Color::White).modifier(Modifier::BOLD),
+            FileType::Folder => Style::default().bg(Color::Green).fg(Color::Magenta).modifier(Modifier::BOLD)
+        }
+    } else {
+        match file_size_rect.file_metadata.file_type {
+            FileType::File => Style::default().fg(Color::White),
+            FileType::Folder => Style::default().fg(Color::Blue).modifier(Modifier::BOLD)
+        }
+    };
+
     let text_style = if file_size_rect.selected {
         Style::default().bg(Color::Green).fg(Color::White).modifier(Modifier::BOLD)
     } else {
@@ -133,22 +146,22 @@ fn draw_rect_text_on_grid(buf: &mut Buffer, rect: &Rect, file_size_rect: &FileSi
     }
     if rect.height > 5 {
         let line_gap = if rect.height % 2 == 0 { 1 } else { 2 };
-        buf.set_string(first_line_start_position, (rect.height / 2) + rect.y - 1, first_line, text_style);
+        buf.set_string(first_line_start_position, (rect.height / 2) + rect.y - 1, first_line, first_line_style);
         buf.set_string(second_line_start_position, (rect.height / 2) + rect.y + line_gap, second_line, text_style);
     } else if rect.height == 5 {
-        buf.set_string(first_line_start_position, (rect.height / 2) + rect.y, first_line, text_style);
+        buf.set_string(first_line_start_position, (rect.height / 2) + rect.y, first_line, first_line_style);
         buf.set_string(second_line_start_position, (rect.height / 2) + rect.y + 1, second_line, text_style);
     } else if rect.height > 4 {
-        buf.set_string(first_line_start_position, rect.y + 1, first_line, text_style);
+        buf.set_string(first_line_start_position, rect.y + 1, first_line, first_line_style);
         buf.set_string(second_line_start_position, rect.y + 2, second_line, text_style);
     } else if rect.height == 4 {
-        buf.set_string(first_line_start_position, rect.y + 1, first_line, text_style);
+        buf.set_string(first_line_start_position, rect.y + 1, first_line, first_line_style);
         buf.set_string(second_line_start_position, rect.y + 3, second_line, text_style);
     } else if rect.height > 2 {
-        buf.set_string(first_line_start_position, rect.y + 1, first_line, text_style);
+        buf.set_string(first_line_start_position, rect.y + 1, first_line, first_line_style);
         buf.set_string(second_line_start_position, rect.y + 2, second_line, text_style);
     } else {
-        buf.set_string(first_line_start_position, rect.y + 1, first_line, text_style);
+        buf.set_string(first_line_start_position, rect.y + 1, first_line, first_line_style);
     }
 }
 

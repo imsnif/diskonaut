@@ -1,5 +1,5 @@
 use tui::layout::Rect;
-use tui::style::{Style, Color};
+use tui::style::{Style, Color, Modifier};
 use ::tui::layout::Alignment;
 use tui::widgets::{Widget};
 use ::tui::terminal::Frame;
@@ -22,7 +22,7 @@ impl TitleLine {
         Self { current_path, size }
     }
     pub fn render(&self, frame: &mut Frame<impl Backend>, rect: Rect) {
-        let title_text = Text::styled(format!("{} ({})", self.current_path, self.size), Style::default().fg(Color::Green));
+        let title_text = Text::styled(format!("{} ({})", self.current_path, self.size), Style::default().fg(Color::Green).modifier(Modifier::BOLD));
         let title_lines = [
             Text::styled("\n", Style::default()),
             title_text,
