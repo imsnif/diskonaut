@@ -41,7 +41,7 @@ expression: "&terminal_draw_events_mirror[0]"
 │                                                          │
 │                                                          │
 │                                                          │
-│                       subfolder1/                        │
+│               subfolder1/ (+1 descendants)               │
 │                                                          │
 │                                                          │
 │                        4.1K (33%)                        │

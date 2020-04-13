@@ -95,9 +95,10 @@ fn draw_rect_on_grid (buf: &mut Buffer, rect: Rect) {
 fn draw_rect_text_on_grid(buf: &mut Buffer, rect: &Rect, file_size_rect: &FileSizeRect) { // TODO: better, combine args
     let max_text_length = if rect.width > 2 { rect.width - 2 } else { 0 };
     let name = &file_size_rect.file_metadata.name;
+    let descendant_count = &file_size_rect.file_metadata.descendants;
     let percentage = &file_size_rect.file_metadata.percentage;
 
-    let first_line_text = if file_size_rect.selected {
+    let filename_text = if file_size_rect.selected {
         match file_size_rect.file_metadata.file_type {
             FileType::File => format!("{}", name),
             FileType::Folder => format!("{}/", name),
@@ -108,7 +109,23 @@ fn draw_rect_text_on_grid(buf: &mut Buffer, rect: &Rect, file_size_rect: &FileSi
             FileType::Folder=> format!("{}/", name),
         }
     };
-    let first_line = truncate_middle(&first_line_text, max_text_length);
+    let first_line = match file_size_rect.file_metadata.file_type {
+        FileType::File => {
+            truncate_middle(&filename_text, max_text_length)
+        },
+        FileType::Folder => {
+            let descendant_count = descendant_count.expect("folder should have descendants");
+            let short_descendants_indication = format!("(+{})", descendant_count); // TODO: use DisplaySize in case there is a bazillion
+            let long_descendants_indication = format!("(+{} descendants)", descendant_count); // TODO: use DisplaySize in case there is a bazillion
+            if &filename_text.len() + long_descendants_indication.len() <= max_text_length as usize {
+                format!("{} {}", filename_text, long_descendants_indication)
+            } else if &filename_text.len() + short_descendants_indication.len() <= max_text_length as usize {
+                format!("{} {}", filename_text, short_descendants_indication)
+            } else {
+                truncate_middle(&filename_text, max_text_length)
+            }
+        }
+    };
     let first_line_length = first_line.len(); // TODO: better
     let first_line_start_position = ((rect.width - first_line_length as u16) as f64 / 2.0).ceil() as u16 + rect.x;
 

@@ -19,6 +19,7 @@ pub enum FileType {
 pub struct FileMetadata {
     pub name: String,
     pub size: u64,
+    pub descendants: Option<u64>,
     pub percentage: f64, // 1.0 is 100% (0.5 is 50%, etc.)
     pub file_type: FileType,
 }
@@ -114,7 +115,7 @@ impl State {
         if let Some(file_size_rect) = &self.tiles.currently_selected() {
             let path_to_selected = &mut self.current_folder_names.clone();
             path_to_selected.push(String::from(&file_size_rect.file_metadata.name));
-            if let Some(file_or_folder) = self.base_folder.path(&path_to_selected) { // TODO: CONTINUE HERE (11/04 - make this work with the FileOrFolder.path stuff, and then implement the TODO in get_file_to_delete)
+            if let Some(file_or_folder) = self.base_folder.path(&path_to_selected) {
                 // there is a folder at this path!
                 match file_or_folder {
                     FileOrFolder::Folder(_) => {
@@ -155,9 +156,11 @@ pub fn calculate_utilization(folder: &Folder) -> Vec<FileMetadata> {
         match file_or_folder {
             FileOrFolder::Folder(folder) => {
                 let size = folder.size();
+                let descendants = Some(folder.num_descendants());
                 let percentage = size as f64 / total_size as f64;
                 let file_metadata = FileMetadata {
                     name: String::from(name),
+                    descendants,
                     percentage,
                     size,
                     file_type: FileType::Folder
@@ -169,6 +172,7 @@ pub fn calculate_utilization(folder: &Folder) -> Vec<FileMetadata> {
                 let percentage = size as f64 / total_size as f64;
                 let file_metadata = FileMetadata {
                     name: String::from(name),
+                    descendants: None,
                     percentage,
                     size,
                     file_type: FileType::File
