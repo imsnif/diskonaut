@@ -402,7 +402,7 @@ fn minimum_tile_sides () {
     }
 
     start(backend, keyboard_events, temp_dir_path.clone());
-    // std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
+    std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
 
     let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
