@@ -4,6 +4,8 @@ use ::tui::Terminal;
 use ::tui::backend::Backend;
 use ::tui::layout::{Layout, Constraint, Direction};
 
+use std::path::PathBuf;
+
 use crate::ui::state::{State, UiMode};
 use crate::ui::{TitleLine, BottomLine, MessageBox};
 use crate::ui::RectangleGrid;
@@ -26,7 +28,9 @@ where B: Backend
     pub fn render (&mut self, state: &mut State) {
         self.terminal.draw(|mut f| {
             let current_path = state.get_current_path();
-            let folder_size = state.get_current_folder_size();
+            let current_path_size = state.get_current_folder_size();
+            let base_path = PathBuf::from(&state.path_in_filesystem); // TODO: look into changing path_in_filesystem to be a PathBuf and then send a ref to it
+            let base_path_size = state.get_total_size();
             let full_screen = f.size();
             let mut chunks = Layout::default()
                 .direction(Direction::Vertical)
@@ -44,7 +48,7 @@ where B: Backend
             chunks[1].width -= 1;
             chunks[1].height -= 1;
             state.change_size(chunks[1]);
-            TitleLine::new(&current_path, folder_size).render(&mut f, chunks[0]);
+            TitleLine::new(&base_path, base_path_size, &current_path, current_path_size, state.space_freed).render(&mut f, chunks[0]);
             RectangleGrid::new((&state.tiles.rectangles).to_vec()).render(&mut f, chunks[1]);
             BottomLine::new().render(&mut f, chunks[2]);
             match &state.ui_mode {

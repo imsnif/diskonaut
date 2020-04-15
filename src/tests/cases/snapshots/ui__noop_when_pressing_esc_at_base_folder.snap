@@ -2,9 +2,9 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[0]"
 ---
-                                                                                                                                                                                              
-                                                              /tmp/bandwhich_tests/noop_when_pressing_esc_at_base_folder (12.3K)                                                              
-                                                                                                                                                                                              
+                                                                                          ┌──────────────────────────────────────────────────────────────────────────┐┌──────────────────────┐
+            /tmp/bandwhich_tests/noop_when_pressing_esc_at_base_folder (12.3K)            │    /tmp/bandwhich_tests/noop_when_pressing_esc_at_base_folder (12.3K)    ││    Space freed: 0    │
+                                                                                          └──────────────────────────────────────────────────────────────────────────┘└──────────────────────┘
 ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┬──────────────────────────────────────────────────────────────┐
 │                                                                                                                             │                                                              │
 │                                                                                                                             │                                                              │

@@ -29,6 +29,7 @@ pub struct State {
     pub base_folder: Folder,
     pub path_in_filesystem: String,
     pub current_folder_names: Vec<String>,
+    pub space_freed: u64,
     pub ui_mode: UiMode,
 }
 
@@ -41,8 +42,12 @@ impl State {
             base_folder,
             path_in_filesystem,
             current_folder_names: Vec::new(),
+            space_freed: 0,
             ui_mode: UiMode::Normal,
         }
+    }
+    pub fn get_total_size (&self) -> u64 {
+        self.base_folder.size()
     }
     pub fn get_current_folder_size (&self) -> u64 {
         if self.current_folder_names.is_empty() {
@@ -54,6 +59,24 @@ impl State {
             // one is somehow not a folder... this is a corrupted state
             unreachable!("couldn't find current folder size")
         }
+    }
+    pub fn get_current_folder_percentage (&self) -> f64 {
+        if self.current_folder_names.is_empty() {
+            return 1.0 // 100%
+        } else if let Some(FileOrFolder::Folder(current_folder)) = self.base_folder.path(&self.current_folder_names) {
+            current_folder.size() as f64 / self.base_folder.size() as f64
+        } else {
+            // here we have something in current_folder_names but the last
+            // one is somehow not a folder... this is a corrupted state
+            unreachable!("couldn't find current folder size")
+        }
+    }
+    pub fn get_relative_path (&self) -> PathBuf {
+        let mut full_path = PathBuf::new();
+        for folder in &self.current_folder_names {
+            full_path.push(&folder)
+        }
+        return full_path;
     }
     pub fn update_files(&mut self) {
         if self.current_folder_names.is_empty() {
@@ -141,9 +164,15 @@ impl State {
         self.ui_mode = UiMode::Normal;
     }
     pub fn delete_file (&mut self) {
-        let file_to_delete = self.get_file_to_delete().expect("could not find file to delete");
         let path_to_delete = &mut self.current_folder_names.clone();
+        let file_to_delete = self.get_file_to_delete().expect("could not find file to delete");
         path_to_delete.push(String::from(file_to_delete.name()));
+        if let Some(file_or_folder_to_delete) = self.base_folder.path(&path_to_delete) {
+            self.space_freed += match file_or_folder_to_delete {
+                FileOrFolder::File(file) => file.size,
+                FileOrFolder::Folder(folder) => folder.size(),
+            };
+        }
         self.base_folder.delete_path(&path_to_delete);
         self.update_files();
     }

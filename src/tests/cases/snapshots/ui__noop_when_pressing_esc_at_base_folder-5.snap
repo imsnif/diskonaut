@@ -3,7 +3,7 @@ source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[4]"
 ---
                                                                                                                                                                                               
-                                                              /tmp/bandwhich_tests/noop wh n_pressing_esc_at base_folder (12.3K)                                                              
+            /tmp/bandwhich_tests/noop wh n_pressing_esc_at base_folder (12.3K)                                                                                                                
                                                                                                                                                                                               
                                                                                                                               ┬                                                               
                                                                                                                               │                                                               
