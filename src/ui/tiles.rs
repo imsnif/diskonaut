@@ -197,7 +197,7 @@ impl Tiles {
             if let Some(next_index) = next_rectangle_index {
                 self.set_selected_index(&next_index);
             }
-        } else {
+        } else if self.rectangles.len() > 0 {
             self.set_selected_index(&0);
         }
 
@@ -239,7 +239,7 @@ impl Tiles {
             if let Some(next_index) = next_rectangle_index {
                 self.set_selected_index(&next_index);
             }
-        } else {
+        } else if self.rectangles.len() > 0 {
             self.set_selected_index(&0);
         }
     }
@@ -282,7 +282,7 @@ impl Tiles {
             if let Some(next_index) = next_rectangle_index {
                 self.set_selected_index(&next_index);
             }
-        } else {
+        } else if self.rectangles.len() > 0 {
             self.set_selected_index(&0);
         }
     }
@@ -326,7 +326,7 @@ impl Tiles {
             if let Some(next_index) = next_rectangle_index {
                 self.set_selected_index(&next_index);
             }
-        } else {
+        } else if self.rectangles.len() > 0 {
             self.set_selected_index(&0);
         }
     }
