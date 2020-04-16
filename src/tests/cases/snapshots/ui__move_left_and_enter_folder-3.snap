@@ -18,8 +18,8 @@ expression: "&terminal_draw_events_mirror[2]"
                                                                                                                                                GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG 
                                                                                                                                                GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG 
                                                                                                                                                GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG 
-                                                                                                                                               GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG 
                                                          subfolder1/ (+1 descendants)                                                          GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG 
+                                                                                                                                               GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG 
                                                                                                                                                GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG 
                                                                   8.2K (50%)                                                                   GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG 
                                                                                                                                                GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG 
@@ -27,7 +27,6 @@ expression: "&terminal_draw_events_mirror[2]"
                                                                                                                                                GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG 
                                                                                                                                                GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG 
                                                                                                                                                GGGGGGGGGGGGGGGGGGGGfile3GGGGGGGGGGGGGGGGGGGGG 
-                                                                                                                                               GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG 
                                                                                                                                                GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG 
                                                                                                                                                GGGGGGGGGGGGGGGGGG4.1KG(25%)GGGGGGGGGGGGGGGGGG 
                                                                                                                                                GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG 
@@ -50,6 +49,7 @@ expression: "&terminal_draw_events_mirror[2]"
                                                                                                                                                GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG 
                                                                                                                                                GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG 
                                                                                                                                                GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG 
+                                                                                                                                                                                              
                                                                                                                                                                                               
                                                                                                                                                                                               
 

@@ -18,11 +18,10 @@ expression: "&terminal_draw_events_mirror[0]"
 │                             │                            │
 │                             │                            │
 │                             │                            │
-│                             │                            │
 │            file2            │           file3            │
 │                             │                            │
-│         4.1K (33%)          │         4.1K (33%)         │
 │                             │                            │
+│         4.1K (33%)          │         4.1K (33%)         │
 │                             │                            │
 │                             │                            │
 │                             │                            │
@@ -52,4 +51,5 @@ expression: "&terminal_draw_events_mirror[0]"
 │                                                          │
 └──────────────────────────────────────────────────────────┘
  x = Small files                                            
+ ←↓↑→/<ENTER>/<ESC>: navigate, <Ctrl-D>: del                
 

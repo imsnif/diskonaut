@@ -39,7 +39,7 @@ where B: Backend
                     [
                         Constraint::Length(3),
                         Constraint::Min(10),
-                        Constraint::Length(1),
+                        Constraint::Length(2),
                     ].as_ref()
                 )
                 .split(full_screen);

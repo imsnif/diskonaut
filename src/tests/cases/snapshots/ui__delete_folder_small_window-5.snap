@@ -28,12 +28,11 @@ expression: "&terminal_draw_events_mirror[4]"
                               │                             
              file2            │           file3             
                               │                             
-                              │                             
           4.1K (50%)          │         4.1K (50%)          
                               │                             
                               │                             
                               │                             
-                                                            
+                              │                             
                                                             
 │                             │                            │
                               │                             
@@ -51,5 +50,6 @@ expression: "&terminal_draw_events_mirror[4]"
                               │                             
                               │                             
                               ┴                             
+                                                            
                                                             
 

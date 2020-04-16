@@ -18,8 +18,8 @@ expression: "&terminal_draw_events_mirror[0]"
 │                                                                                                                                             │                                              │
 │                                                                                                                                             │                                              │
 │                                                                                                                                             │                                              │
-│                                                                                                                                             │                                              │
 │                                                        subfolder1/ (+1 descendants)                                                         │                                              │
+│                                                                                                                                             │                                              │
 │                                                                                                                                             │                                              │
 │                                                                 8.2K (50%)                                                                  │                                              │
 │                                                                                                                                             │                                              │
@@ -27,7 +27,6 @@ expression: "&terminal_draw_events_mirror[0]"
 │                                                                                                                                             │                                              │
 │                                                                                                                                             │                                              │
 │                                                                                                                                             │                    file3                     │
-│                                                                                                                                             │                                              │
 │                                                                                                                                             │                                              │
 │                                                                                                                                             │                  4.1K (25%)                  │
 │                                                                                                                                             │                                              │
@@ -52,4 +51,5 @@ expression: "&terminal_draw_events_mirror[0]"
 │                                                                                                                                             │                                              │
 └─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┴──────────────────────────────────────────────┘
  x = Small files                                                                                                                                                                              
+ <hjkl> or <arrow keys> - move around, <ENTER> - enter folder, <ESC> - parent folder, <Ctrl-D> - delete                                                                                       
 

@@ -17,7 +17,6 @@ expression: "&terminal_draw_events_mirror[0]"
 │                                                                                                                             │                                                              │
 │                                                            file2                                                            │                                                              │
 │                                                                                                                             │                                                              │
-│                                                                                                                             │                                                              │
 │                                                         4.1K (33%)                                                          │                                                              │
 │                                                                                                                             │                                                              │
 │                                                                                                                             │                                                              │
@@ -26,8 +25,8 @@ expression: "&terminal_draw_events_mirror[0]"
 │                                                                                                                             │                                                              │
 │                                                                                                                             │                                                              │
 │                                                                                                                             │                                                              │
-│                                                                                                                             │                 subfolder1/ (+1 descendants)                 │
 │                                                                                                                             │                                                              │
+│                                                                                                                             │                 subfolder1/ (+1 descendants)                 │
 ├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤                                                              │
 │                                                                                                                             │                          4.1K (33%)                          │
 │                                                                                                                             │                                                              │
@@ -52,4 +51,5 @@ expression: "&terminal_draw_events_mirror[0]"
 │                                                                                                                             │                                                              │
 └─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┴──────────────────────────────────────────────────────────────┘
  x = Small files                                                                                                                                                                              
+ <hjkl> or <arrow keys> - move around, <ENTER> - enter folder, <ESC> - parent folder, <Ctrl-D> - delete                                                                                       
 

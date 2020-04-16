@@ -30,16 +30,16 @@ where B: Backend // TODO: better
         Event::Key(Key::Ctrl('d')) => {
             app.prompt_file_deletion();
         }
-        Event::Key(Key::Char('l')) => {
+        Event::Key(Key::Char('l')) | Event::Key(Key::Right) => {
             app.move_selected_right();
         }
-        Event::Key(Key::Char('h')) => {
+        Event::Key(Key::Char('h')) | Event::Key(Key::Left) => {
             app.move_selected_left();
         }
-        Event::Key(Key::Char('j')) => {
+        Event::Key(Key::Char('j')) | Event::Key(Key::Down) => {
             app.move_selected_down();
         }
-        Event::Key(Key::Char('k')) => {
+        Event::Key(Key::Char('k')) | Event::Key(Key::Up) => {
             app.move_selected_up();
         }
         Event::Key(Key::Char('\n')) => {
