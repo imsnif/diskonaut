@@ -13,7 +13,8 @@ use crate::ui::RectangleGrid;
 pub struct Display <B>
 where B: Backend
 {
-    terminal: Terminal<B>
+    terminal: Terminal<B>,
+    scan_boolean: bool, // TODO: elsewhere - this is to determine whether "Sanning folder..." should be bold or not
 }
 
 impl <B> Display<B>
@@ -23,9 +24,11 @@ where B: Backend
         let mut terminal = Terminal::new(terminal_backend).expect("failed to create terminal");
         terminal.clear().expect("failed to clear terminal");
         terminal.hide_cursor().expect("failed to hide cursor");
-        Display { terminal }
+        Display { terminal, scan_boolean: true }
     }
-    pub fn render (&mut self, state: &mut State) {
+    pub fn render (&mut self, state: &mut State) { // TODO: change name to render_ui
+        let scan_boolean = self.scan_boolean;
+        self.scan_boolean = !scan_boolean;
         self.terminal.draw(|mut f| {
             let current_path = state.get_current_path();
             let current_path_size = state.get_current_folder_size();
@@ -48,9 +51,9 @@ where B: Backend
             chunks[1].width -= 1;
             chunks[1].height -= 1;
             state.change_size(chunks[1]);
-            TitleLine::new(&base_path, base_path_size, &current_path, current_path_size, state.space_freed).render(&mut f, chunks[0]);
+            TitleLine::new(&base_path, base_path_size, &current_path, current_path_size, state.space_freed, state.ui_mode, scan_boolean).render(&mut f, chunks[0]);
             RectangleGrid::new((&state.tiles.rectangles).to_vec()).render(&mut f, chunks[1]);
-            BottomLine::new().render(&mut f, chunks[2]);
+            BottomLine::new(state.ui_mode).render(&mut f, chunks[2]);
             match &state.ui_mode {
                 UiMode::DeleteFile => {
                     let file_to_delete = state.get_file_to_delete().expect("cannot find file to delete");

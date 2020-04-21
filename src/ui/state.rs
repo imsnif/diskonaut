@@ -4,7 +4,9 @@ use crate::ui::Tiles;
 use crate::input::{FileOrFolder, Folder};
 use std::path::PathBuf;
 
+#[derive(Clone, Copy)]
 pub enum UiMode {
+    Loading,
     Normal,
     DeleteFile,
 }
@@ -43,17 +45,20 @@ impl State {
             path_in_filesystem,
             current_folder_names: Vec::new(),
             space_freed: 0,
-            ui_mode: UiMode::Normal,
+            ui_mode: UiMode::Loading,
         }
     }
     pub fn get_total_size (&self) -> u64 {
-        self.base_folder.size()
+        self.base_folder.size
+        // self.base_folder.size()
     }
     pub fn get_current_folder_size (&self) -> u64 {
         if self.current_folder_names.is_empty() {
-            self.base_folder.size()
+            self.base_folder.size
+            // self.base_folder.size()
         } else if let Some(FileOrFolder::Folder(current_folder)) = self.base_folder.path(&self.current_folder_names) {
-            current_folder.size()
+            current_folder.size
+            // current_folder.size()
         } else {
             // here we have something in current_folder_names but the last
             // one is somehow not a folder... this is a corrupted state
@@ -64,7 +69,8 @@ impl State {
         if self.current_folder_names.is_empty() {
             return 1.0 // 100%
         } else if let Some(FileOrFolder::Folder(current_folder)) = self.base_folder.path(&self.current_folder_names) {
-            current_folder.size() as f64 / self.base_folder.size() as f64
+            current_folder.size as f64 / self.base_folder.size as f64
+            // current_folder.size() as f64 / self.base_folder.size() as f64
         } else {
             // here we have something in current_folder_names but the last
             // one is somehow not a folder... this is a corrupted state
@@ -143,8 +149,8 @@ impl State {
                 match file_or_folder {
                     FileOrFolder::Folder(_) => {
                         self.current_folder_names.push(String::from(&file_size_rect.file_metadata.name));
-                        self.update_files();
                         self.tiles.reset_selected_index();
+                        self.update_files();
                     },
                     FileOrFolder::File(_) => {}
                 }
@@ -153,6 +159,7 @@ impl State {
     }
     pub fn go_up(&mut self) {
         self.current_folder_names.pop();
+        self.tiles.reset_selected_index();
         self.update_files();
     }
     pub fn prompt_file_deletion (&mut self) {
@@ -170,22 +177,27 @@ impl State {
         if let Some(file_or_folder_to_delete) = self.base_folder.path(&path_to_delete) {
             self.space_freed += match file_or_folder_to_delete {
                 FileOrFolder::File(file) => file.size,
-                FileOrFolder::Folder(folder) => folder.size(),
+                FileOrFolder::Folder(folder) => folder.size,
+                // FileOrFolder::Folder(folder) => folder.size(),
             };
         }
         self.base_folder.delete_path(&path_to_delete);
+        self.tiles.reset_selected_index();
         self.update_files();
     }
 }
 
 pub fn calculate_utilization(folder: &Folder) -> Vec<FileMetadata> {
     let mut file_list = Vec::new();
-    let total_size = folder.size();
+    let total_size = folder.size;
+    // let total_size = folder.size();
     for (name, file_or_folder) in &folder.contents {
         match file_or_folder {
             FileOrFolder::Folder(folder) => {
-                let size = folder.size();
-                let descendants = Some(folder.num_descendants());
+                let size = folder.size;
+                // let size = folder.size();
+                let descendants = Some(folder.num_descendants);
+                // let descendants = Some(11);
                 let percentage = size as f64 / total_size as f64;
                 let file_metadata = FileMetadata {
                     name: String::from(name),

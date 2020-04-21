@@ -4,11 +4,15 @@ use tui::widgets::Widget;
 
 use tui::buffer::Buffer;
 
-pub struct BottomLine {}
+use crate::ui::UiMode;
+
+pub struct BottomLine {
+    ui_mode: UiMode, // TODO: better, we should not know about this
+}
 
 impl BottomLine {
-    pub fn new() -> Self {
-        Self {}
+    pub fn new(ui_mode: UiMode) -> Self {
+        Self {ui_mode}
     }
 }
 
@@ -19,7 +23,10 @@ impl<'a> Widget for BottomLine {
         bottom_left_character.set_style(Style::default().bg(Color::White).fg(Color::Black));
         buf.set_string(3, area.y + area.height - 2, "= Small files", Style::default());
         
-        let long_controls_line = String::from("<hjkl> or <arrow keys> - move around, <ENTER> - enter folder, <ESC> - parent folder, <Ctrl-D> - delete");
+        let long_controls_line = match self.ui_mode {
+            UiMode::Loading => String::from("<hjkl> or <arrow keys> - move around, <ENTER> - enter folder, <ESC> - parent folder"),
+            _ => String::from("<hjkl> or <arrow keys> - move around, <ENTER> - enter folder, <ESC> - parent folder, <Ctrl-D> - delete")
+        };
         let short_controls_line = String::from("←↓↑→/<ENTER>/<ESC>: navigate, <Ctrl-D>: del");
         let too_small_line = "(...)";
         if area.width >= long_controls_line.chars().count() as u16 {

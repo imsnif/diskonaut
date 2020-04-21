@@ -405,6 +405,7 @@ fn minimum_tile_sides () {
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
 
     let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
+    // let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor];
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]

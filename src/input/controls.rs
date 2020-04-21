@@ -20,6 +20,35 @@ impl Iterator for KeyboardEvents {
 }
 
 
+pub fn handle_keypress_loading_mode<B>(evt: Event, app: &mut App<B>)
+where B: Backend // TODO: better
+{
+    match evt {
+        Event::Key(Key::Ctrl('c')) | Event::Key(Key::Char('q')) => {
+            app.exit();
+        }
+        Event::Key(Key::Char('l')) | Event::Key(Key::Right) => {
+            app.move_selected_right();
+        }
+        Event::Key(Key::Char('h')) | Event::Key(Key::Left) => {
+            app.move_selected_left();
+        }
+        Event::Key(Key::Char('j')) | Event::Key(Key::Down) => {
+            app.move_selected_down();
+        }
+        Event::Key(Key::Char('k')) | Event::Key(Key::Up) => {
+            app.move_selected_up();
+        }
+        Event::Key(Key::Char('\n')) => {
+            app.enter_selected();
+        }
+        Event::Key(Key::Esc) => {
+            app.go_up();
+        }
+        _ => (),
+    };
+}
+
 pub fn handle_keypress_normal_mode<B>(evt: Event, app: &mut App<B>)
 where B: Backend // TODO: better
 {

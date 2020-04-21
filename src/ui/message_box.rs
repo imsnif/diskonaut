@@ -104,7 +104,7 @@ impl<'a> Widget for MessageBox<'a> {
                 }
             },
             FileOrFolder::Folder(folder) => {
-                let children = folder.num_descendants();
+                let children = folder.num_descendants;
                 let full_line = format!("Delete folder with {} children?", children);
                 let short_line = format!("Delete folder?");
                 if text_length >= full_line.len() as u16 {

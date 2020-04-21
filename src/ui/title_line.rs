@@ -10,6 +10,7 @@ use std::path::PathBuf;
 use ::tui::widgets::{Block, Borders, Paragraph, Text};
 
 use crate::ui::DisplaySize;
+use crate::ui::UiMode;
 
 // TODO: merge with identical function elsewhere
 fn truncate_middle(row: &str, max_length: u16) -> String {
@@ -55,16 +56,18 @@ pub struct TitleLine {
     current_path: String,
     current_path_size: DisplaySize,
     space_freed: DisplaySize,
+    ui_mode: UiMode, // TODO: better, we should not know about this
+    scan_boolean: bool,
 }
 
 impl TitleLine {
-    pub fn new(base_path: &PathBuf, base_path_size: u64, current_path: &PathBuf, current_path_size: u64, space_freed: u64) -> Self {
+    pub fn new(base_path: &PathBuf, base_path_size: u64, current_path: &PathBuf, current_path_size: u64, space_freed: u64, ui_mode: UiMode, scan_boolean: bool) -> Self {
         let base_path = base_path.clone().into_os_string().into_string().expect("could not convert os string to string");
         let current_path = current_path.clone().into_os_string().into_string().expect("could not convert os string to string");
         let base_path_size = DisplaySize(base_path_size as f64);
         let current_path_size = DisplaySize(current_path_size as f64);
         let space_freed = DisplaySize(space_freed as f64);
-        Self { base_path, base_path_size, current_path, current_path_size, space_freed }
+        Self { base_path, base_path_size, current_path, current_path_size, space_freed, ui_mode, scan_boolean }
     }
     pub fn render(&self, frame: &mut Frame<impl Backend>, rect: Rect) {
         let current_path_text = format!("{} ({})", &self.current_path, &self.current_path_size);
@@ -81,11 +84,53 @@ impl TitleLine {
             Text::styled(format!("Space freed: {}", &self.space_freed), Style::default().fg(Color::Yellow).modifier(Modifier::BOLD))
         ];
 
+        let loading_text = String::from("Scanning folder...");
+        let loading_display = if self.scan_boolean {
+            [
+                Text::styled(loading_text.clone(), Style::default().fg(Color::Yellow).modifier(Modifier::BOLD))
+            ]
+        } else {
+            [
+                Text::styled(loading_text.clone(), Style::default().fg(Color::Yellow))
+            ]
+        };
+
         let min_current_path_len = current_path_text.len() as u16 + 10;
         let min_base_path_len = base_path_text.len() as u16 + 10;
         let min_space_freed_text_len = space_freed_text.len() as u16 + 10;
+
+        let min_loading_text_len = loading_text.len() as u16 + 10;
         
-        if min_current_path_len + min_base_path_len + min_space_freed_text_len <= rect.width {
+        if let UiMode::Loading = self.ui_mode {
+            if min_current_path_len + min_loading_text_len <= rect.width {
+                let remainder = rect.width - min_space_freed_text_len - min_current_path_len;
+                let parts = Layout::default()
+                    .direction(Direction::Horizontal)
+                    .margin(0)
+                    .constraints(
+                        [
+                            Constraint::Length(min_current_path_len + remainder),
+                            Constraint::Length(min_loading_text_len),
+                        ].as_ref()
+                    )
+                    .split(rect);
+
+
+                let (left, right) = (parts[0], parts[1]);
+                render_boxless_title!(current_path_display, frame, left);
+                render_boxed_title!(loading_display, frame, right);
+            } else {
+                // TODO: merge with below final else
+                let current_path_size_len = &self.current_path_size.to_string().len() + 2; // 2 == two parentheses chars
+                // TODO: truncate folder numes in full path a la fish
+                let current_path_text = format!("{} ({})", truncate_middle(&self.current_path, rect.width - current_path_size_len as u16), &self.current_path_size);
+                let current_path_display = [
+                    Text::raw("\n"), // this isn't inside a block, so it needs a gentle push to be centered vertically
+                    Text::styled(&current_path_text, Style::default().fg(Color::Green).modifier(Modifier::BOLD))
+                ];
+                render_boxless_title!(current_path_display, frame, rect);
+            }
+        } else if min_current_path_len + min_base_path_len + min_space_freed_text_len <= rect.width {
             let remainder = rect.width - min_space_freed_text_len - min_base_path_len - min_current_path_len;
             let parts = Layout::default()
                 .direction(Direction::Horizontal)
