@@ -10,7 +10,6 @@ use std::path::PathBuf;
 use ::tui::widgets::{Block, Borders, Paragraph, Text};
 
 use crate::ui::DisplaySize;
-use crate::ui::UiMode;
 
 // TODO: merge with identical function elsewhere
 fn truncate_middle(row: &str, max_length: u16) -> String {
@@ -56,18 +55,22 @@ pub struct TitleLine {
     current_path: String,
     current_path_size: DisplaySize,
     space_freed: DisplaySize,
-    ui_mode: UiMode, // TODO: better, we should not know about this
+    show_loading: bool,
     scan_boolean: bool,
 }
 
 impl TitleLine {
-    pub fn new(base_path: &PathBuf, base_path_size: u64, current_path: &PathBuf, current_path_size: u64, space_freed: u64, ui_mode: UiMode, scan_boolean: bool) -> Self {
+    pub fn new(base_path: &PathBuf, base_path_size: u64, current_path: &PathBuf, current_path_size: u64, space_freed: u64, scan_boolean: bool) -> Self {
         let base_path = base_path.clone().into_os_string().into_string().expect("could not convert os string to string");
         let current_path = current_path.clone().into_os_string().into_string().expect("could not convert os string to string");
         let base_path_size = DisplaySize(base_path_size as f64);
         let current_path_size = DisplaySize(current_path_size as f64);
         let space_freed = DisplaySize(space_freed as f64);
-        Self { base_path, base_path_size, current_path, current_path_size, space_freed, ui_mode, scan_boolean }
+        Self { base_path, base_path_size, current_path, current_path_size, space_freed, scan_boolean, show_loading: false }
+    }
+    pub fn show_loading(mut self) -> Self {
+        self.show_loading = true;
+        self
     }
     pub fn render(&self, frame: &mut Frame<impl Backend>, rect: Rect) {
         let current_path_text = format!("{} ({})", &self.current_path, &self.current_path_size);
@@ -101,7 +104,7 @@ impl TitleLine {
 
         let min_loading_text_len = loading_text.len() as u16 + 10;
         
-        if let UiMode::Loading = self.ui_mode {
+        if self.show_loading {
             if min_current_path_len + min_loading_text_len <= rect.width {
                 let remainder = rect.width - min_space_freed_text_len - min_current_path_len;
                 let parts = Layout::default()

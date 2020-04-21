@@ -1,13 +1,10 @@
 #[allow(dead_code)]
 
 use std::collections::{HashMap, VecDeque};
-use std::fs;
 use std::fs::Metadata;
 use std::os::unix::fs::MetadataExt; // TODO: support other OSs
 
-use walkdir::WalkDir;
 use std::path::{Path, PathBuf};
-use ::std::sync::{Arc, Mutex};
 
 #[derive(Debug, Clone)]
 pub enum FileOrFolder {
@@ -20,6 +17,12 @@ impl FileOrFolder {
         match self {
             FileOrFolder::Folder(folder) => &folder.name,
             FileOrFolder::File(file) => &file.name,
+        }
+    }
+    pub fn size (&self) -> u64 {
+        match self {
+            FileOrFolder::Folder(folder) => folder.size,
+            FileOrFolder::File(file) => file.size,
         }
     }
 }
@@ -58,12 +61,7 @@ impl Folder {
             self.add_folder(relative_path);
         } else {
             let size = entry_metadata.blocks() * 512; // TODO: support other OSs that do not have blocks
-
             self.add_file(relative_path, size);
-//            let mut files_read = files_read.lock().unwrap();
-//            let mut size_read = size_read.lock().unwrap();
-//            *files_read += 1;
-//            *size_read += size;
         }
     }
 
@@ -126,7 +124,6 @@ impl Folder {
             self.num_descendants += 1;
             match path_entry { // TODO: less ugly
                 FileOrFolder::Folder(folder) => {
-                    // folder.size += size;
                     folder.add_file(path.iter().skip(1).collect(), size);
                 },
                 _ => {}
@@ -145,30 +142,6 @@ impl Folder {
             );
         }
     }
-//    pub fn size (&self) -> u64 {
-//        let mut total_size = 0;
-//        for (_, descendant) in &self.contents {
-//            match descendant {
-//                FileOrFolder::Folder(folder) => {
-//                    total_size += folder.size();
-//                },
-//                FileOrFolder::File(file) => {
-//                    total_size += file.size;
-//                }
-//            };
-//        }
-//        total_size
-//    }
-//    pub fn num_descendants (&self) -> u64 {
-//        let mut total_descendants = 0;
-//        for (_, descendant) in &self.contents {
-//            total_descendants += 1;
-//            if let FileOrFolder::Folder(folder) = descendant {
-//                total_descendants += folder.num_descendants();
-//            }
-//        }
-//        total_descendants
-//    }
     pub fn path(&self, folder_names: &Vec<String>) -> Option<&FileOrFolder> {
         let mut folders_to_traverse: VecDeque<String> = VecDeque::from(folder_names.to_owned());
         let next_name = folders_to_traverse.pop_front().expect("could not find next path folder1");
@@ -185,10 +158,7 @@ impl Folder {
         let mut folders_to_traverse: VecDeque<String> = VecDeque::from(folder_names.to_owned()); // TODO: better
         if folder_names.len() == 1 {
             let name = folder_names.last().expect("could not find last item in path");
-            let removed_size = match &self.contents.get(name).expect("could not find folder") {
-                FileOrFolder::Folder(folder) => folder.size,
-                FileOrFolder::File(file) => file.size,
-            };
+            let removed_size = &self.contents.get(name).expect("could not find folder").size();
             let removed_descendents = match &self.contents.get(name).expect("could not find folder") {
                 FileOrFolder::Folder(folder) => folder.num_descendants,
                 FileOrFolder::File(_file) => 1,
@@ -199,10 +169,7 @@ impl Folder {
         } else {
             let (removed_size, removed_descendents) = {
                 let item_to_remove = self.path(&Vec::from(folders_to_traverse.clone())).expect("could not find item to delete");
-                let removed_size = match item_to_remove {
-                    FileOrFolder::Folder(folder) => folder.size,
-                    FileOrFolder::File(file) => file.size,
-                };
+                let removed_size = item_to_remove.size();
                 let removed_descendents = match item_to_remove {
                     FileOrFolder::Folder(folder) => folder.num_descendants,
                     FileOrFolder::File(_file) => 1,
@@ -225,18 +192,4 @@ impl Folder {
             }
         }
     }
-}
-
-pub fn scan_folder (path: PathBuf, size_read: Arc<Mutex<u64>>, files_read: Arc<Mutex<u64>>) -> Folder { // TODO: better, do not accept Arc/Mutexes
-    
-    let path_length = path.components().count();
-    let mut base_folder = Folder::new(&path);
-
-    for entry in WalkDir::new(path).into_iter().filter_map(|e| e.ok()) {
-        if let Ok(file_metadata) = entry.metadata() {
-            let entry_path = entry.path();
-            base_folder.add_entry(&file_metadata, entry_path, &path_length);
-        }
-    }
-    base_folder
 }

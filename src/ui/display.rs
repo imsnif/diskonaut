@@ -51,15 +51,24 @@ where B: Backend
             chunks[1].width -= 1;
             chunks[1].height -= 1;
             state.change_size(chunks[1]);
-            TitleLine::new(&base_path, base_path_size, &current_path, current_path_size, state.space_freed, state.ui_mode, scan_boolean).render(&mut f, chunks[0]);
-            RectangleGrid::new((&state.tiles.rectangles).to_vec()).render(&mut f, chunks[1]);
-            BottomLine::new(state.ui_mode).render(&mut f, chunks[2]);
             match &state.ui_mode {
+                UiMode::Loading => {
+                    TitleLine::new(&base_path, base_path_size, &current_path, current_path_size, state.space_freed, scan_boolean).show_loading().render(&mut f, chunks[0]);
+                    RectangleGrid::new((&state.tiles.rectangles).to_vec()).render(&mut f, chunks[1]);
+                    BottomLine::new().hide_delete().render(&mut f, chunks[2]);
+                },
+                UiMode::Normal => {
+                    TitleLine::new(&base_path, base_path_size, &current_path, current_path_size, state.space_freed, scan_boolean).render(&mut f, chunks[0]);
+                    RectangleGrid::new((&state.tiles.rectangles).to_vec()).render(&mut f, chunks[1]);
+                    BottomLine::new().render(&mut f, chunks[2]);
+                }
                 UiMode::DeleteFile => {
                     let file_to_delete = state.get_file_to_delete().expect("cannot find file to delete");
+                    TitleLine::new(&base_path, base_path_size, &current_path, current_path_size, state.space_freed, scan_boolean).render(&mut f, chunks[0]);
+                    RectangleGrid::new((&state.tiles.rectangles).to_vec()).render(&mut f, chunks[1]);
+                    BottomLine::new().render(&mut f, chunks[2]);
                     MessageBox::new(file_to_delete, &current_path).render(&mut f, full_screen);
                 },
-                _ => {}
             };
         }).expect("failed to draw");
     }

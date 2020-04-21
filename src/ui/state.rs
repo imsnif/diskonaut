@@ -50,15 +50,12 @@ impl State {
     }
     pub fn get_total_size (&self) -> u64 {
         self.base_folder.size
-        // self.base_folder.size()
     }
     pub fn get_current_folder_size (&self) -> u64 {
         if self.current_folder_names.is_empty() {
             self.base_folder.size
-            // self.base_folder.size()
         } else if let Some(FileOrFolder::Folder(current_folder)) = self.base_folder.path(&self.current_folder_names) {
             current_folder.size
-            // current_folder.size()
         } else {
             // here we have something in current_folder_names but the last
             // one is somehow not a folder... this is a corrupted state
@@ -70,7 +67,6 @@ impl State {
             return 1.0 // 100%
         } else if let Some(FileOrFolder::Folder(current_folder)) = self.base_folder.path(&self.current_folder_names) {
             current_folder.size as f64 / self.base_folder.size as f64
-            // current_folder.size() as f64 / self.base_folder.size() as f64
         } else {
             // here we have something in current_folder_names but the last
             // one is somehow not a folder... this is a corrupted state
@@ -170,16 +166,18 @@ impl State {
     pub fn normal_mode (&mut self) {
         self.ui_mode = UiMode::Normal;
     }
+    pub fn reset_mode (&mut self) {
+        match self.ui_mode {
+            UiMode::Loading | UiMode::Normal => {},
+            _ => self.normal_mode()
+        };
+    }
     pub fn delete_file (&mut self) {
         let path_to_delete = &mut self.current_folder_names.clone();
         let file_to_delete = self.get_file_to_delete().expect("could not find file to delete");
         path_to_delete.push(String::from(file_to_delete.name()));
         if let Some(file_or_folder_to_delete) = self.base_folder.path(&path_to_delete) {
-            self.space_freed += match file_or_folder_to_delete {
-                FileOrFolder::File(file) => file.size,
-                FileOrFolder::Folder(folder) => folder.size,
-                // FileOrFolder::Folder(folder) => folder.size(),
-            };
+            self.space_freed += file_or_folder_to_delete.size();
         }
         self.base_folder.delete_path(&path_to_delete);
         self.tiles.reset_selected_index();
@@ -190,39 +188,24 @@ impl State {
 pub fn calculate_utilization(folder: &Folder) -> Vec<FileMetadata> {
     let mut file_list = Vec::new();
     let total_size = folder.size;
-    // let total_size = folder.size();
     for (name, file_or_folder) in &folder.contents {
-        match file_or_folder {
-            FileOrFolder::Folder(folder) => {
-                let size = folder.size;
-                // let size = folder.size();
-                let descendants = Some(folder.num_descendants);
-                // let descendants = Some(11);
-                let percentage = size as f64 / total_size as f64;
-                let file_metadata = FileMetadata {
-                    name: String::from(name),
-                    descendants,
-                    percentage,
-                    size,
-                    file_type: FileType::Folder
-                };
-                file_list.push(file_metadata);
-            },
-            FileOrFolder::File(file) => {
-                let size = file.size;
-                let percentage = size as f64 / total_size as f64;
-                let file_metadata = FileMetadata {
-                    name: String::from(name),
-                    descendants: None,
-                    percentage,
-                    size,
-                    file_type: FileType::File
-                };
-                file_list.push(file_metadata);
+        file_list.push({
+            let size = file_or_folder.size();
+            let name = String::from(name);
+            let (descendants, file_type) = match file_or_folder {
+                FileOrFolder::Folder(folder) => (Some(folder.num_descendants), FileType::Folder),
+                FileOrFolder::File(_file) => (None, FileType::File),
+            };
+            let percentage = size as f64 / total_size as f64;
+            FileMetadata {
+                size,
+                name,
+                descendants,
+                percentage,
+                file_type,
             }
-        }
+        });
     }
-
     file_list.sort_by(|a, b| {
         if a.percentage == b.percentage {
             a.name.partial_cmp(&b.name).expect("could not compare name")

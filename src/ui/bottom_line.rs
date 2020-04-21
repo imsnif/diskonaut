@@ -4,15 +4,17 @@ use tui::widgets::Widget;
 
 use tui::buffer::Buffer;
 
-use crate::ui::UiMode;
-
 pub struct BottomLine {
-    ui_mode: UiMode, // TODO: better, we should not know about this
+    hide_delete: bool,
 }
 
 impl BottomLine {
-    pub fn new(ui_mode: UiMode) -> Self {
-        Self {ui_mode}
+    pub fn new() -> Self {
+        Self {hide_delete: false}
+    }
+    pub fn hide_delete(mut self) -> Self {
+        self.hide_delete = true;
+        self
     }
 }
 
@@ -22,12 +24,17 @@ impl<'a> Widget for BottomLine {
         bottom_left_character.set_symbol("x");
         bottom_left_character.set_style(Style::default().bg(Color::White).fg(Color::Black));
         buf.set_string(3, area.y + area.height - 2, "= Small files", Style::default());
-        
-        let long_controls_line = match self.ui_mode {
-            UiMode::Loading => String::from("<hjkl> or <arrow keys> - move around, <ENTER> - enter folder, <ESC> - parent folder"),
-            _ => String::from("<hjkl> or <arrow keys> - move around, <ENTER> - enter folder, <ESC> - parent folder, <Ctrl-D> - delete")
+        let (long_controls_line, short_controls_line) = if self.hide_delete {
+            (
+                String::from("<hjkl> or <arrow keys> - move around, <ENTER> - enter folder, <ESC> - parent folder"),
+                String::from("←↓↑→/<ENTER>/<ESC>: navigate")
+            )
+        } else {
+            (
+                String::from("<hjkl> or <arrow keys> - move around, <ENTER> - enter folder, <ESC> - parent folder, <Ctrl-D> - delete"),
+                String::from("←↓↑→/<ENTER>/<ESC>: navigate, <Ctrl-D>: del")
+            )
         };
-        let short_controls_line = String::from("←↓↑→/<ENTER>/<ESC>: navigate, <Ctrl-D>: del");
         let too_small_line = "(...)";
         if area.width >= long_controls_line.chars().count() as u16 {
             buf.set_string(1, area.y + area.height - 1, long_controls_line, Style::default());

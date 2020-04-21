@@ -78,58 +78,58 @@ where B: Backend
         let ui_state = State::new(base_folder, path_in_filesystem); // TODO: change name to UiState
         App { loaded: false, is_running: true, ui_state, display, size_read: 0, files_read: 0, last_file_read: None }
     }
-    pub fn render (&mut self) {
+    pub fn render_and_update_files (&mut self) {
         self.ui_state.update_files();
+        self.render();
+    }
+    pub fn render (&mut self) {
         self.display.render(&mut self.ui_state);
     }
     pub fn start_ui(&mut self) {
         self.loaded = true;
         self.ui_state.normal_mode();
-        self.render();
+        self.render_and_update_files();
     }
     pub fn add_entry_to_base_folder(&mut self, file_metadata: &Metadata, entry_path: &Path, path_length: &usize) {
         self.ui_state.base_folder.add_entry(file_metadata, entry_path, path_length);
     }
     pub fn reset_ui_mode (&mut self) {
-        match self.ui_state.ui_mode {
-            UiMode::Loading | UiMode::Normal => {},
-            _ => self.ui_state.normal_mode()
-        };
+        self.ui_state.reset_mode();
     }
     pub fn exit (&mut self) {
         self.is_running = false;
     }
     pub fn move_selected_right (&mut self) {
         self.ui_state.move_selected_right();
-        self.display.render(&mut self.ui_state);
+        self.render();
     }
     pub fn move_selected_left (&mut self) {
         self.ui_state.move_selected_left();
-        self.display.render(&mut self.ui_state);
+        self.render();
     }
     pub fn move_selected_down (&mut self) {
         self.ui_state.move_selected_down();
-        self.display.render(&mut self.ui_state);
+        self.render();
     }
     pub fn move_selected_up (&mut self) {
         self.ui_state.move_selected_up();
-        self.display.render(&mut self.ui_state);
+        self.render();
     }
     pub fn enter_selected (&mut self) {
         self.ui_state.enter_selected();
-        self.render();
+        self.render_and_update_files();
     }
     pub fn go_up (&mut self) {
         self.ui_state.go_up();
-        self.render();
+        self.render_and_update_files();
     }
     pub fn prompt_file_deletion(&mut self) {
         self.ui_state.prompt_file_deletion();
-        self.display.render(&mut self.ui_state);
+        self.render();
     }
     pub fn normal_mode(&mut self) {
         self.ui_state.normal_mode();
-        self.render();
+        self.render_and_update_files();
     }
     pub fn delete_file(&mut self) {
         let file_to_delete = self.ui_state.get_path_of_file_to_delete().expect("cannot find file to delete");
@@ -142,7 +142,7 @@ where B: Backend
         }
         self.ui_state.delete_file();
         self.ui_state.normal_mode();
-        self.render();
+        self.render_and_update_files();
     }
 }
 
