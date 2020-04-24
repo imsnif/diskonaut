@@ -23,7 +23,6 @@ use input::sigwinch;
 use ui::state::{State, UiMode};
 use ui::Display;
 
-use input::Folder;
 use walkdir::WalkDir;
 
 use std::fs;
@@ -71,15 +70,13 @@ where B: Backend
 impl <B>App <B>
 where B: Backend
 {
-    pub fn new (terminal_backend: B, path: PathBuf) -> Self {
+    pub fn new (terminal_backend: B, path_in_filesystem: PathBuf) -> Self {
         let display = Display::new(terminal_backend);
-        let base_folder = Folder::new(&path); // TODO: better
-        let path_in_filesystem = path.into_os_string().into_string().expect("could not convert path to string"); // TODO: no clone
-        let ui_state = State::new(base_folder, path_in_filesystem); // TODO: change name to UiState
+        let ui_state = State::new(path_in_filesystem); // TODO: change name to UiState
         App { loaded: false, is_running: true, ui_state, display, size_read: 0, files_read: 0, last_file_read: None }
     }
-    pub fn render_and_update_files (&mut self) {
-        self.ui_state.update_files();
+    pub fn render_and_update_tiles (&mut self) {
+        self.ui_state.update_tiles();
         self.render();
     }
     pub fn render (&mut self) {
@@ -88,10 +85,10 @@ where B: Backend
     pub fn start_ui(&mut self) {
         self.loaded = true;
         self.ui_state.normal_mode();
-        self.render_and_update_files();
+        self.render_and_update_tiles();
     }
     pub fn add_entry_to_base_folder(&mut self, file_metadata: &Metadata, entry_path: &Path, path_length: &usize) {
-        self.ui_state.base_folder.add_entry(file_metadata, entry_path, path_length);
+        self.ui_state.add_entry(file_metadata, entry_path, path_length);
     }
     pub fn reset_ui_mode (&mut self) {
         self.ui_state.reset_mode();
@@ -117,11 +114,11 @@ where B: Backend
     }
     pub fn enter_selected (&mut self) {
         self.ui_state.enter_selected();
-        self.render_and_update_files();
+        self.render_and_update_tiles();
     }
     pub fn go_up (&mut self) {
         self.ui_state.go_up();
-        self.render_and_update_files();
+        self.render_and_update_tiles();
     }
     pub fn prompt_file_deletion(&mut self) {
         self.ui_state.prompt_file_deletion();
@@ -129,7 +126,7 @@ where B: Backend
     }
     pub fn normal_mode(&mut self) {
         self.ui_state.normal_mode();
-        self.render_and_update_files();
+        self.render_and_update_tiles();
     }
     pub fn delete_file(&mut self) {
         let file_to_delete = self.ui_state.get_path_of_file_to_delete().expect("cannot find file to delete");
@@ -142,7 +139,7 @@ where B: Backend
         }
         self.ui_state.delete_file();
         self.ui_state.normal_mode();
-        self.render_and_update_files();
+        self.render_and_update_tiles();
     }
 }
 
@@ -220,7 +217,7 @@ where
                                 if app.loaded {
                                     break;
                                 }
-                                app.render();
+                                app.render_and_update_tiles();
                             }
                             park_timeout(time::Duration::from_millis(100));
                         }
