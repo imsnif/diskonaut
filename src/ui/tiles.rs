@@ -103,7 +103,6 @@ impl Tiles {
     }
     pub fn change_files(&mut self, file_list: Vec<FileMetadata>) {
         self.files = file_list;
-        // self.selected_index = None;
         self.fill();
     }
     pub fn change_area(&mut self, area: &Rect) {

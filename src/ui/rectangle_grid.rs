@@ -92,6 +92,16 @@ fn draw_rect_on_grid (buf: &mut Buffer, rect: Rect) {
     }
 }
 
+fn draw_small_files_rect_on_grid(buf: &mut Buffer, rect: Rect) {
+    for x in rect.x..rect.width {
+        for y in rect.y..rect.height {
+            let buf = buf.get_mut(x, y);
+            buf.set_symbol("x");
+            buf.set_style(Style::default().bg(Color::White).fg(Color::Black));
+        }
+    }
+}
+
 fn draw_rect_text_on_grid(buf: &mut Buffer, rect: &Rect, file_size_rect: &FileSizeRect) { // TODO: better, combine args
     let max_text_length = if rect.width > 2 { rect.width - 2 } else { 0 };
     let name = &file_size_rect.file_metadata.name;
@@ -132,7 +142,7 @@ fn draw_rect_text_on_grid(buf: &mut Buffer, rect: &Rect, file_size_rect: &FileSi
     let second_line = truncate_size_line(&file_size_rect.file_metadata.size, &percentage, &max_text_length);
 
     let second_line_length = second_line.len(); // TODO: better
-    let second_line_start_position = ((rect.width - second_line_length as u16) as f64 / 2.0).ceil() as u16 + rect.x;
+    let second_line_start_position = ((rect.width - second_line_length as u16) as f64 / 2.0).ceil() as u16 + rect.x; // TODO: we get "subtract with overflow" errors here, fix this
 
 
     let first_line_style = if file_size_rect.selected {
@@ -182,11 +192,79 @@ fn draw_rect_text_on_grid(buf: &mut Buffer, rect: &Rect, file_size_rect: &FileSi
     }
 }
 
+struct SmallFilesArea {
+    leftmost_top_left_coordinates: Option<(u16, u16)>,
+    highest_top_left_coordinates: Option<(u16, u16)>,
+}
+
+impl SmallFilesArea {
+    pub fn new () -> Self {
+        Self {
+            leftmost_top_left_coordinates: None,
+            highest_top_left_coordinates: None,
+        }
+    }
+    pub fn add_rect(&mut self, rect: &Rect) {
+        match self.leftmost_top_left_coordinates {
+            Some((x, y)) => {
+                if rect.x < x {
+                    self.leftmost_top_left_coordinates = Some((rect.x, rect.y));
+                } else if rect.x == x && rect.y < y {
+                    self.leftmost_top_left_coordinates = Some((rect.x, rect.y));
+                }
+            },
+            None => {
+                self.leftmost_top_left_coordinates = Some((rect.x, rect.y));
+            }
+        }
+
+        match self.highest_top_left_coordinates {
+            Some((x, y)) => {
+                if rect.y < y {
+                    self.highest_top_left_coordinates = Some((rect.x, rect.y));
+                } else if rect.y == y && rect.x < x {
+                    self.highest_top_left_coordinates = Some((rect.x, rect.y));
+                }
+            },
+            None => {
+                self.highest_top_left_coordinates = Some((rect.x, rect.y));
+            }
+        }
+    }
+    pub fn draw(&self, area: &Rect, buf: &mut Buffer) {
+        if let Some((small_files_start_x, small_files_start_y)) = self.highest_top_left_coordinates {
+            if small_files_start_x > 0 && small_files_start_y > 0 {
+                draw_small_files_rect_on_grid(buf, Rect {
+                    x: small_files_start_x + 1,
+                    y: small_files_start_y + 1,
+                    width: area.x + area.width,
+                    height: area.y + area.height,
+                });
+            } else {
+                // TODO: ui indication that we have X small unrenderable files
+            }
+        }
+        if let Some((small_files_start_x, small_files_start_y)) = self.leftmost_top_left_coordinates {
+            if small_files_start_x > 0 && small_files_start_y > 0 {
+                draw_small_files_rect_on_grid(buf, Rect {
+                    x: small_files_start_x + 1,
+                    y: small_files_start_y + 1,
+                    width: area.x + area.width,
+                    height: area.y + area.height,
+                });
+            } else {
+                // TODO: ui indication that we have X small unrenderable files
+            }
+        }
+    }
+}
+
 impl<'a> Widget for RectangleGrid {
     fn draw(&mut self, area: Rect, buf: &mut Buffer) {
         if area.width < 2 || area.height < 2 {
             return;
         }
+        let mut small_files = SmallFilesArea::new();
         for file_size_rect in &self.rectangles {
             let rounded_x = file_size_rect.rect.x.round();
             let rounded_y = file_size_rect.rect.y.round();
@@ -205,24 +283,14 @@ impl<'a> Widget for RectangleGrid {
                 rect.height += 1;
             }
 
-            if rect.height < MINIMUM_HEIGHT || rect.width < MINIMUM_WIDTH {
-
-                for x in rect.x..(rect.x + rect.width + 1) { // +1 because the width might be 0
-                    if x > rect.x && x < area.x + area.width {
-                        for y in rect.y..(rect.y + rect.height + 1) { // +1 because the height might be 0
-                            if y > rect.y && y < area.y + area.height {
-                                let buf = buf.get_mut(x, y);
-                                buf.set_symbol("x");
-                                buf.set_style(Style::default().bg(Color::White).fg(Color::Black));
-                            }
-                        }
-                    }
-                }
+            if file_size_rect.rect.height < MINIMUM_HEIGHT as f64 || file_size_rect.rect.width < MINIMUM_WIDTH as f64 {
+                small_files.add_rect(&rect);
             } else {
                 draw_rect_text_on_grid(buf, &rect, &file_size_rect);
                 draw_rect_on_grid(buf, rect);
             }
         }
+        small_files.draw(&area, buf);
         draw_rect_on_grid(buf, area); // we draw a frame around the whole area to make up for the "small files" block not having a frame of its own
     }
 }
