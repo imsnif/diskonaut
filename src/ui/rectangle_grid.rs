@@ -3,7 +3,8 @@ use tui::layout::Rect;
 use tui::style::{Style, Color, Modifier};
 use tui::widgets::{Widget};
 
-use crate::ui::{FileMetadata, FileType, draw_symbol, boundaries, DisplaySize, DisplaySizeRounded};
+use crate::state::{FileMetadata, FileType};
+use crate::ui::{draw_symbol, boundaries, DisplaySize, DisplaySizeRounded};
 
 pub const MINIMUM_HEIGHT: u16 = 2;
 pub const MINIMUM_WIDTH: u16 = 8;

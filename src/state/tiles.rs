@@ -1,7 +1,8 @@
 use tui::layout::Rect;
 
+use crate::input::{FileOrFolder, Folder};
 use crate::ui::TreeMap;
-use crate::ui::FileMetadata;
+// use crate::ui::FileMetadata;
 use crate::ui::rectangle_grid::{FileSizeRect, RectFloat, MINIMUM_HEIGHT, MINIMUM_WIDTH};
 
 fn first_is_right_of_second(first: &RectFloat, second: &RectFloat) -> bool {
@@ -92,8 +93,54 @@ pub struct Tiles {
     files: Vec<FileMetadata>,
 }
 
+#[derive(Clone, Debug)]
+pub enum FileType {
+    File,
+    Folder,
+}
+
+#[derive(Debug, Clone)]
+pub struct FileMetadata {
+    pub name: String,
+    pub size: u64,
+    pub descendants: Option<u64>,
+    pub percentage: f64, // 1.0 is 100% (0.5 is 50%, etc.)
+    pub file_type: FileType,
+}
+
 impl Tiles {
-    pub fn new (files: Vec<FileMetadata>) -> Self {
+    pub fn new (folder: &Folder) -> Self {
+        let mut files = Vec::new();
+        let total_size = folder.size;
+        for (name, file_or_folder) in &folder.contents {
+            files.push({
+                let size = file_or_folder.size();
+                let name = String::from(name);
+                let (descendants, file_type) = match file_or_folder {
+                    FileOrFolder::Folder(folder) => (Some(folder.num_descendants), FileType::Folder),
+                    FileOrFolder::File(_file) => (None, FileType::File),
+                };
+                let percentage = size as f64 / total_size as f64;
+                FileMetadata {
+                    size,
+                    name,
+                    descendants,
+                    percentage,
+                    file_type,
+                }
+            });
+        }
+        files.sort_by(|a, b| {
+            if a.percentage == b.percentage {
+                a.name.partial_cmp(&b.name).expect("could not compare name")
+            } else {
+                b.percentage.partial_cmp(&a.percentage).expect("could not compare percentage")
+            }
+        });
+
+
+
+
         Tiles {
             rectangles: vec![],
             files,
@@ -101,8 +148,37 @@ impl Tiles {
             area: None,
         }
     }
-    pub fn change_files(&mut self, file_list: Vec<FileMetadata>) {
-        self.files = file_list;
+    pub fn change_files(&mut self, folder: &Folder) {
+        // TODO: better - this is basically a copy of the new function above
+        // maybe just hold a reference to this folder and calculate on fill?
+        let mut files = Vec::new();
+        let total_size = folder.size;
+        for (name, file_or_folder) in &folder.contents {
+            files.push({
+                let size = file_or_folder.size();
+                let name = String::from(name);
+                let (descendants, file_type) = match file_or_folder {
+                    FileOrFolder::Folder(folder) => (Some(folder.num_descendants), FileType::Folder),
+                    FileOrFolder::File(_file) => (None, FileType::File),
+                };
+                let percentage = size as f64 / total_size as f64;
+                FileMetadata {
+                    size,
+                    name,
+                    descendants,
+                    percentage,
+                    file_type,
+                }
+            });
+        }
+        files.sort_by(|a, b| {
+            if a.percentage == b.percentage {
+                a.name.partial_cmp(&b.name).expect("could not compare name")
+            } else {
+                b.percentage.partial_cmp(&a.percentage).expect("could not compare percentage")
+            }
+        });
+        self.files = files;
         self.fill();
     }
     pub fn change_area(&mut self, area: &Rect) {

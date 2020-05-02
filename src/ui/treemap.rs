@@ -1,4 +1,4 @@
-use crate::ui::FileMetadata;
+use crate::state::FileMetadata;
 use crate::ui::rectangle_grid::{FileSizeRect, RectFloat, MINIMUM_HEIGHT, MINIMUM_WIDTH} ;
 
 const HEIGHT_WIDTH_RATIO: f64 = 2.5;

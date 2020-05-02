@@ -608,18 +608,16 @@ fn noop_when_entering_file() {
    std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
    let terminal_draw_events_mirror = terminal_draw_events.lock().expect("could not acquire lock on terminal events");
 
-   let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor];
-
+   let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor];
    assert_eq!(
        &terminal_events.lock().expect("could not acquire lock on terminal_events")[..],
        &expected_terminal_events[..]
    );
 
-   assert_eq!(terminal_draw_events_mirror.len(), 4);
+   assert_eq!(terminal_draw_events_mirror.len(), 3);
    assert_snapshot!(&terminal_draw_events_mirror[0]);
    assert_snapshot!(&terminal_draw_events_mirror[1]);
    assert_snapshot!(&terminal_draw_events_mirror[2]);
-   assert_snapshot!(&terminal_draw_events_mirror[3]);
 }
 
 #[test]
@@ -1212,7 +1210,7 @@ fn pressing_delete_with_no_selected_tile() {
    start(backend, keyboard_events, temp_dir_path.clone());
    let terminal_draw_events_mirror = terminal_draw_events.lock().expect("could not acquire lock on terminal events");
 
-   let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor];
+   let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
    assert_eq!(
        &terminal_events.lock().expect("could not acquire lock on terminal_events")[..],
        &expected_terminal_events[..]
@@ -1223,9 +1221,8 @@ fn pressing_delete_with_no_selected_tile() {
    assert_eq!(std::fs::metadata(&file_3_path).is_ok(), true, "second different file was untouched");
    std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
 
-   assert_eq!(terminal_draw_events_mirror.len(), 2);
+   assert_eq!(terminal_draw_events_mirror.len(), 1);
    assert_snapshot!(&terminal_draw_events_mirror[0]);
-   assert_snapshot!(&terminal_draw_events_mirror[1]);
 }
 
 #[test]

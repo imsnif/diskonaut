@@ -1,14 +1,11 @@
 use tui::buffer::Buffer;
 use tui::layout::Rect;
 use tui::style::{Style, Color, Modifier};
-use ::tui::layout::Alignment;
 use tui::widgets::{Widget};
-use ::tui::terminal::Frame;
-use ::tui::backend::Backend;
 use std::path::PathBuf;
 
-use crate::ui::{FileMetadata, FileType, draw_symbol_with_style, boundaries, DisplaySize, DisplaySizeRounded};
-use crate::input::{FileOrFolder, Folder};
+use crate::ui::{draw_symbol_with_style, boundaries};
+use crate::input::FileOrFolder;
 
 pub struct MessageBox<'a> {
     current_path: &'a PathBuf,
