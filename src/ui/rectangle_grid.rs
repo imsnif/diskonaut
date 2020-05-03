@@ -3,34 +3,20 @@ use tui::layout::Rect;
 use tui::style::{Style, Color, Modifier};
 use tui::widgets::{Widget};
 
-use crate::state::{FileMetadata, FileType};
+use crate::state::FileType;
 use crate::ui::{draw_symbol, boundaries, DisplaySize, DisplaySizeRounded};
+use crate::state::FileRect;
 
 pub const MINIMUM_HEIGHT: u16 = 2;
 pub const MINIMUM_WIDTH: u16 = 8;
 
-#[derive(Clone, Debug)]
-pub struct FileSizeRect {
-    pub rect: RectFloat,
-    pub file_metadata: FileMetadata,
-    pub selected: bool,
-}
-
-#[derive(Clone, Debug)]
-pub struct RectFloat {
-    pub x: f64,
-    pub y: f64,
-    pub width: f64,
-    pub height: f64,
-}
-
 #[derive(Clone)]
 pub struct RectangleGrid {
-    rectangles: Vec<FileSizeRect>
+    rectangles: Vec<FileRect>
 }
 
 impl<'a> RectangleGrid {
-    pub fn new (rectangles: Vec<FileSizeRect>) -> Self {
+    pub fn new (rectangles: Vec<FileRect>) -> Self {
         RectangleGrid { rectangles }
     }
 }
@@ -103,7 +89,7 @@ fn draw_small_files_rect_on_grid(buf: &mut Buffer, rect: Rect) {
     }
 }
 
-fn draw_rect_text_on_grid(buf: &mut Buffer, rect: &Rect, file_size_rect: &FileSizeRect) { // TODO: better, combine args
+fn draw_rect_text_on_grid(buf: &mut Buffer, rect: &Rect, file_size_rect: &FileRect) { // TODO: better, combine args
     let max_text_length = if rect.width > 2 { rect.width - 2 } else { 0 };
     let name = &file_size_rect.file_metadata.name;
     let descendant_count = &file_size_rect.file_metadata.descendants;

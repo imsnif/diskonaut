@@ -1,10 +1,11 @@
 use crate::state::FileMetadata;
-use crate::ui::rectangle_grid::{FileSizeRect, RectFloat, MINIMUM_HEIGHT, MINIMUM_WIDTH} ;
+use crate::ui::rectangle_grid::{MINIMUM_HEIGHT, MINIMUM_WIDTH} ;
+use crate::state::{FileRect, RectFloat};
 
 const HEIGHT_WIDTH_RATIO: f64 = 2.5;
 
 pub struct TreeMap {
-    pub rectangles: Vec<FileSizeRect>,
+    pub rectangles: Vec<FileRect>,
     empty_space: RectFloat,
     total_size: f64,
 }
@@ -29,7 +30,7 @@ impl TreeMap {
                 let size = file_metadata.percentage * self.total_size;
                 let width = (size / row_total) * self.empty_space.width as f64;
                 let height = size / width;
-                let rect_with_text = FileSizeRect {
+                let rect_with_text = FileRect {
                     rect: RectFloat {x, y: self.empty_space.y, width: width , height: height },
                     file_metadata,
                     selected: false,
@@ -50,7 +51,7 @@ impl TreeMap {
             let height = (size / row_total) * self.empty_space.height as f64;
             let width = size / height;
 
-            let mut rect_with_text = FileSizeRect {
+            let mut rect_with_text = FileRect {
                 rect: RectFloat { x: self.empty_space.x, y, width: width, height: height },
                 file_metadata,
                 selected: false,
