@@ -1,5 +1,4 @@
-mod file_tree;
+pub mod files;
 mod tiles;
 
-pub use file_tree::*;
 pub use tiles::*;

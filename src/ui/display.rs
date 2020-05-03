@@ -4,7 +4,7 @@ use ::tui::Terminal;
 use ::tui::backend::Backend;
 use ::tui::layout::{Layout, Constraint, Direction};
 
-use crate::state::FileTree;
+use crate::state::files::FileTree;
 use crate::ui::{TitleLine, BottomLine, MessageBox};
 use crate::ui::RectangleGrid;
 use crate::state::Tiles;

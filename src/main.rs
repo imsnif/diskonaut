@@ -18,13 +18,16 @@ use ::std::process;
 use ::std::path::PathBuf;
 use ::tui::backend::Backend;
 use ::std::sync::{Arc, Mutex};
+use ::walkdir::WalkDir;
 
-use input::{handle_keypress_loading_mode, handle_keypress_normal_mode, handle_keypress_delete_file_mode};
-use input::KeyboardEvents;
-use input::sigwinch;
+use input::{
+    KeyboardEvents,
+    sigwinch,
+    handle_keypress_loading_mode,
+    handle_keypress_normal_mode,
+    handle_keypress_delete_file_mode
+};
 use app::{App, UiMode};
-
-use walkdir::WalkDir;
 
 #[cfg(not(test))]
 const SHOULD_SHOW_LOADING_ANIMATION: bool = true;

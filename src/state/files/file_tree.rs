@@ -1,4 +1,4 @@
-use crate::input::{FileOrFolder, Folder};
+use crate::state::files::{FileOrFolder, Folder};
 use std::path::{Path, PathBuf};
 use std::fs::Metadata;
 

@@ -1,12 +1,11 @@
 use ::std::path::{Path, PathBuf};
+use ::std::fs::{self, Metadata};
 use ::tui::backend::Backend;
 
-use crate::input::{Folder, FileOrFolder};
+use crate::state::files::{Folder, FileOrFolder};
 use crate::ui::Display;
-use crate::state::{FileTree, Tiles};
-
-use std::fs;
-use std::fs::Metadata;
+use crate::state::Tiles;
+use crate::state::files::FileTree;
 
 #[derive(Clone, Copy)]
 pub enum UiMode {

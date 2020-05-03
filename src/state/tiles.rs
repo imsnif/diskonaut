@@ -1,8 +1,7 @@
 use tui::layout::Rect;
 
-use crate::input::{FileOrFolder, Folder};
+use crate::state::files::{FileOrFolder, Folder};
 use crate::ui::TreeMap;
-// use crate::ui::FileMetadata;
 use crate::ui::rectangle_grid::{FileSizeRect, RectFloat, MINIMUM_HEIGHT, MINIMUM_WIDTH};
 
 fn first_is_right_of_second(first: &RectFloat, second: &RectFloat) -> bool {

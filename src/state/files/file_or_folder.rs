@@ -1,5 +1,3 @@
-#[allow(dead_code)]
-
 use std::collections::{HashMap, VecDeque};
 use std::fs::Metadata;
 use std::os::unix::fs::MetadataExt; // TODO: support other OSs

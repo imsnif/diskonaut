@@ -5,7 +5,7 @@ use tui::widgets::{Widget};
 use std::path::PathBuf;
 
 use crate::ui::{draw_symbol_with_style, boundaries};
-use crate::input::FileOrFolder;
+use crate::state::files::FileOrFolder;
 
 pub struct MessageBox<'a> {
     current_path: &'a PathBuf,
