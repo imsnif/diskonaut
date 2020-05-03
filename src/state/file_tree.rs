@@ -36,16 +36,6 @@ impl FileTree {
     pub fn get_current_folder_size (&self) -> u64 {
         self.get_current_folder().size
     }
-    pub fn get_current_folder_percentage (&self) -> f64 {
-        self.get_current_folder().size as f64 / self.base_folder.size as f64
-    }
-    pub fn get_relative_path (&self) -> PathBuf {
-        let mut full_path = PathBuf::new();
-        for folder in &self.current_folder_names {
-            full_path.push(&folder)
-        }
-        return full_path;
-    }
     pub fn get_current_path (&self) -> PathBuf {
         let mut full_path = PathBuf::from(&self.path_in_filesystem);
         for folder in &self.current_folder_names {
