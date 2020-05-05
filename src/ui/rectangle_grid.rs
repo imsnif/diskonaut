@@ -89,24 +89,24 @@ fn draw_small_files_rect_on_grid(buf: &mut Buffer, rect: Rect) {
     }
 }
 
-fn draw_rect_text_on_grid(buf: &mut Buffer, rect: &Rect, file_size_rect: &FileRect) { // TODO: better, combine args
+fn draw_rect_text_on_grid(buf: &mut Buffer, rect: &Rect, file_rect: &FileRect) { // TODO: better, combine args
     let max_text_length = if rect.width > 2 { rect.width - 2 } else { 0 };
-    let name = &file_size_rect.file_metadata.name;
-    let descendant_count = &file_size_rect.file_metadata.descendants;
-    let percentage = &file_size_rect.file_metadata.percentage;
+    let name = &file_rect.file_metadata.name;
+    let descendant_count = &file_rect.file_metadata.descendants;
+    let percentage = &file_rect.file_metadata.percentage;
 
-    let filename_text = if file_size_rect.selected {
-        match file_size_rect.file_metadata.file_type {
+    let filename_text = if file_rect.selected {
+        match file_rect.file_metadata.file_type {
             FileType::File => format!("{}", name),
             FileType::Folder => format!("{}/", name),
         }
     } else {
-        match file_size_rect.file_metadata.file_type {
+        match file_rect.file_metadata.file_type {
             FileType::File => format!("{}", name),
             FileType::Folder=> format!("{}/", name),
         }
     };
-    let first_line = match file_size_rect.file_metadata.file_type {
+    let first_line = match file_rect.file_metadata.file_type {
         FileType::File => {
             truncate_middle(&filename_text, max_text_length)
         },
@@ -126,31 +126,31 @@ fn draw_rect_text_on_grid(buf: &mut Buffer, rect: &Rect, file_size_rect: &FileRe
     let first_line_length = first_line.len(); // TODO: better
     let first_line_start_position = ((rect.width - first_line_length as u16) as f64 / 2.0).ceil() as u16 + rect.x;
 
-    let second_line = truncate_size_line(&file_size_rect.file_metadata.size, &percentage, &max_text_length);
+    let second_line = truncate_size_line(&file_rect.file_metadata.size, &percentage, &max_text_length);
 
     let second_line_length = second_line.len(); // TODO: better
     let second_line_start_position = ((rect.width - second_line_length as u16) as f64 / 2.0).ceil() as u16 + rect.x; // TODO: we get "subtract with overflow" errors here, fix this
 
 
-    let first_line_style = if file_size_rect.selected {
-        match file_size_rect.file_metadata.file_type {
+    let first_line_style = if file_rect.selected {
+        match file_rect.file_metadata.file_type {
             FileType::File => Style::default().bg(Color::Green).fg(Color::White).modifier(Modifier::BOLD),
             FileType::Folder => Style::default().bg(Color::Green).fg(Color::Magenta).modifier(Modifier::BOLD)
         }
     } else {
-        match file_size_rect.file_metadata.file_type {
+        match file_rect.file_metadata.file_type {
             FileType::File => Style::default().fg(Color::White),
             FileType::Folder => Style::default().fg(Color::Blue).modifier(Modifier::BOLD)
         }
     };
 
-    let text_style = if file_size_rect.selected {
+    let text_style = if file_rect.selected {
         Style::default().bg(Color::Green).fg(Color::White).modifier(Modifier::BOLD)
     } else {
         Style::default()
     };
 
-    if file_size_rect.selected {
+    if file_rect.selected {
         let selected_string = format!("{:1$}", " ", max_text_length as usize + 1);
         for y in rect.y..(rect.y + rect.height) {
             if y > rect.y {
@@ -252,28 +252,13 @@ impl<'a> Widget for RectangleGrid {
             return;
         }
         let mut small_files = SmallFilesArea::new();
-        for file_size_rect in &self.rectangles {
-            let rounded_x = file_size_rect.rect.x.round();
-            let rounded_y = file_size_rect.rect.y.round();
-            let mut rect = Rect {
-                x: rounded_x as u16,
-                y: rounded_y  as u16,
-                width: ((file_size_rect.rect.x - rounded_x) + file_size_rect.rect.width).round() as u16,
-                height: ((file_size_rect.rect.y - rounded_y) + file_size_rect.rect.height).round() as u16,
-            };
+        for file_rect in &self.rectangles {
+            let rect = file_rect.rect.round();
 
-            // fix rounding errors
-            if (file_size_rect.rect.x + file_size_rect.rect.width).round() as u16 > rect.x + rect.width {
-                rect.width += 1;
-            }
-            if (file_size_rect.rect.y + file_size_rect.rect.height).round() as u16 > rect.y + rect.height {
-                rect.height += 1;
-            }
-
-            if file_size_rect.rect.height < MINIMUM_HEIGHT as f64 || file_size_rect.rect.width < MINIMUM_WIDTH as f64 {
+            if file_rect.rect.height < MINIMUM_HEIGHT as f64 || file_rect.rect.width < MINIMUM_WIDTH as f64 {
                 small_files.add_rect(&rect);
             } else {
-                draw_rect_text_on_grid(buf, &rect, &file_size_rect);
+                draw_rect_text_on_grid(buf, &rect, &file_rect);
                 draw_rect_on_grid(buf, rect);
             }
         }

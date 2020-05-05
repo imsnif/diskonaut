@@ -7,7 +7,7 @@ use ::tui::layout::{Layout, Constraint, Direction};
 use crate::state::files::FileTree;
 use crate::ui::{TitleLine, BottomLine, MessageBox};
 use crate::ui::RectangleGrid;
-use crate::state::Tiles;
+use crate::state::Board;
 use crate::UiMode;
 
 pub struct Display <B>
@@ -26,7 +26,7 @@ where B: Backend
         terminal.hide_cursor().expect("failed to hide cursor");
         Display { terminal, scan_boolean: true }
     }
-    pub fn render (&mut self, file_tree: &mut FileTree, tiles: &mut Tiles, ui_mode: &UiMode) { // TODO: change name to render_ui
+    pub fn render (&mut self, file_tree: &mut FileTree, board: &mut Board, ui_mode: &UiMode) { // TODO: change name to render_ui
         let scan_boolean = self.scan_boolean;
         self.scan_boolean = !scan_boolean;
         self.terminal.draw(|mut f| {
@@ -49,24 +49,24 @@ where B: Backend
             // TODO: find out how to get rid of these
             chunks[1].width -= 1;
             chunks[1].height -= 1;
-            tiles.change_area(&chunks[1]);
+            board.change_area(&chunks[1]);
             let path_in_filesystem = &file_tree.path_in_filesystem;
             match ui_mode {
                 UiMode::Loading => {
                     TitleLine::new(&path_in_filesystem, base_path_size, &current_path, current_path_size, file_tree.space_freed, scan_boolean).show_loading().render(&mut f, chunks[0]);
-                    RectangleGrid::new((&tiles.rectangles).to_vec()).render(&mut f, chunks[1]);
+                    RectangleGrid::new((&board.rectangles).to_vec()).render(&mut f, chunks[1]);
                     BottomLine::new().hide_delete().render(&mut f, chunks[2]);
                 },
                 UiMode::Normal => {
                     TitleLine::new(&path_in_filesystem, base_path_size, &current_path, current_path_size, file_tree.space_freed, scan_boolean).render(&mut f, chunks[0]);
-                    RectangleGrid::new((&tiles.rectangles).to_vec()).render(&mut f, chunks[1]);
+                    RectangleGrid::new((&board.rectangles).to_vec()).render(&mut f, chunks[1]);
                     BottomLine::new().render(&mut f, chunks[2]);
                 }
                 UiMode::DeleteFile => {
-                    let currently_selected_name = &tiles.currently_selected().expect("could not find currently selected file to delete").file_metadata.name;
+                    let currently_selected_name = &board.currently_selected().expect("could not find currently selected file to delete").file_metadata.name;
                     let file_to_delete = file_tree.item_in_current_folder(&currently_selected_name).expect("could not find file to delete in current folder");
                     TitleLine::new(&path_in_filesystem, base_path_size, &current_path, current_path_size, file_tree.space_freed, scan_boolean).render(&mut f, chunks[0]);
-                    RectangleGrid::new((&tiles.rectangles).to_vec()).render(&mut f, chunks[1]);
+                    RectangleGrid::new((&board.rectangles).to_vec()).render(&mut f, chunks[1]);
                     BottomLine::new().render(&mut f, chunks[2]);
                     MessageBox::new(file_to_delete, &current_path).render(&mut f, full_screen);
                 },

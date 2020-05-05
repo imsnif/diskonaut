@@ -1,4 +1,4 @@
 pub mod files;
-mod tiles;
+pub mod tiles;
 
 pub use tiles::*;

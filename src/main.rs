@@ -130,7 +130,7 @@ where
                                 if app.loaded {
                                     break;
                                 }
-                                app.render_and_update_tiles();
+                                app.render_and_update_board();
                             }
                             park_timeout(time::Duration::from_millis(100));
                         }
