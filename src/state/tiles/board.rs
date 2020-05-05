@@ -1,8 +1,7 @@
 use tui::layout::Rect;
 
 use crate::state::files::{FileOrFolder, Folder};
-use crate::state::tiles::RectFloat;
-use crate::ui::TreeMap;
+use crate::state::tiles::{TreeMap, RectFloat};
 
 #[derive(Clone, Debug)]
 pub enum FileType {

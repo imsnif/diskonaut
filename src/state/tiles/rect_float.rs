@@ -9,14 +9,6 @@ pub struct RectFloat {
     pub height: f64,
 }
 
-// TODO: CONTINUE HERE (03/05) - just finished moving all the methods to RectFloat
-// now we need to move RectFloat to a separate file
-//
-// might be best to create a "rectangles" or some such folder inside state and put
-// tiles plus this new file in there... maybe also want to think of a new name for RectFloat?
-//
-// then keep looking here and see what we'd like to refactor... maybe keep breaking things away
-// from RectangleGrid could be related?
 impl RectFloat {
     pub fn is_right_of(&self, other: &RectFloat) -> bool {
         self.x >= other.x + other.width
