@@ -1,7 +1,9 @@
+use ::std::sync::{Mutex, Arc};
 use ::std::path::{Path, PathBuf};
 use ::std::fs::{self, Metadata};
 use ::tui::backend::Backend;
 
+use crate::{EventBus, Event};
 use crate::state::files::{Folder, FileOrFolder};
 use crate::ui::Display;
 use crate::state::Board;
@@ -20,16 +22,17 @@ where B: Backend
     pub is_running: bool,
     pub board: Board,
     pub file_tree: FileTree,
-    pub display: Display<B>,
+    pub display: Arc<Mutex<Display<B>>>,
     pub loaded: bool, // TODO: better
     pub ui_mode: UiMode,
+    pub event_bus: Arc<Mutex<EventBus>>,
 }
 
 impl <B>App <B>
 where B: Backend
 {
-    pub fn new (terminal_backend: B, path_in_filesystem: PathBuf) -> Self {
-        let display = Display::new(terminal_backend);
+    pub fn new (terminal_backend: B, path_in_filesystem: PathBuf, event_bus: Arc<Mutex<EventBus>>) -> Self {
+        let display = Arc::new(Mutex::new(Display::new(terminal_backend)));
         let board = Board::new(&Folder::new(&path_in_filesystem));
         let base_folder = Folder::new(&path_in_filesystem); // TODO: better
         let file_tree = FileTree::new(base_folder, path_in_filesystem);
@@ -40,6 +43,7 @@ where B: Backend
             loaded: false,
             display,
             ui_mode: UiMode::Loading,
+            event_bus,
         }
     }
     pub fn render_and_update_board (&mut self) {
@@ -48,7 +52,23 @@ where B: Backend
         self.render();
     }
     pub fn render (&mut self) {
-        self.display.render(&mut self.file_tree, &mut self.board, &self.ui_mode);
+        let path_should_blink = false;
+        self.display.lock().unwrap().render(&mut self.file_tree, &mut self.board, &self.ui_mode, path_should_blink);
+    }
+    pub fn render_blinking_path(&mut self) {
+        let path_should_blink = true;
+        self.display.lock().unwrap().render(&mut self.file_tree, &mut self.board, &self.ui_mode, path_should_blink);
+    }
+    pub fn set_path_to_red(&mut self) {
+        self.display.lock().unwrap().set_path_to_red();
+    }
+    pub fn reset_path_color(&mut self) {
+        self.display.lock().unwrap().reset_path_color();
+    }
+    pub fn stop_blinking_path(&mut self) {
+        let path_should_blink = false;
+        let mut display = self.display.lock().unwrap();
+        display.render(&mut self.file_tree, &mut self.board, &self.ui_mode, path_should_blink);
     }
     pub fn start_ui(&mut self) {
         self.loaded = true;
@@ -92,6 +112,7 @@ where B: Backend
                         self.file_tree.enter_folder(&selected_name);
                         self.board.reset_selected_index();
                         self.render_and_update_board();
+                        self.event_bus.lock().unwrap().publish(Event::PathChange);
                     }
                     FileOrFolder::File(_) => {} // do not enter if currently_selected is a file
                 }
@@ -99,9 +120,14 @@ where B: Backend
         }
     }
     pub fn go_up (&mut self) {
-        self.file_tree.leave_folder();
+        let succeeded = self.file_tree.leave_folder();
         self.board.reset_selected_index();
         self.render_and_update_board();
+        if succeeded {
+            self.event_bus.lock().unwrap().publish(Event::PathChange);
+        } else {
+            self.event_bus.lock().unwrap().publish(Event::PathError);
+        }
     }
     pub fn get_file_to_delete(&self) -> Option<&FileOrFolder> {
         let currently_selected_name = &self.board.currently_selected()?.file_metadata.name;

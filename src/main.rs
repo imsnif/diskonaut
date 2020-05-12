@@ -5,12 +5,13 @@ mod app;
 mod state;
 mod ui;
 mod input;
+mod events;
 
 use ::std::env;
 use ::std::io;
 use ::std::{thread, time};
 use ::std::thread::park_timeout;
-use ::termion::event::Event;
+use ::termion::event::{Event as TermionEvent};
 use ::failure;
 use ::termion::raw::IntoRawMode;
 use ::tui::backend::TermionBackend;
@@ -28,6 +29,7 @@ use input::{
     handle_keypress_delete_file_mode
 };
 use app::{App, UiMode};
+use events::{Blinker, EventBus, Event};
 
 #[cfg(not(test))]
 const SHOULD_SHOW_LOADING_ANIMATION: bool = true;
@@ -56,13 +58,20 @@ fn try_main() -> Result<(), failure::Error> {
     Ok(())
 }
 
-pub fn start<B>(terminal_backend: B, keyboard_events: Box<dyn Iterator<Item = Event> + Send>, path: PathBuf)
+pub fn start<B>(terminal_backend: B, keyboard_events: Box<dyn Iterator<Item = TermionEvent> + Send>, path: PathBuf)
 where
     B: Backend + Send + 'static,
 {
     let mut active_threads = vec![];
 
-    let app = Arc::new(Mutex::new(App::new(terminal_backend, path.clone())));
+    let event_bus = Arc::new(Mutex::new(EventBus::new()));
+    let app = Arc::new(Mutex::new(App::new(terminal_backend, path.clone(), event_bus.clone())));
+    let blinker = Blinker::new(&app);
+    {
+        let mut event_bus = event_bus.lock().unwrap();
+        event_bus.subscribe(Event::PathChange, blinker.blink_path_green());
+        event_bus.subscribe(Event::PathError, blinker.blink_path_red());
+    }
 
     let (on_sigwinch, cleanup) = sigwinch();
 
@@ -73,6 +82,8 @@ where
                 let app = app.clone();
                 move || {
                     for evt in keyboard_events {
+                        // TODO: consider abstracting this away with a weak pointer like with
+                        // blinker
                         let mut app = app.lock().expect("could not get app");
                         match app.ui_mode {
                             UiMode::Loading => {
@@ -94,7 +105,6 @@ where
             })
             .unwrap(),
     );
-
 
     active_threads.push(
         thread::Builder::new()

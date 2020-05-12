@@ -40,13 +40,35 @@ macro_rules! render_boxless_title {
 }
 
 macro_rules! render_boxed_title {
-    (  $text: ident, $frame: ident, $rect: ident ) => {{
+    (  $text: ident, $frame: ident, $rect: ident, $color: ident ) => {{
         Paragraph::new($text.iter())
-            .block(Block::default().borders(Borders::ALL))
-            .style(Style::default())
+            .block(Block::default().borders(Borders::ALL).border_style(Style::default().fg($color).modifier(Modifier::BOLD)))
+            .style(Style::default().fg($color))
             .alignment(Alignment::Center)
             .render($frame, $rect);
     }};
+}
+
+macro_rules! render_current_path {
+    ( $text: ident, $frame: ident, $rect: ident, $path_should_blink: ident, $path_should_be_red: ident ) => {{
+    let color = if $path_should_be_red {
+        Color::Red
+    } else {
+        Color::Green
+    };
+    if $path_should_blink {
+        let current_path_display = [
+            Text::styled($text, Style::default().fg(color).modifier(Modifier::BOLD))
+        ];
+        render_boxed_title!(current_path_display, $frame, $rect, color);
+    } else {
+        let current_path_display = [
+            Text::raw("\n"), // this isn't inside a block, so it needs a gentle push to be centered vertically
+            Text::styled($text, Style::default().fg(color).modifier(Modifier::BOLD))
+        ];
+        render_boxless_title!(current_path_display, $frame, $rect);
+    };
+    }}
 }
 
 pub struct TitleLine {
@@ -57,27 +79,33 @@ pub struct TitleLine {
     space_freed: DisplaySize,
     show_loading: bool,
     scan_boolean: bool,
+    path_should_blink: bool,
+    path_should_be_red: bool,
 }
 
 impl TitleLine {
-    pub fn new(base_path: &PathBuf, base_path_size: u64, current_path: &PathBuf, current_path_size: u64, space_freed: u64, scan_boolean: bool) -> Self {
+    pub fn new(base_path: &PathBuf, base_path_size: u64, current_path: &PathBuf, current_path_size: u64, space_freed: u64, scan_boolean: bool, path_should_be_red: bool) -> Self {
         let base_path = base_path.clone().into_os_string().into_string().expect("could not convert os string to string");
         let current_path = current_path.clone().into_os_string().into_string().expect("could not convert os string to string");
         let base_path_size = DisplaySize(base_path_size as f64);
         let current_path_size = DisplaySize(current_path_size as f64);
         let space_freed = DisplaySize(space_freed as f64);
-        Self { base_path, base_path_size, current_path, current_path_size, space_freed, scan_boolean, show_loading: false }
+        Self { base_path, base_path_size, current_path, current_path_size, space_freed, scan_boolean, show_loading: false, path_should_blink: false, path_should_be_red }
     }
     pub fn show_loading(mut self) -> Self {
         self.show_loading = true;
         self
     }
+    pub fn set_path_blink(mut self, path_should_blink: bool) -> Self {
+        self.path_should_blink = path_should_blink;
+        self
+    }
     pub fn render(&self, frame: &mut Frame<impl Backend>, rect: Rect) {
         let current_path_text = format!("{} ({})", &self.current_path, &self.current_path_size);
-        let current_path_display = [
-            Text::raw("\n"), // this isn't inside a block, so it needs a gentle push to be centered vertically
-            Text::styled(&current_path_text, Style::default().fg(Color::Green).modifier(Modifier::BOLD))
-        ];
+        let path_should_blink = self.path_should_blink;
+        let path_should_be_red = self.path_should_be_red;
+        let box_border_color = Color::Yellow;
+
         let base_path_text = format!("{} ({})", &self.base_path, &self.base_path_size);
         let base_path_display = [
             Text::styled(&base_path_text, Style::default().fg(Color::Yellow).modifier(Modifier::BOLD))
@@ -120,18 +148,14 @@ impl TitleLine {
 
 
                 let (left, right) = (parts[0], parts[1]);
-                render_boxless_title!(current_path_display, frame, left);
-                render_boxed_title!(loading_display, frame, right);
+                render_current_path!(current_path_text, frame, left, path_should_blink, path_should_be_red);
+                render_boxed_title!(loading_display, frame, right, box_border_color);
             } else {
                 // TODO: merge with below final else
                 let current_path_size_len = &self.current_path_size.to_string().len() + 2; // 2 == two parentheses chars
                 // TODO: truncate folder numes in full path a la fish
                 let current_path_text = format!("{} ({})", truncate_middle(&self.current_path, rect.width - current_path_size_len as u16), &self.current_path_size);
-                let current_path_display = [
-                    Text::raw("\n"), // this isn't inside a block, so it needs a gentle push to be centered vertically
-                    Text::styled(&current_path_text, Style::default().fg(Color::Green).modifier(Modifier::BOLD))
-                ];
-                render_boxless_title!(current_path_display, frame, rect);
+                render_current_path!(current_path_text, frame, rect, path_should_blink, path_should_be_red);
             }
         } else if min_current_path_len + min_base_path_len + min_space_freed_text_len <= rect.width {
             let remainder = rect.width - min_space_freed_text_len - min_base_path_len - min_current_path_len;
@@ -149,9 +173,9 @@ impl TitleLine {
 
 
             let (left, middle, right) = (parts[0], parts[1], parts[2]);
-            render_boxless_title!(current_path_display, frame, left);
-            render_boxed_title!(base_path_display, frame, middle);
-            render_boxed_title!(space_freed_display, frame, right);
+            render_current_path!(current_path_text, frame, left, path_should_blink, path_should_be_red);
+            render_boxed_title!(base_path_display, frame, middle, box_border_color);
+            render_boxed_title!(space_freed_display, frame, right, box_border_color);
         } else if min_current_path_len + min_space_freed_text_len <= rect.width {
             let remainder = rect.width - min_space_freed_text_len - min_current_path_len;
             let parts = Layout::default()
@@ -167,17 +191,13 @@ impl TitleLine {
 
 
             let (left, right) = (parts[0], parts[1]);
-            render_boxless_title!(current_path_display, frame, left);
-            render_boxed_title!(space_freed_display, frame, right);
+            render_current_path!(current_path_text, frame, left, path_should_blink, path_should_be_red);
+            render_boxed_title!(space_freed_display, frame, right, box_border_color);
         } else {
             let current_path_size_len = &self.current_path_size.to_string().len() + 2; // 2 == two parentheses chars
             // TODO: truncate folder numes in full path a la fish
             let current_path_text = format!("{} ({})", truncate_middle(&self.current_path, rect.width - current_path_size_len as u16), &self.current_path_size);
-            let current_path_display = [
-                Text::raw("\n"), // this isn't inside a block, so it needs a gentle push to be centered vertically
-                Text::styled(&current_path_text, Style::default().fg(Color::Green).modifier(Modifier::BOLD))
-            ];
-            render_boxless_title!(current_path_display, frame, rect);
+            render_current_path!(current_path_text, frame, rect, path_should_blink, path_should_be_red);
         }
     }
 }

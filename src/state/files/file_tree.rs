@@ -50,8 +50,11 @@ impl FileTree {
     pub fn enter_folder(&mut self, folder_name: &str) {
         self.current_folder_names.push(String::from(folder_name));
     }
-    pub fn leave_folder(&mut self) {
-        self.current_folder_names.pop();
+    pub fn leave_folder(&mut self) -> bool { // true => succeeded, false => at base folder
+        match self.current_folder_names.pop() {
+            Some(_) => true,
+            None => false
+        }
     }
     pub fn delete_file(&mut self, file_name: &str) {
         let path_to_delete = &mut self.current_folder_names.clone();

@@ -23,6 +23,7 @@ futures = "*"
 walkdir = "2"
 jwalk = "0.3"
 signal-hook = "0.1.10"
+tokio = { version = "0.2.20", features = ["rt-core", "sync"] }
 
 [dev-dependencies]
 stderrlog = "0.4"
