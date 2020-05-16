@@ -71,6 +71,7 @@ where
         let mut event_bus = event_bus.lock().unwrap();
         event_bus.subscribe(Event::PathChange, blinker.blink_path_green());
         event_bus.subscribe(Event::PathError, blinker.blink_path_red());
+        event_bus.subscribe(Event::FileDeleted, blinker.blink_space_freed());
     }
 
     let (on_sigwinch, cleanup) = sigwinch();
@@ -137,9 +138,10 @@ where
                         loop {
                             {
                                 let mut app = app.lock().unwrap();
-                                if app.loaded {
+                                if let UiMode::Normal = app.ui_mode {
                                     break;
                                 }
+                                app.toggle_scanning_visual_indicator();
                                 app.render_and_update_board();
                             }
                             park_timeout(time::Duration::from_millis(100));

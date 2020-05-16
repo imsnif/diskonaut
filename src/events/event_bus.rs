@@ -14,6 +14,7 @@ use tokio::{
 pub enum Event {
     PathChange,
     PathError,
+    FileDeleted,
 }
 
 impl Eq for Event {}

@@ -3,7 +3,7 @@ source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[6]"
 ---
                                                                                                                                                                                               
-                                     /tmp/bandwhich_t  ts/esc_to_go_up (12.3K)                                                                                                                
+                                                                                           /tmp/bandwhich_t  ts/esc_to_go_up (12.3K)                                                          
                                                                                                                                                                                               
                                                                                                                               ┬                                                               
                                                                                                                               │                                                               

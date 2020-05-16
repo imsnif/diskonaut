@@ -4,7 +4,8 @@ use tui::style::{Style, Color, Modifier};
 use tui::widgets::{Widget};
 
 use crate::state::FileType;
-use crate::ui::{draw_symbol, boundaries, DisplaySize, DisplaySizeRounded};
+use crate::ui::{draw_symbol, boundaries};
+use crate::ui::format::{DisplaySize, DisplaySizeRounded, truncate_middle};
 use crate::state::FileRect;
 
 pub const MINIMUM_HEIGHT: u16 = 2;
@@ -18,22 +19,6 @@ pub struct RectangleGrid {
 impl<'a> RectangleGrid {
     pub fn new (rectangles: Vec<FileRect>) -> Self {
         RectangleGrid { rectangles }
-    }
-}
-
-fn truncate_middle(row: &str, max_length: u16) -> String {
-    if max_length < 6 {
-        String::from("") // TODO: make sure this never happens
-    } else if row.len() as u16 > max_length {
-        let first_slice = &row[0..(max_length as usize / 2) - 2];
-        let second_slice = &row[(row.len() - (max_length / 2) as usize + 2)..row.len()];
-        if max_length % 2 == 0 {
-            format!("{}[...]{}", first_slice, second_slice)
-        } else {
-            format!("{}[..]{}", first_slice, second_slice)
-        }
-    } else {
-        row.to_string()
     }
 }
 

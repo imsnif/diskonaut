@@ -6,7 +6,7 @@ use ::tui::backend::Backend;
 use crate::{EventBus, Event};
 use crate::state::files::{Folder, FileOrFolder};
 use crate::ui::Display;
-use crate::state::Board;
+use crate::state::{Board, UiEffects};
 use crate::state::files::FileTree;
 
 #[derive(Clone, Copy)]
@@ -20,30 +20,31 @@ pub struct App <B>
 where B: Backend
 {
     pub is_running: bool,
-    pub board: Board,
-    pub file_tree: FileTree,
-    pub display: Arc<Mutex<Display<B>>>,
-    pub loaded: bool, // TODO: better
     pub ui_mode: UiMode,
-    pub event_bus: Arc<Mutex<EventBus>>,
+    board: Board,
+    file_tree: FileTree,
+    display: Display<B>,
+    event_bus: Arc<Mutex<EventBus>>,
+    ui_effects: UiEffects,
 }
 
 impl <B>App <B>
 where B: Backend
 {
     pub fn new (terminal_backend: B, path_in_filesystem: PathBuf, event_bus: Arc<Mutex<EventBus>>) -> Self {
-        let display = Arc::new(Mutex::new(Display::new(terminal_backend)));
+        let display = Display::new(terminal_backend);
         let board = Board::new(&Folder::new(&path_in_filesystem));
         let base_folder = Folder::new(&path_in_filesystem); // TODO: better
         let file_tree = FileTree::new(base_folder, path_in_filesystem);
+        let ui_effects = UiEffects::new();
         App {
             is_running: true,
             board,
             file_tree,
-            loaded: false,
             display,
             ui_mode: UiMode::Loading,
             event_bus,
+            ui_effects,
         }
     }
     pub fn render_and_update_board (&mut self) {
@@ -51,27 +52,31 @@ where B: Backend
         self.board.change_files(&current_folder); // TODO: rename to change_tiles
         self.render();
     }
-    pub fn render (&mut self) {
-        let path_should_blink = false;
-        self.display.lock().unwrap().render(&mut self.file_tree, &mut self.board, &self.ui_mode, path_should_blink);
+    pub fn toggle_scanning_visual_indicator(&mut self) {
+        self.ui_effects.toggle_scanning_visual_indicator();
     }
-    pub fn render_blinking_path(&mut self) {
-        let path_should_blink = true;
-        self.display.lock().unwrap().render(&mut self.file_tree, &mut self.board, &self.ui_mode, path_should_blink);
+    pub fn render (&mut self) {
+        self.display.render(&mut self.file_tree, &mut self.board, &self.ui_mode, &self.ui_effects);
+    }
+    pub fn set_frame_around_current_path(&mut self) {
+        self.ui_effects.frame_around_current_path = true;
+    }
+    pub fn remove_frame_around_current_path(&mut self) {
+        self.ui_effects.frame_around_current_path = false;
+    }
+    pub fn set_frame_around_space_freed(&mut self) {
+        self.ui_effects.frame_around_space_freed = true;
+    }
+    pub fn remove_frame_around_space_freed(&mut self) {
+        self.ui_effects.frame_around_space_freed = false;
     }
     pub fn set_path_to_red(&mut self) {
-        self.display.lock().unwrap().set_path_to_red();
+        self.ui_effects.current_path_is_red = true;
     }
-    pub fn reset_path_color(&mut self) {
-        self.display.lock().unwrap().reset_path_color();
-    }
-    pub fn stop_blinking_path(&mut self) {
-        let path_should_blink = false;
-        let mut display = self.display.lock().unwrap();
-        display.render(&mut self.file_tree, &mut self.board, &self.ui_mode, path_should_blink);
+    pub fn reset_current_path_color(&mut self) {
+        self.ui_effects.current_path_is_red = false;
     }
     pub fn start_ui(&mut self) {
-        self.loaded = true;
         self.ui_mode = UiMode::Normal;
         self.render_and_update_board();
     }
@@ -165,5 +170,6 @@ where B: Backend
         self.board.reset_selected_index();
         self.ui_mode = UiMode::Normal;
         self.render_and_update_board();
+        self.event_bus.lock().unwrap().publish(Event::FileDeleted);
     }
 }

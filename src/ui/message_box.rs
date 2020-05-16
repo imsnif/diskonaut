@@ -5,6 +5,7 @@ use tui::widgets::{Widget};
 use std::path::PathBuf;
 
 use crate::ui::{draw_symbol_with_style, boundaries};
+use crate::ui::format::truncate_middle;
 use crate::state::files::FileOrFolder;
 
 pub struct MessageBox<'a> {
@@ -38,23 +39,6 @@ fn draw_rect_on_grid (buf: &mut Buffer, rect: Rect) {
     for y in (rect.y + 1)..(rect.y + rect.height) {
         draw_symbol_with_style(buf, rect.x, y, &boundaries::VERTICAL, Style::default().bg(Color::Black));
         draw_symbol_with_style(buf, rect.x + rect.width, y, &boundaries::VERTICAL, Style::default().bg(Color::Black));
-    }
-}
-
-// TODO: merge with identical function elsewhere
-fn truncate_middle(row: &str, max_length: u16) -> String {
-    if max_length < 6 {
-        String::from("") // TODO: make sure this never happens
-    } else if row.len() as u16 > max_length {
-        let first_slice = &row[0..(max_length as usize / 2) - 2];
-        let second_slice = &row[(row.len() - (max_length / 2) as usize + 2)..row.len()];
-        if max_length % 2 == 0 {
-            format!("{}[...]{}", first_slice, second_slice)
-        } else {
-            format!("{}[..]{}", first_slice, second_slice)
-        }
-    } else {
-        row.to_string()
     }
 }
 

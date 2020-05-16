@@ -3,7 +3,7 @@ source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[4]"
 ---
                                                                                                                                                                                               
-                   /tmp/bandwhich_tests/move_up_and_enter folder/subfolder1 (12.3K)                                                                                                           
+                                                                                     /tmp/bandwhich_tests/move_up_and_enter folder/subfolder1 (12.3K)                                         
                                                                                                                                                                                               
                                                                                                                                                               ─                               
                                                                                                                                                                                               

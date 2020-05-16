@@ -2,9 +2,9 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[4]"
 ---
-                                                                                       ┌────                                                                     ┐┌  ──                       
-           /tmp/bandwhich_test /del t _folder_with_multiple_children (32.8K)           │    /tmp bandwhich_tests/delet _folder_with_multip e_children (32.8K)    ││    Space fr ed: 12.3K     
-                                                                                       └────                                                                     ┘└  ──                       
+                                                                                                                                                                                              
+                                                                      32 8               /tmp/bandwhich_test /del t _folder_with_multiple_children (32.8K)             Space fr ed: 12.3K     
+                                                                                                                                                                                              
                                                                                                                                          ─                                                    
                                                                                                                                                                                               
                                                                                                                                                                                               

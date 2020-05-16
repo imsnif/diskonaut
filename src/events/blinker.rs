@@ -1,9 +1,9 @@
 use ::std::sync::{Arc, Weak, Mutex};
-use ::std::{thread, time};
+use ::std::time;
 use ::tui::backend::Backend;
 use ::std::thread::park_timeout;
 
-use crate::app::{App, UiMode};
+use crate::app::App;
 
 pub struct Blinker <B>
 where B: Backend + 'static + Send
@@ -28,19 +28,27 @@ where B: Backend + 'static + Send
             let app = self.app.clone();
             move || {
                 if let Some(app) = app.upgrade() {
-                    app.lock().unwrap().render_blinking_path();
+                    let mut app = app.lock().unwrap();
+                    app.set_frame_around_current_path();
+                    app.render();
                 }
                 park_timeout(time::Duration::from_millis(50));
                 if let Some(app) = app.upgrade() {
-                    app.lock().unwrap().stop_blinking_path();
+                    let mut app = app.lock().unwrap();
+                    app.remove_frame_around_current_path();
+                    app.render();
                 }
                 park_timeout(time::Duration::from_millis(50));
                 if let Some(app) = app.upgrade() {
-                    app.lock().unwrap().render_blinking_path();
+                    let mut app = app.lock().unwrap();
+                    app.set_frame_around_current_path();
+                    app.render();
                 }
                 park_timeout(time::Duration::from_millis(100));
                 if let Some(app) = app.upgrade() {
-                    app.lock().unwrap().stop_blinking_path();
+                    let mut app = app.lock().unwrap();
+                    app.remove_frame_around_current_path();
+                    app.render();
                 }
             }
         })
@@ -55,22 +63,59 @@ where B: Backend + 'static + Send
                 if let Some(app) = app.upgrade() {
                     let mut app = app.lock().unwrap();
                     app.set_path_to_red();
-                    app.render_blinking_path();
+                    app.set_frame_around_current_path();
+                    app.render();
                 }
                 park_timeout(time::Duration::from_millis(50));
                 if let Some(app) = app.upgrade() {
                     let mut app = app.lock().unwrap();
-                    app.stop_blinking_path();
+                    app.remove_frame_around_current_path();
+                    app.render();
                 }
                 park_timeout(time::Duration::from_millis(50));
                 if let Some(app) = app.upgrade() {
-                    app.lock().unwrap().render_blinking_path();
+                    let mut app = app.lock().unwrap();
+                    app.set_frame_around_current_path();
+                    app.render();
                 }
                 park_timeout(time::Duration::from_millis(100));
                 if let Some(app) = app.upgrade() {
                     let mut app = app.lock().unwrap();
-                    app.reset_path_color();
-                    app.stop_blinking_path();
+                    app.reset_current_path_color();
+                    app.remove_frame_around_current_path();
+                    app.render();
+                }
+            }
+        })
+    }
+    pub fn blink_space_freed(&self) -> Box<dyn Fn() + Send + Sync>
+        where B: Backend + 'static + Send
+    {
+        Box::new({
+            let app = self.app.clone();
+            move || {
+                if let Some(app) = app.upgrade() {
+                    let mut app = app.lock().unwrap();
+                    app.set_frame_around_space_freed();
+                    app.render();
+                }
+                park_timeout(time::Duration::from_millis(50));
+                if let Some(app) = app.upgrade() {
+                    let mut app = app.lock().unwrap();
+                    app.remove_frame_around_space_freed();
+                    app.render();
+                }
+                park_timeout(time::Duration::from_millis(50));
+                if let Some(app) = app.upgrade() {
+                    let mut app = app.lock().unwrap();
+                    app.set_frame_around_space_freed();
+                    app.render();
+                }
+                park_timeout(time::Duration::from_millis(100));
+                if let Some(app) = app.upgrade() {
+                    let mut app = app.lock().unwrap();
+                    app.remove_frame_around_space_freed();
+                    app.render();
                 }
             }
         })
