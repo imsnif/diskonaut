@@ -38,7 +38,7 @@ fn truncate_size_line (size: &u64, percentage: &f64, max_length: &u16) -> String
     } else if *max_length >= 4 { // 4 == "100%"
         format!("{:.0}%", (percentage * 100.0).round())
     } else {
-        String::from(".") // TODO: make sure this never happens
+        unreachable!("trying to render a rect of less than minimum size")
     }
 }
 
@@ -240,7 +240,7 @@ impl<'a> Widget for RectangleGrid {
         for file_rect in &self.rectangles {
             let rect = file_rect.rect.round();
 
-            if file_rect.rect.height < MINIMUM_HEIGHT as f64 || file_rect.rect.width < MINIMUM_WIDTH as f64 {
+            if rect.height < MINIMUM_HEIGHT || rect.width < MINIMUM_WIDTH {
                 small_files.add_rect(&rect);
             } else {
                 draw_rect_text_on_grid(buf, &rect, &file_rect);
