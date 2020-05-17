@@ -114,7 +114,7 @@ fn draw_rect_text_on_grid(buf: &mut Buffer, rect: &Rect, file_rect: &FileRect) {
     let second_line = truncate_size_line(&file_rect.file_metadata.size, &percentage, &max_text_length);
 
     let second_line_length = second_line.len(); // TODO: better
-    let second_line_start_position = ((rect.width - second_line_length as u16) as f64 / 2.0).ceil() as u16 + rect.x; // TODO: we get "subtract with overflow" errors here, fix this
+    let second_line_start_position = ((rect.width - second_line_length as u16) as f64 / 2.0).ceil() as u16 + rect.x;
 
 
     let first_line_style = if file_rect.selected {
