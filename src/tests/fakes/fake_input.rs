@@ -18,7 +18,7 @@ impl Iterator for KeyboardEvents {
             Some(ev) => match ev {
                 Some(ev) => Some(ev),
                 None => {
-                    thread::sleep(time::Duration::from_millis(100));
+                    thread::sleep(time::Duration::from_millis(200));
                     self.next()
                 }
             },

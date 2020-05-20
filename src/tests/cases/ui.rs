@@ -1004,6 +1004,9 @@ fn delete_file() {
    events.push(None);
    events.push(Some(Event::Key(Key::Char('y'))));
    events.push(None);
+   events.push(None);
+   events.push(None);
+   events.push(None);
    events.push(Some(Event::Key(Key::Ctrl('c'))));
    let keyboard_events = Box::new(KeyboardEvents::new(events));
 

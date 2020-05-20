@@ -5,31 +5,28 @@ mod app;
 mod state;
 mod ui;
 mod input;
-mod events;
+mod messages;
 
 use ::std::env;
 use ::std::io;
 use ::std::{thread, time};
 use ::std::thread::park_timeout;
-use ::termion::event::{Event as TermionEvent};
+use ::std::sync::mpsc::{SyncSender, Sender, Receiver};
+use ::std::sync::mpsc;
+use ::termion::event::{Event as TermionEvent, Key};
 use ::failure;
 use ::termion::raw::IntoRawMode;
 use ::tui::backend::TermionBackend;
 use ::std::process;
 use ::std::path::PathBuf;
 use ::tui::backend::Backend;
-use ::std::sync::{Arc, Mutex};
+use ::std::sync::atomic::{AtomicBool, Ordering};
+use ::std::sync::Arc;
 use ::walkdir::WalkDir;
 
-use input::{
-    KeyboardEvents,
-    sigwinch,
-    handle_keypress_loading_mode,
-    handle_keypress_normal_mode,
-    handle_keypress_delete_file_mode
-};
+use input::{KeyboardEvents,sigwinch};
 use app::{App, UiMode};
-use events::{Blinker, EventBus, Event};
+use messages::{Event, Instruction, handle_events};
 
 #[cfg(not(test))]
 const SHOULD_SHOW_LOADING_ANIMATION: bool = true;
@@ -64,109 +61,109 @@ where
 {
     let mut active_threads = vec![];
 
-    let event_bus = Arc::new(Mutex::new(EventBus::new()));
-    let app = Arc::new(Mutex::new(App::new(terminal_backend, path.clone(), event_bus.clone())));
-    let blinker = Blinker::new(&app);
+    let (event_sender, event_receiver): (Sender<Event>, Receiver<Event>) = mpsc::channel();
+    let (instruction_sender, instruction_receiver): (SyncSender<Instruction>, Receiver<Instruction>) = mpsc::sync_channel(100);
+
+    let running = Arc::new(AtomicBool::new(true));
+    let loaded = Arc::new(AtomicBool::new(false));
     {
-        let mut event_bus = event_bus.lock().unwrap();
-        event_bus.subscribe(Event::PathChange, blinker.blink_path_green());
-        event_bus.subscribe(Event::PathError, blinker.blink_path_red());
-        event_bus.subscribe(Event::FileDeleted, blinker.blink_space_freed());
-    }
-
-    let (on_sigwinch, cleanup) = sigwinch();
-
-    active_threads.push(
-        thread::Builder::new()
-            .name("stdin_handler".to_string())
-            .spawn({
-                let app = app.clone();
-                move || {
-                    for evt in keyboard_events {
-                        // TODO: consider abstracting this away with a weak pointer like with
-                        // blinker
-                        let mut app = app.lock().expect("could not get app");
-                        match app.ui_mode {
-                            UiMode::Loading => {
-                                handle_keypress_loading_mode(evt, &mut app);
-                            },
-                            UiMode::Normal => {
-                                handle_keypress_normal_mode(evt, &mut app);
-                            },
-                            UiMode::DeleteFile => {
-                                handle_keypress_delete_file_mode(evt, &mut app);
-                            }
-                        }
-                        if !app.is_running {
-                            cleanup();
-                            break;
-                        }
-                    }
-                }
-            })
-            .unwrap(),
-    );
-
-    active_threads.push(
-        thread::Builder::new()
-            .name("hd_scanner".to_string())
-            .spawn({
-                let app = app.clone();
-                let path = path.clone();
-                move || {
-                    let path_length = path.components().count();
-
-                    for entry in WalkDir::new(&path).into_iter().filter_map(|e| e.ok()) {
-                        if let Ok(file_metadata) = entry.metadata() {
-                            let entry_path = entry.path();
-                            app.lock().unwrap().add_entry_to_base_folder(&file_metadata, &entry_path, &path_length);
-                        }
-                    }
-                    app.lock().unwrap().start_ui();
-                }
-            })
-            .unwrap()
-    );
-
-    if SHOULD_SHOW_LOADING_ANIMATION {
+        let mut app = App::new(terminal_backend, path.clone(), event_sender.clone());
+        let (on_sigwinch, cleanup) = sigwinch();
         active_threads.push(
             thread::Builder::new()
-                .name("loading_loop".to_string())
+                .name("event_executer".to_string())
                 .spawn({
-                    let app = app.clone();
+                    let instruction_sender = instruction_sender.clone();
+                    || handle_events(event_receiver, instruction_sender)
+                }).unwrap(),
+        );
+
+        active_threads.push(
+            thread::Builder::new()
+                .name("stdin_handler".to_string())
+                .spawn({
+                    let instruction_sender = instruction_sender.clone();
                     move || {
-                        loop {
-                            {
-                                let mut app = app.lock().unwrap();
-                                if let UiMode::Normal = app.ui_mode {
-                                    break;
-                                }
-                                app.toggle_scanning_visual_indicator();
-                                app.render_and_update_board();
+                        for evt in keyboard_events {
+                            if let TermionEvent::Key(Key::Ctrl('c')) | TermionEvent::Key(Key::Char('q')) = evt {
+                                // not ideal, but works in a pinch
+                                let _ = instruction_sender.send(Instruction::Keypress(evt));
+                                break;
                             }
-                            park_timeout(time::Duration::from_millis(100));
+                            match instruction_sender.send(Instruction::Keypress(evt)) {
+                                Err(_) => break,
+                                _ => {}
+                            };
                         }
+                    }
+                })
+                .unwrap(),
+        );
+
+        active_threads.push(
+            thread::Builder::new()
+                .name("hd_scanner".to_string())
+                .spawn({
+                    let path = path.clone();
+                    let instruction_sender = instruction_sender.clone();
+                    let loaded = loaded.clone();
+                    move || {
+                        let path_length = path.components().count();
+
+                        'scanning: for entry in WalkDir::new(&path).into_iter().filter_map(|e| e.ok()) {
+                            if let Ok(file_metadata) = entry.metadata() {
+                                match instruction_sender.send(Instruction::AddEntryToBaseFolder((file_metadata, entry, path_length))) {
+                                    Err(_) => break 'scanning,
+                                    _ => {}
+                                };
+                            }
+                        }
+                        let _ = instruction_sender.send(Instruction::StartUi);
+                        loaded.store(true, Ordering::Release);
                     }
                 })
                 .unwrap()
         );
-    }
 
-    active_threads.push(
-        thread::Builder::new()
-            .name("resize_handler".to_string())
-            .spawn({
-                let app = app.clone();
-                move || {
-                    on_sigwinch(Box::new(move || { 
-                        let mut app = app.lock().unwrap();
-                        app.reset_ui_mode();
-                        app.render();
-                    }));
-                }
-            })
-            .unwrap(),
-    );
+        if SHOULD_SHOW_LOADING_ANIMATION {
+            active_threads.push(
+                thread::Builder::new()
+                    .name("loading_loop".to_string())
+                    .spawn({
+                        let instruction_sender = instruction_sender.clone();
+                        let loaded = loaded.clone();
+                        let running = running.clone();
+                        move || {
+                            while running.load(Ordering::Acquire) && !loaded.load(Ordering::Acquire) {
+                                let _ = instruction_sender.send(Instruction::ToggleScanningVisualIndicator);
+                                let _ = instruction_sender.send(Instruction::RenderAndUpdateBoard);
+                                park_timeout(time::Duration::from_millis(100));
+                            }
+                        }
+                    })
+                    .unwrap()
+            );
+        }
+
+        active_threads.push(
+            thread::Builder::new()
+                .name("resize_handler".to_string())
+                .spawn({
+                    let instruction_sender = instruction_sender.clone();
+                    move || {
+                        on_sigwinch(Box::new(move || {
+                            let _ = instruction_sender.send(Instruction::ResetUiMode);
+                            let _ = instruction_sender.send(Instruction::Render);
+                        }));
+                    }
+                })
+                .unwrap(),
+        );
+
+        app.start(instruction_receiver);
+        running.store(false, Ordering::Release);
+        cleanup();
+    }
 
     for thread_handler in active_threads {
         thread_handler.join().unwrap();

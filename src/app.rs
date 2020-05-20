@@ -1,13 +1,14 @@
-use ::std::sync::{Mutex, Arc};
+use ::std::sync::mpsc::{Sender, Receiver};
 use ::std::path::{Path, PathBuf};
 use ::std::fs::{self, Metadata};
 use ::tui::backend::Backend;
 
-use crate::{EventBus, Event};
+use crate::Event;
 use crate::state::files::{Folder, FileOrFolder};
 use crate::ui::Display;
 use crate::state::{Board, UiEffects};
 use crate::state::files::FileTree;
+use crate::messages::{Instruction, handle_instructions};
 
 #[derive(Clone, Copy)]
 pub enum UiMode {
@@ -24,14 +25,14 @@ where B: Backend
     board: Board,
     file_tree: FileTree,
     display: Display<B>,
-    event_bus: Arc<Mutex<EventBus>>,
+    event_sender: Sender<Event>,
     ui_effects: UiEffects,
 }
 
 impl <B>App <B>
 where B: Backend
 {
-    pub fn new (terminal_backend: B, path_in_filesystem: PathBuf, event_bus: Arc<Mutex<EventBus>>) -> Self {
+    pub fn new (terminal_backend: B, path_in_filesystem: PathBuf, event_sender: Sender<Event>) -> Self {
         let display = Display::new(terminal_backend);
         let board = Board::new(&Folder::new(&path_in_filesystem));
         let base_folder = Folder::new(&path_in_filesystem); // TODO: better
@@ -43,9 +44,12 @@ where B: Backend
             file_tree,
             display,
             ui_mode: UiMode::Loading,
-            event_bus,
+            event_sender,
             ui_effects,
         }
+    }
+    pub fn start (&mut self, receiver: Receiver<Instruction>) {
+        handle_instructions(self, receiver);
     }
     pub fn render_and_update_board (&mut self) {
         let current_folder = self.file_tree.get_current_folder();
@@ -91,6 +95,7 @@ where B: Backend
     }
     pub fn exit (&mut self) {
         self.is_running = false;
+        let _ = self.event_sender.send(Event::AppExit);
     }
     pub fn move_selected_right (&mut self) {
         self.board.move_selected_right();
@@ -117,7 +122,7 @@ where B: Backend
                         self.file_tree.enter_folder(&selected_name);
                         self.board.reset_selected_index();
                         self.render_and_update_board();
-                        self.event_bus.lock().unwrap().publish(Event::PathChange);
+                        let _ = self.event_sender.send(Event::PathChange);
                     }
                     FileOrFolder::File(_) => {} // do not enter if currently_selected is a file
                 }
@@ -129,9 +134,9 @@ where B: Backend
         self.board.reset_selected_index();
         self.render_and_update_board();
         if succeeded {
-            self.event_bus.lock().unwrap().publish(Event::PathChange);
+            let _ = self.event_sender.send(Event::PathChange);
         } else {
-            self.event_bus.lock().unwrap().publish(Event::PathError);
+            let _ = self.event_sender.send(Event::PathError);
         }
     }
     pub fn get_file_to_delete(&self) -> Option<&FileOrFolder> {
@@ -170,6 +175,6 @@ where B: Backend
         self.board.reset_selected_index();
         self.ui_mode = UiMode::Normal;
         self.render_and_update_board();
-        self.event_bus.lock().unwrap().publish(Event::FileDeleted);
+        let _ = self.event_sender.send(Event::FileDeleted);
     }
 }

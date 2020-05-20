@@ -9,7 +9,7 @@ use crate::ui::format::{DisplaySize, DisplaySizeRounded, truncate_middle};
 use crate::state::FileRect;
 
 pub const MINIMUM_HEIGHT: u16 = 2;
-pub const MINIMUM_WIDTH: u16 = 8;
+pub const MINIMUM_WIDTH: u16 = 8;// TODO: change to 10
 
 #[derive(Clone)]
 pub struct RectangleGrid {
