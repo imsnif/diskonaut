@@ -9,7 +9,7 @@ use crate::ui::format::{DisplaySize, DisplaySizeRounded, truncate_middle};
 use crate::state::FileRect;
 
 pub const MINIMUM_HEIGHT: u16 = 2;
-pub const MINIMUM_WIDTH: u16 = 8;// TODO: change to 10
+pub const MINIMUM_WIDTH: u16 = 8;
 
 #[derive(Clone)]
 pub struct RectangleGrid {
@@ -179,7 +179,12 @@ impl SmallFilesArea {
     pub fn add_rect(&mut self, rect: &Rect) {
         match self.leftmost_top_left_coordinates {
             Some((x, y)) => {
-                if rect.x < x {
+                if rect.x == 0 {
+                    // do nothing
+                    // this happens because of a bug in treemap.rs
+                    // where somehow file_rects are created with x/y as NaN
+                    // TODO: fix this properly
+                } else if rect.x < x {
                     self.leftmost_top_left_coordinates = Some((rect.x, rect.y));
                 } else if rect.x == x && rect.y < y {
                     self.leftmost_top_left_coordinates = Some((rect.x, rect.y));
@@ -192,7 +197,12 @@ impl SmallFilesArea {
 
         match self.highest_top_left_coordinates {
             Some((x, y)) => {
-                if rect.y < y {
+                if rect.y == 0 {
+                    // do nothing
+                    // this happens because of a bug in treemap.rs
+                    // where somehow file_rects are created with x/y as NaN
+                    // TODO: fix this properly
+                } else if rect.y < y {
                     self.highest_top_left_coordinates = Some((rect.x, rect.y));
                 } else if rect.y == y && rect.x < x {
                     self.highest_top_left_coordinates = Some((rect.x, rect.y));
