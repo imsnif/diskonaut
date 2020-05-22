@@ -2,9 +2,9 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[5]"
 ---
-┌────────────────────────────────────────────────────────────────────────────────┐┌                                                                                                           
-│    Base: /tmp/bandwhich_tests/noop_when_pressing_esc_at_base_folder (12.3K)    ││        /tmp/bandwhich_tests/noop_when_pressing_esc_at_base_folder (12.3K)                                 
-└────────────────────────────────────────────────────────────────────────────────┘└                                                                                                           
+                                                                                                                                                                                              
+                                             /tmp/bandwhich_tests/noop wh n_pressing_esc_at base_folder | 12.3K | +4 files                                                                    
+                                                                                                                                                                                              
                                                                                                                               ┬                                                               
                                                                                                                               │                                                               
                                                                                                                               │                                                               

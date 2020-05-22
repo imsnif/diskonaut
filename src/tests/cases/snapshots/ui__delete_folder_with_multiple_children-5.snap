@@ -3,7 +3,7 @@ source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[4]"
 ---
                                                                                                                                                                                               
-                                                                      32 8               /tmp/bandwhich_test /del t _folder_with_multiple_children (32.8K)             Space fr ed: 12.3K     
+                                           /tmp/bandwhich_test /del t _folder_with_multiple_children | 32.8K | +3 files                                                Space fr ed: 12.3K     
                                                                                                                                                                                               
                                                                                                                                          ─                                                    
                                                                                                                                                                                               

@@ -1,10 +1,10 @@
-use tui::layout::Rect;
-use tui::style::{Style, Color, Modifier};
+use ::tui::layout::Rect;
+use ::tui::style::{Style, Color, Modifier};
 use ::tui::layout::Alignment;
-use tui::widgets::{Widget};
+use ::tui::widgets::{Widget};
 use ::tui::terminal::Frame;
 use ::tui::backend::Backend;
-use std::path::PathBuf;
+use ::std::path::PathBuf;
 
 use ::tui::widgets::{Block, Borders, Paragraph, Text};
 
@@ -13,17 +13,19 @@ use crate::ui::format::{DisplaySize, truncate_middle};
 pub struct BasePath {
     path: String,
     size: DisplaySize,
+    num_descendants: u64,
     bold: bool,
     loading: bool,
 }
 
 impl BasePath { 
-    pub fn new (path: &PathBuf, size: u64) -> Self {
+    pub fn new (path: &PathBuf, size: u64, num_descendants: u64) -> Self {
         let size = DisplaySize(size as f64);
         let path = path.clone().into_os_string().into_string().expect("could not convert os string to string");
         BasePath {
             path,
             size,
+            num_descendants,
             bold: true,
             loading: false,
         }
@@ -47,16 +49,17 @@ impl BasePath {
         self.text(None).len()
     }
     fn text (&self, max_len: Option<u16>) -> String {
-        let size_string_len = &self.size.to_string().len() + 2; // 2 == two parentheses chars
+        let info_string = format!(" | {} | +{} files", &self.size, &self.num_descendants);
         let path_text = match max_len {
-            Some(len) => truncate_middle(&self.path, len - size_string_len as u16),
+            Some(len) => truncate_middle(&self.path, len - info_string.len() as u16),
             None => String::from(&self.path),
         };
+        // TODO: truncate size and num_descendants before info_string
         // TODO: truncate folder numes in full path a la fish
         if self.loading {
-            format!("Scanning: {} ({})", path_text, &self.size)
+            format!("Scanning: {}{}", path_text, info_string)
         } else {
-            format!("Base: {} ({})", path_text, &self.size)
+            format!("Base: {}{}", path_text, info_string)
         }
     }
     pub fn render(&self, frame: &mut Frame<impl Backend>, rect: Rect) {

@@ -22,6 +22,9 @@ impl FileTree {
     pub fn get_total_size (&self) -> u64 {
         self.base_folder.size
     }
+    pub fn get_total_descendants (&self) -> u64 {
+        self.base_folder.num_descendants
+    }
     pub fn get_current_folder (&self) -> &Folder {
         if self.current_folder_names.is_empty() {
             &self.base_folder

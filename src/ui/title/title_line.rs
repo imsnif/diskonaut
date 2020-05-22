@@ -2,11 +2,11 @@ use ::tui::layout::Rect;
 use ::tui::terminal::Frame;
 use ::tui::backend::Backend;
 use ::tui::layout::{Layout, Constraint, Direction};
-use ::std::path::PathBuf;
 
 use crate::ui::title::BasePath;
 use crate::ui::title::CurrentPath;
 use crate::ui::title::SpaceFreed;
+use crate::ui::FolderInfo;
 
 fn three_part_layout (first_part_len: u16, second_part_len: u16, third_part_len: u16, rect: Rect) -> (Option<Rect>, Option<Rect>, Option<Rect>) {
     if first_part_len + second_part_len + third_part_len <= rect.width {
@@ -62,10 +62,8 @@ fn two_part_layout (first_part_len: u16, second_part_len: u16, rect: Rect) -> (O
 }
 
 pub struct TitleLine <'a> {
-    base_path: &'a PathBuf,
-    base_path_size: u64,
-    current_path: &'a PathBuf,
-    current_path_size: u64,
+    base_path_info: FolderInfo<'a>,
+    current_path_info: FolderInfo<'a>,
     space_freed: u64,
     show_loading: bool,
     scanning_should_be_bold: bool,
@@ -75,12 +73,10 @@ pub struct TitleLine <'a> {
 }
 
 impl <'a>TitleLine<'a> {
-    pub fn new(base_path: &'a PathBuf, base_path_size: u64, current_path: &'a PathBuf, current_path_size: u64, space_freed: u64) -> Self {
+    pub fn new(base_path_info: FolderInfo<'a>, current_path_info: FolderInfo<'a>, space_freed: u64) -> Self {
         Self {
-            base_path,
-            base_path_size,
-            current_path,
-            current_path_size,
+            base_path_info,
+            current_path_info,
             space_freed,
             scanning_should_be_bold: false,
             show_loading: false,
@@ -110,10 +106,10 @@ impl <'a>TitleLine<'a> {
         self
     }
     pub fn render(&self, frame: &mut Frame<impl Backend>, rect: Rect) {
-        let base_path = BasePath::new(&self.base_path, self.base_path_size)
+        let base_path = BasePath::new(&self.base_path_info.path, self.base_path_info.size, self.base_path_info.num_descendants)
             .loading(self.show_loading)
             .bold(self.scanning_should_be_bold);
-        let current_path = CurrentPath::new(&self.current_path, self.current_path_size)
+        let current_path = CurrentPath::new(&self.current_path_info.path, self.current_path_info.size, self.current_path_info.num_descendants)
             .frame(self.frame_around_current_path)
             .red(self.current_path_is_red);
         let space_freed = SpaceFreed::new(self.space_freed)

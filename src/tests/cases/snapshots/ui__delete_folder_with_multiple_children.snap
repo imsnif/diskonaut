@@ -2,9 +2,9 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[0]"
 ---
-┌───────────────────────────────────────────────────────────────────────────────┐                                                                                                             
-│    Base: /tmp/bandwhich_tests/delete_folder_with_multiple_children (45.1K)    │          /tmp/bandwhich_tests/delete_folder_with_multiple_children (45.1K)               Space freed: 0     
-└───────────────────────────────────────────────────────────────────────────────┘                                                                                                             
+                                                                                                                                                                                              
+                                             /tmp/bandwhich_tests/delete_folder_with_multiple_children | 45.1K | +7 files                                                  Space freed: 0     
+                                                                                                                                                                                              
 ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┬───────────────────────────────────────────────────┐
 │                                                                                                                                        │                                                   │
 │                                                                                                                                        │                                                   │

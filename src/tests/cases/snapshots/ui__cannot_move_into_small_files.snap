@@ -2,9 +2,9 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[0]"
 ---
-┌──────────────────────────────────────────────────────────────────────┐                                                                                                                      
-│    Base: /tmp/bandwhich_tests/cannot_move_into_small_files (2.4M)    │                   /tmp/bandwhich_tests/cannot_move_into_small_files (2.4M)                        Space freed: 0     
-└──────────────────────────────────────────────────────────────────────┘                                                                                                                      
+┌──────────────────────────────────────────────────────────────────────────────────┐                                                                                                          
+│    Base: /tmp/bandwhich_tests/cannot_move_into_small_files | 2.4M | +12 files    │       /tmp/bandwhich_tests/cannot_move_into_small_files | 2.4M | +12 files            Space freed: 0     
+└──────────────────────────────────────────────────────────────────────────────────┘                                                                                                          
 ┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┬─────────────────────────────────┐
 │                                                                                                                                                          │                                 │
 │                                                                                                                                                          │                                 │

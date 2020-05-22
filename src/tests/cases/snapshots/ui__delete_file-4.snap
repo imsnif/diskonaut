@@ -2,9 +2,9 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[3]"
 ---
-                                                      ┐                                                                                                                                       
-                                             8.2K)    │                                   /tmp/bandwhich_tests/delete_file (8. K)                                       Space freed: 4.1K     
-                                                      ┘                                                                                                                                       
+                                                                 ┐                                                                                                                            
+                                              8.2K | +3 files    │                       /tmp/bandwhich_test /del t _file | 8.2K | +3 files                             Space freed: 4.1K     
+                                                                 ┘                                                                                                                            
                                                                                                                               ─                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               

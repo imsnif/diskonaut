@@ -13,17 +13,19 @@ use crate::ui::format::{DisplaySize, truncate_middle};
 pub struct CurrentPath {
     path: String,
     size: DisplaySize,
+    num_descendants: u64,
     frame: bool,
     red: bool,
 }
 
 impl CurrentPath { 
-    pub fn new (path: &PathBuf, size: u64) -> Self {
+    pub fn new (path: &PathBuf, size: u64, num_descendants: u64) -> Self {
         let size = DisplaySize(size as f64);
         let path = path.clone().into_os_string().into_string().expect("could not convert os string to string");
         CurrentPath {
             path,
             size,
+            num_descendants,
             frame: false,
             red: false,
         }
@@ -40,10 +42,11 @@ impl CurrentPath {
         self.text(None).len()
     }
     fn text (&self, max_len: Option<u16>) -> String {
-        let size_string_len = &self.size.to_string().len() + 2; // 2 == two parentheses chars
+        // TODO: truncate size and num_descendants before info_string
         // TODO: truncate folder numes in full path a la fish
+        let info_string = format!(" | {} | +{} files", &self.size, &self.num_descendants);
         match max_len {
-            Some(len) => format!("{} ({})", truncate_middle(&self.path, len - size_string_len as u16), &self.size),
+            Some(len) => format!("{}{}", truncate_middle(&self.path, len - info_string.len() as u16), info_string),
             None => format!("{} ({})", &self.path, &self.size),
         }
     }
