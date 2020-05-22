@@ -1,10 +1,11 @@
 use crate::state::files::{FileOrFolder, Folder};
 use std::path::{Path, PathBuf};
+use std::ffi::{OsString, OsStr};
 use std::fs::Metadata;
 
 pub struct FileTree {
     base_folder: Folder,
-    current_folder_names: Vec<String>,
+    current_folder_names: Vec<OsString>,
     pub space_freed: u64, // TODO: move elsewhere
     pub path_in_filesystem: PathBuf,
 }
@@ -46,12 +47,12 @@ impl FileTree {
         }
         return full_path;
     }
-    pub fn item_in_current_folder(&self, item_name: &str) -> Option<&FileOrFolder> {
+    pub fn item_in_current_folder(&self, item_name: &OsStr) -> Option<&FileOrFolder> {
         let current_folder = &self.get_current_folder();
-        current_folder.path(&vec![String::from(item_name)])
+        current_folder.path(&vec![item_name.to_os_string()])
     }
-    pub fn enter_folder(&mut self, folder_name: &str) {
-        self.current_folder_names.push(String::from(folder_name));
+    pub fn enter_folder(&mut self, folder_name: &OsStr) {
+        self.current_folder_names.push(folder_name.to_os_string());
     }
     pub fn leave_folder(&mut self) -> bool { // true => succeeded, false => at base folder
         match self.current_folder_names.pop() {
@@ -59,13 +60,12 @@ impl FileTree {
             None => false
         }
     }
-    pub fn delete_file(&mut self, file_name: &str) {
+    pub fn delete_file(&mut self, file_name: &OsStr) {
         let path_to_delete = &mut self.current_folder_names.clone();
-        path_to_delete.push(String::from(file_name));
+        path_to_delete.push(file_name.to_os_string());
         self.base_folder.delete_path(&path_to_delete);
     }
     pub fn add_entry(&mut self, entry_metadata: &Metadata, entry_full_path: &Path, base_path_length: &usize) {
         self.base_folder.add_entry(entry_metadata, entry_full_path, base_path_length);
     }
-
 }

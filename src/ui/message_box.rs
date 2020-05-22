@@ -102,7 +102,7 @@ impl<'a> Widget for MessageBox<'a> {
         full_path.push(&self.file_to_delete.name());
 
         let full_path = full_path.into_os_string().into_string().expect("could not convert os string to string");
-        let file_name = &self.file_to_delete.name();
+        let file_name = &self.file_to_delete.name().to_string_lossy();
 
         let full_path_display = String::from(full_path);
         let file_name_line = if text_length > full_path_display.len() as u16 {

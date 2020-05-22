@@ -1,4 +1,5 @@
 use tui::layout::Rect;
+use std::ffi::OsString;
 
 use crate::state::files::{FileOrFolder, Folder};
 use crate::state::tiles::{TreeMap, RectFloat};
@@ -11,7 +12,7 @@ pub enum FileType {
 
 #[derive(Debug, Clone)]
 pub struct FileMetadata {
-    pub name: String,
+    pub name: OsString,
     pub size: u64,
     pub descendants: Option<u64>,
     pub percentage: f64, // 1.0 is 100% (0.5 is 50%, etc.)
@@ -39,7 +40,7 @@ impl Board {
         for (name, file_or_folder) in &folder.contents {
             files.push({
                 let size = file_or_folder.size();
-                let name = String::from(name);
+                let name = name.clone();
                 let (descendants, file_type) = match file_or_folder {
                     FileOrFolder::Folder(folder) => (Some(folder.num_descendants), FileType::Folder),
                     FileOrFolder::File(_file) => (None, FileType::File),
@@ -80,7 +81,7 @@ impl Board {
         for (name, file_or_folder) in &folder.contents {
             files.push({
                 let size = file_or_folder.size();
-                let name = String::from(name);
+                let name = name.clone();
                 let (descendants, file_type) = match file_or_folder {
                     FileOrFolder::Folder(folder) => (Some(folder.num_descendants), FileType::Folder),
                     FileOrFolder::File(_file) => (None, FileType::File),

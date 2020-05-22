@@ -1,6 +1,7 @@
 use std::collections::{HashMap, VecDeque};
 use std::fs::Metadata;
 use std::os::unix::fs::MetadataExt; // TODO: support other OSs
+use std::ffi::{OsString, OsStr};
 
 use std::path::{Path, PathBuf};
 
@@ -11,7 +12,7 @@ pub enum FileOrFolder {
 }
 
 impl FileOrFolder {
-    pub fn name (&self) -> &str {
+    pub fn name (&self) -> &OsStr {
         match self {
             FileOrFolder::Folder(folder) => &folder.name,
             FileOrFolder::File(file) => &file.name,
@@ -27,23 +28,23 @@ impl FileOrFolder {
 
 #[derive(Debug, Clone)]
 pub struct File {
-    pub name: String,
+    pub name: OsString,
     pub size: u64,
 }
 
 #[derive(Debug, Clone)]
 pub struct Folder {
-    pub name: String,
-    pub contents: HashMap<String, FileOrFolder>,
+    pub name: OsString,
+    pub contents: HashMap<OsString, FileOrFolder>,
     pub size: u64,
     pub num_descendants: u64,
 }
 
 impl Folder {
     pub fn new (path: &PathBuf) -> Self {
-        let base_folder_name = path.iter().last().expect("could not get path base name").to_string_lossy();
+        let base_folder_name = path.iter().last().expect("could not get path base name");
         Self {
-            name: String::from(base_folder_name),
+            name: base_folder_name.to_os_string(),
             contents: HashMap::new(),
             size: 0,
             num_descendants: 0,
@@ -70,7 +71,7 @@ impl Folder {
             return
         }
         if path_length > 1 {
-            let name = String::from(path.iter().next().expect("could not get next path element for folder").to_string_lossy());
+            let name = path.iter().next().expect("could not get next path element for folder").to_os_string();
             let path_entry = self.contents.entry(name.clone()).or_insert( 
                 FileOrFolder::Folder(
                     Folder {
@@ -87,7 +88,7 @@ impl Folder {
                 _ => {}
             };
         } else {
-            let name = String::from(path.iter().next().expect("could not get next path element for file").to_string_lossy());
+            let name = path.iter().next().expect("could not get next path element for file").to_os_string();
             self.num_descendants += 1;
             self.contents.insert(name.clone(),
                 FileOrFolder::Folder(
@@ -107,7 +108,7 @@ impl Folder {
             return
         }
         if path_length > 1 {
-            let name = String::from(path.iter().next().expect("could not get next path element for folder").to_string_lossy());
+            let name = path.iter().next().expect("could not get next path element for folder").to_os_string();
             let path_entry = self.contents.entry(name.clone()).or_insert( 
                 FileOrFolder::Folder(
                     Folder {
@@ -127,7 +128,7 @@ impl Folder {
                 _ => {}
             };
         } else {
-            let name = String::from(path.iter().next().expect("could not get next path element for file").to_string_lossy());
+            let name = path.iter().next().expect("could not get next path element for file").to_os_string();
             self.size += size;
             self.num_descendants += 1;
             self.contents.insert(name.clone(),
@@ -140,8 +141,8 @@ impl Folder {
             );
         }
     }
-    pub fn path(&self, folder_names: &Vec<String>) -> Option<&FileOrFolder> {
-        let mut folders_to_traverse: VecDeque<String> = VecDeque::from(folder_names.to_owned());
+    pub fn path(&self, folder_names: &Vec<OsString>) -> Option<&FileOrFolder> {
+        let mut folders_to_traverse: VecDeque<OsString> = VecDeque::from(folder_names.to_owned());
         let next_name = folders_to_traverse.pop_front().expect("could not find next path folder1");
         let next_in_path = &self.contents.get(&next_name)?;
         if folders_to_traverse.is_empty() {
@@ -152,8 +153,8 @@ impl Folder {
             Some(next_in_path)
         }
     }
-    pub fn delete_path(&mut self, folder_names: &Vec<String>) {
-        let mut folders_to_traverse: VecDeque<String> = VecDeque::from(folder_names.to_owned()); // TODO: better
+    pub fn delete_path(&mut self, folder_names: &Vec<OsString>) {
+        let mut folders_to_traverse: VecDeque<OsString> = VecDeque::from(folder_names.to_owned()); // TODO: better
         if folder_names.len() == 1 {
             let name = folder_names.last().expect("could not find last item in path");
             let removed_size = &self.contents.get(name).expect("could not find folder").size();

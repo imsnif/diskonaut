@@ -76,7 +76,7 @@ fn draw_small_files_rect_on_grid(buf: &mut Buffer, rect: Rect) {
 
 fn draw_rect_text_on_grid(buf: &mut Buffer, rect: &Rect, file_rect: &FileRect) { // TODO: better, combine args
     let max_text_length = if rect.width > 2 { rect.width - 2 } else { 0 };
-    let name = &file_rect.file_metadata.name;
+    let name = &file_rect.file_metadata.name.to_string_lossy();
     let descendant_count = &file_rect.file_metadata.descendants;
     let percentage = &file_rect.file_metadata.percentage;
 
