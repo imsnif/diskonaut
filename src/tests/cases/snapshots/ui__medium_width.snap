@@ -3,7 +3,7 @@ source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[0]"
 ---
                                                                                                     
-            /tmp/bandwhich_tests/medium_width | 20.5K | +3 files                 Space freed: 0     
+            /tmp/bandwhich_tests/medium_width | 20.0K | +3 files                 Space freed: 0     
                                                                                                     
 ┌─────────────────────────────────────────────────┬────────────────────────────────────────────────┐
 │                                                 │                                                │
@@ -24,7 +24,7 @@ expression: "&terminal_draw_events_mirror[0]"
 │                      file2                      │                     file3                      │
 │                                                 │                                                │
 │                                                 │                                                │
-│                   8.2K (40%)                    │                   8.2K (40%)                   │
+│                   8.0K (40%)                    │                   8.0K (40%)                   │
 │                                                 │                                                │
 │                                                 │                                                │
 │                                                 │                                                │
@@ -46,7 +46,7 @@ expression: "&terminal_draw_events_mirror[0]"
 │                                              file1                                               │
 │                                                                                                  │
 │                                                                                                  │
-│                                            4.1K (20%)                                            │
+│                                            4.0K (20%)                                            │
 │                                                                                                  │
 │                                                                                                  │
 └──────────────────────────────────────────────────────────────────────────────────────────────────┘

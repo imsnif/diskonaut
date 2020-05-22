@@ -3,7 +3,7 @@ source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[0]"
 ---
 ┌─────────────────────────────────────────────────────────────────────────┐                                                                                                                   
-│    Base: /tmp/bandwhich_tests/delete_file_press_n | 12.3K | +4 files    │                /tmp/bandwhich_tests/delete_file_press_n | 12.3K | +4 files                     Space freed: 0     
+│    Base: /tmp/bandwhich_tests/delete_file_press_n | 12.0K | +4 files    │                /tmp/bandwhich_tests/delete_file_press_n | 12.0K | +4 files                     Space freed: 0     
 └─────────────────────────────────────────────────────────────────────────┘                                                                                                                   
 ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┬──────────────────────────────────────────────────────────────┐
 │                                                                                                                             │                                                              │
@@ -17,7 +17,7 @@ expression: "&terminal_draw_events_mirror[0]"
 │                                                                                                                             │                                                              │
 │                                                            file2                                                            │                                                              │
 │                                                                                                                             │                                                              │
-│                                                         4.1K (33%)                                                          │                                                              │
+│                                                         4.0K (33%)                                                          │                                                              │
 │                                                                                                                             │                                                              │
 │                                                                                                                             │                                                              │
 │                                                                                                                             │                                                              │
@@ -28,7 +28,7 @@ expression: "&terminal_draw_events_mirror[0]"
 │                                                                                                                             │                                                              │
 │                                                                                                                             │                 subfolder1/ (+1 descendants)                 │
 ├─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤                                                              │
-│                                                                                                                             │                          4.1K (33%)                          │
+│                                                                                                                             │                          4.0K (33%)                          │
 │                                                                                                                             │                                                              │
 │                                                                                                                             │                                                              │
 │                                                                                                                             │                                                              │
@@ -39,7 +39,7 @@ expression: "&terminal_draw_events_mirror[0]"
 │                                                                                                                             │                                                              │
 │                                                            file3                                                            │                                                              │
 │                                                                                                                             │                                                              │
-│                                                         4.1K (33%)                                                          │                                                              │
+│                                                         4.0K (33%)                                                          │                                                              │
 │                                                                                                                             │                                                              │
 │                                                                                                                             │                                                              │
 │                                                                                                                             │                                                              │

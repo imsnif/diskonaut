@@ -3,7 +3,7 @@ source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[3]"
 ---
                                                                                                                                                                                               
-                                                                                       /tmp bandwhich_tests/move_[...]nd_enter_folder/subfolder1 | 8.2K | +1 files                            
+                                                                                       /tmp bandwhich_tests/move_[...]nd_enter_folder/subfolder1 | 8.0K | +1 files                            
                                                                                                                                                                                               
                                                                                                                                                        ─                                      
                                                                                                                                                                                               
@@ -28,7 +28,7 @@ expression: "&terminal_draw_events_mirror[3]"
                                                                                                                                                                                               
                                                                                             file3                                                                                             
 │                                                                                                                                                                                             
-                                                                                         8.2K (100%)                                                                                          
+                                                                                         8.0K (100%)                                                                                          
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               

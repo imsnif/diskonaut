@@ -3,7 +3,7 @@ source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[3]"
 ---
                                                                                                                                                                                               
-                                        /tmp/bandwhich_tests/noop_when pr ssing_esc_at_base folder/subfolder1 | 4.1K | +1 files                                                               
+                                        /tmp/bandwhich_tests/noop_when pr ssing_esc_at_base folder/subfolder1 | 4.0K | +1 files                                                               
                                                                                                                                                                                               
                                                                                                                               ─                                                               
                                                                                                                                                                                               
@@ -28,7 +28,7 @@ expression: "&terminal_draw_events_mirror[3]"
                                                                                                                                                                                               
                                                                                             file1                                                                                             
 │                                                                                                                                                                                             
-                                                                                         4.1K (100%)                                                                                          
+                                                                                         4.0K (100%)                                                                                          
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
