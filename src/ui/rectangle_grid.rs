@@ -247,17 +247,32 @@ impl<'a> Widget for RectangleGrid {
             return;
         }
         let mut small_files = SmallFilesArea::new();
-        for file_rect in &self.rectangles {
-            let rect = file_rect.rect.round();
-
-            if rect.height < MINIMUM_HEIGHT || rect.width < MINIMUM_WIDTH {
-                small_files.add_rect(&rect);
-            } else {
-                draw_rect_text_on_grid(buf, &rect, &file_rect);
-                draw_rect_on_grid(buf, rect);
+        if self.rectangles.len() == 0 {
+            for x in area.x + 1..area.x + area.width {
+                for y in area.y + 1..area.y + area.height {
+                    let buf = buf.get_mut(x, y);
+                    buf.set_symbol("█");
+                    buf.set_style(Style::default().bg(Color::White).fg(Color::Black));
+                }
             }
+            let empty_folder_line = "Folder is empty";
+            let text_length = empty_folder_line.len();
+            let text_style = Style::default();
+            let text_start_position = ((area.width - text_length as u16) as f64 / 2.0).ceil() as u16 + area.x;
+            buf.set_string(text_start_position, (area.height / 2) + area.y - 1, empty_folder_line, text_style);
+        } else {
+            for file_rect in &self.rectangles {
+                let rect = file_rect.rect.round();
+
+                if rect.height < MINIMUM_HEIGHT || rect.width < MINIMUM_WIDTH {
+                    small_files.add_rect(&rect);
+                } else {
+                    draw_rect_text_on_grid(buf, &rect, &file_rect);
+                    draw_rect_on_grid(buf, rect);
+                }
+            }
+            small_files.draw(&area, buf);
         }
-        small_files.draw(&area, buf);
-        draw_rect_on_grid(buf, area); // we draw a frame around the whole area to make up for the "small files" block not having a frame of its own
+        draw_rect_on_grid(buf, area); // draw a frame around the whole area (to properly support the small files and empty folder cases)
     }
 }

@@ -1400,3 +1400,26 @@ fn files_with_size_zero() {
     assert_eq!(terminal_draw_events_mirror.len(), 1);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
 }
+
+#[test]
+fn empty_folder () {
+
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let keyboard_events = sleep_and_quit_events(1);
+    let temp_dir_path = create_root_temp_dir("empty_folder").expect("failed to create temp dir");
+
+    start(backend, keyboard_events, temp_dir_path.clone());
+    std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
+    let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
+    println!("terminal_draw_events_mirror[0] {:?}", terminal_draw_events_mirror[0]);
+
+    let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
+
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
+
+    assert_eq!(terminal_draw_events_mirror.len(), 1);
+    assert_snapshot!(&terminal_draw_events_mirror[0]);
+}
