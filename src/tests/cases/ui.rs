@@ -1403,7 +1403,6 @@ fn files_with_size_zero() {
 
 #[test]
 fn empty_folder () {
-
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
     let keyboard_events = sleep_and_quit_events(1);
     let temp_dir_path = create_root_temp_dir("empty_folder").expect("failed to create temp dir");

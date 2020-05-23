@@ -92,12 +92,7 @@ where B: Backend
             };
         }).expect("failed to draw");
     }
-}
-
-impl <B> Drop for Display<B>
-where B: Backend
-{
-    fn drop(&mut self) {
+    pub fn clear (&mut self) {
         self.terminal.clear().expect("failed to clear terminal");
         self.terminal.show_cursor().expect("failed to show cursor");
     }

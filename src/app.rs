@@ -50,6 +50,7 @@ where B: Backend
     }
     pub fn start (&mut self, receiver: Receiver<Instruction>) {
         handle_instructions(self, receiver);
+        self.display.clear();
     }
     pub fn render_and_update_board (&mut self) {
         let current_folder = self.file_tree.get_current_folder();
