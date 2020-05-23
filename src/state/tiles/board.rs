@@ -45,7 +45,13 @@ impl Board {
                     FileOrFolder::Folder(folder) => (Some(folder.num_descendants), FileType::Folder),
                     FileOrFolder::File(_file) => (None, FileType::File),
                 };
-                let percentage = size as f64 / total_size as f64;
+                let percentage = if size == 0 && total_size == 0 {
+                    // if all files in the folder are of size 0, we'll want to display them all as
+                    // the same size
+                    1.0 / folder.contents.len() as f64
+                } else {
+                    size as f64 / total_size as f64
+                };
                 FileMetadata {
                     size,
                     name,
@@ -86,7 +92,13 @@ impl Board {
                     FileOrFolder::Folder(folder) => (Some(folder.num_descendants), FileType::Folder),
                     FileOrFolder::File(_file) => (None, FileType::File),
                 };
-                let percentage = size as f64 / total_size as f64;
+                let percentage = if size == 0 && total_size == 0 {
+                    // if all files in the folder are of size 0, we'll want to display them all as
+                    // the same size
+                    1.0 / folder.contents.len() as f64
+                } else {
+                    size as f64 / total_size as f64
+                };
                 FileMetadata {
                     size,
                     name,
