@@ -34,7 +34,7 @@ where B: Backend
     pub fn render (&mut self, file_tree: &mut FileTree, board: &mut Board, ui_mode: &UiMode, ui_effects: &UiEffects) {
         self.terminal.draw(|mut f| {
             let full_screen = f.size();
-            if full_screen.width < 40 || full_screen.height < 15 {
+            if full_screen.width < 50 || full_screen.height < 15 {
                 TermTooSmall::new().render(&mut f, full_screen);
             } else {
                 let current_path = file_tree.get_current_path();

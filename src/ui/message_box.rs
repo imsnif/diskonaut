@@ -81,7 +81,7 @@ impl<'a> Widget for MessageBox<'a> {
                 } else if text_length >= 3 {
                     format!("Delete?")
                 } else {
-                    format!("?!?!?! {}", text_length) // TODO: donot render app if it's so small
+                    unreachable!("should not render if terminal is so small");
                 }
             },
             FileOrFolder::Folder(folder) => {
