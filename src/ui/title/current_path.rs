@@ -46,7 +46,7 @@ impl CurrentPath {
         // TODO: truncate folder numes in full path a la fish
         let info_string = format!(" | {} | +{} files", &self.size, &self.num_descendants);
         match max_len {
-            Some(len) => format!("{}{}", truncate_middle(&self.path, len - info_string.len() as u16), info_string),
+            Some(len) => truncate_middle(&format!("{}{}", &self.path, &info_string), len),
             None => format!("{} ({})", &self.path, &self.size),
         }
     }

@@ -146,6 +146,145 @@ fn small_width () {
 }
 
 #[test]
+fn too_small_width_one () {
+
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(39, 50);
+    let keyboard_events = sleep_and_quit_events(1);
+    let temp_dir_path = create_root_temp_dir("too_small_width_one").expect("failed to create temp dir");
+
+    let mut file_1_path = PathBuf::from(&temp_dir_path);
+    file_1_path.push("file1");
+    create_temp_file(file_1_path, 4000).expect("failed to create temp file");
+
+    let mut file_2_path = PathBuf::from(&temp_dir_path);
+    file_2_path.push("file2");
+    create_temp_file(file_2_path, 5000).expect("failed to create temp file");
+
+    let mut file_3_path = PathBuf::from(&temp_dir_path);
+    file_3_path.push("file3");
+    create_temp_file(file_3_path, 5000).expect("failed to create temp file");
+
+    start(backend, keyboard_events, temp_dir_path.clone());
+    std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
+    let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
+    println!("terminal_draw_events_mirror[0] {:?}", terminal_draw_events_mirror[0]);
+
+    let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
+
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
+
+    assert_eq!(terminal_draw_events_mirror.len(), 1);
+    assert_snapshot!(&terminal_draw_events_mirror[0]);
+}
+
+#[test]
+fn too_small_width_two () {
+
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(26, 50);
+    let keyboard_events = sleep_and_quit_events(1);
+    let temp_dir_path = create_root_temp_dir("too_small_width_two").expect("failed to create temp dir");
+
+    let mut file_1_path = PathBuf::from(&temp_dir_path);
+    file_1_path.push("file1");
+    create_temp_file(file_1_path, 4000).expect("failed to create temp file");
+
+    let mut file_2_path = PathBuf::from(&temp_dir_path);
+    file_2_path.push("file2");
+    create_temp_file(file_2_path, 5000).expect("failed to create temp file");
+
+    let mut file_3_path = PathBuf::from(&temp_dir_path);
+    file_3_path.push("file3");
+    create_temp_file(file_3_path, 5000).expect("failed to create temp file");
+
+    start(backend, keyboard_events, temp_dir_path.clone());
+    std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
+    let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
+    println!("terminal_draw_events_mirror[0] {:?}", terminal_draw_events_mirror[0]);
+
+    let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
+
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
+
+    assert_eq!(terminal_draw_events_mirror.len(), 1);
+    assert_snapshot!(&terminal_draw_events_mirror[0]);
+}
+
+#[test]
+fn too_small_width_three () {
+
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(20, 50);
+    let keyboard_events = sleep_and_quit_events(1);
+    let temp_dir_path = create_root_temp_dir("too_small_width_three").expect("failed to create temp dir");
+
+    start(backend, keyboard_events, temp_dir_path.clone());
+    std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
+    let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
+    println!("terminal_draw_events_mirror[0] {:?}", terminal_draw_events_mirror[0]);
+
+    let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
+
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
+
+    assert_eq!(terminal_draw_events_mirror.len(), 1);
+    assert_snapshot!(&terminal_draw_events_mirror[0]);
+}
+
+#[test]
+fn too_small_width_four () {
+
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(15, 50);
+    let keyboard_events = sleep_and_quit_events(1);
+    let temp_dir_path = create_root_temp_dir("too_small_width_four").expect("failed to create temp dir");
+
+    start(backend, keyboard_events, temp_dir_path.clone());
+    std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
+    let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
+    println!("terminal_draw_events_mirror[0] {:?}", terminal_draw_events_mirror[0]);
+
+    let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
+
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
+
+    assert_eq!(terminal_draw_events_mirror.len(), 1);
+    assert_snapshot!(&terminal_draw_events_mirror[0]);
+}
+
+#[test]
+fn too_small_width_five () {
+
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(5, 50);
+    let keyboard_events = sleep_and_quit_events(1);
+    let temp_dir_path = create_root_temp_dir("too_small_width_five").expect("failed to create temp dir");
+
+    start(backend, keyboard_events, temp_dir_path.clone());
+    std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
+    let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
+    println!("terminal_draw_events_mirror[0] {:?}", terminal_draw_events_mirror[0]);
+
+    let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
+
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
+
+    assert_eq!(terminal_draw_events_mirror.len(), 1);
+    assert_snapshot!(&terminal_draw_events_mirror[0]);
+}
+
+#[test]
 fn eleven_files () {
 
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);

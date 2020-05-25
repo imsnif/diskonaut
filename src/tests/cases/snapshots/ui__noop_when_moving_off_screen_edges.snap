@@ -3,7 +3,7 @@ source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[0]"
 ---
 ┌───────────────────────────────────────────────────────────────────────────────────────┐                                                                                                     
-│    Base: /tmp/bandwhich_tests/noop_when_moving_off_screen_edges | 12.0K | +3 files    │    /tmp/bandwhich_tests/n[...]oving_off_screen_edges | 12.0K | +3 files          Space freed: 0     
+│    Base: /tmp/bandwhich_tests/noop_when_moving_off_screen_edges | 12.0K | +3 files    │     /tmp/bandwhich_tests/noop_when_[..]screen_edges | 12.0K | +3 files           Space freed: 0     
 └───────────────────────────────────────────────────────────────────────────────────────┘                                                                                                     
 ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┬──────────────────────────────────────────────────────────────┐
 │                                                                                                                             │                                                              │

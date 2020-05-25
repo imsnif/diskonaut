@@ -3,7 +3,7 @@ source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[0]"
 ---
                                                             
-      /tmp/bandwhic[..]small_wikndow | 12.0K | +4 files     
+     /tmp/bandwhich_tests/de[...]ndow | 12.0K | +4 files    
                                                             
 ┌─────────────────────────────┬────────────────────────────┐
 │                             │                            │

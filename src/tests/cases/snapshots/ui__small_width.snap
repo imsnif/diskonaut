@@ -3,7 +3,7 @@ source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[0]"
 ---
                                                   
-      /tmp/ban[..]ll_width | 20.0K | +3 files     
+     /tmp/bandwhich_tes[...]| 20.0K | +3 files    
                                                   
 ┌────────────────────────┬───────────────────────┐
 │                        │                       │
