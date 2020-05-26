@@ -2,6 +2,7 @@ use ::tui::layout::Rect;
 use ::tui::terminal::Frame;
 use ::tui::backend::Backend;
 use ::tui::layout::{Layout, Constraint, Direction};
+use ::tui::widgets::Widget;
 
 use crate::ui::title::BasePath;
 use crate::ui::title::CurrentPath;
@@ -66,7 +67,7 @@ pub struct TitleLine <'a> {
     current_path_info: FolderInfo<'a>,
     space_freed: u64,
     show_loading: bool,
-    scanning_should_be_bold: bool,
+    scanning_visual_indicator: u64,
     frame_around_current_path: bool,
     frame_around_space_freed: bool,
     current_path_is_red: bool,
@@ -78,7 +79,7 @@ impl <'a>TitleLine<'a> {
             base_path_info,
             current_path_info,
             space_freed,
-            scanning_should_be_bold: false,
+            scanning_visual_indicator: 0,
             show_loading: false,
             frame_around_current_path: false,
             frame_around_space_freed: false,
@@ -101,14 +102,14 @@ impl <'a>TitleLine<'a> {
         self.current_path_is_red = current_path_is_red;
         self
     }
-    pub fn scanning_should_be_bold(mut self, scanning_should_be_bold: bool) -> Self {
-        self.scanning_should_be_bold = scanning_should_be_bold;
+    pub fn scanning_visual_indicator(mut self, scanning_visual_indicator: u64) -> Self {
+        self.scanning_visual_indicator = scanning_visual_indicator;
         self
     }
     pub fn render(&self, frame: &mut Frame<impl Backend>, rect: Rect) {
-        let base_path = BasePath::new(&self.base_path_info.path, self.base_path_info.size, self.base_path_info.num_descendants)
+        let mut base_path = BasePath::new(&self.base_path_info.path, self.base_path_info.size, self.base_path_info.num_descendants)
             .loading(self.show_loading)
-            .bold(self.scanning_should_be_bold);
+            .visual_indicator(self.scanning_visual_indicator);
         let current_path = CurrentPath::new(&self.current_path_info.path, self.current_path_info.size, self.current_path_info.num_descendants)
             .frame(self.frame_around_current_path)
             .red(self.current_path_is_red);

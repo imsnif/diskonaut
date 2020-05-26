@@ -58,7 +58,7 @@ where B: Backend
         self.render();
     }
     pub fn toggle_scanning_visual_indicator(&mut self) {
-        self.ui_effects.toggle_scanning_visual_indicator();
+        self.ui_effects.increment_scanning_visual_indicator();
     }
     pub fn render (&mut self) {
         self.display.render(&mut self.file_tree, &mut self.board, &self.ui_mode, &self.ui_effects);

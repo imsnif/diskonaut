@@ -64,7 +64,7 @@ where B: Backend
                 match ui_mode {
                     UiMode::Loading => {
                         TitleLine::new(base_path_info, current_path_info, file_tree.space_freed)
-                            .scanning_should_be_bold(ui_effects.scanning_visual_indicator)
+                            .scanning_visual_indicator(ui_effects.scanning_visual_indicator)
                             .frame_around_current_path(ui_effects.frame_around_current_path)
                             .current_path_is_red(ui_effects.current_path_is_red)
                             .show_loading()

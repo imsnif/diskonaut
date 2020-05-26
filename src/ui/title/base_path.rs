@@ -1,24 +1,44 @@
 use ::tui::layout::Rect;
 use ::tui::style::{Style, Color, Modifier};
-use ::tui::layout::Alignment;
-use ::tui::widgets::{Widget};
-use ::tui::terminal::Frame;
-use ::tui::backend::Backend;
+use ::tui::widgets::Widget;
 use ::std::path::PathBuf;
+use ::tui::buffer::Buffer;
 
-use ::tui::widgets::{Block, Borders, Paragraph, Text};
-
+use crate::ui::{draw_symbol_with_style, boundaries};
 use crate::ui::format::{DisplaySize, truncate_middle};
+
+// TODO: use external method
+fn draw_rect_on_grid_with_style (buf: &mut Buffer, rect: Rect, style: Style) {
+    // top and bottom
+    for x in rect.x..(rect.x + rect.width) {
+        if x == rect.x {
+            draw_symbol_with_style(buf, x, rect.y, &boundaries::TOP_LEFT, style);
+            draw_symbol_with_style(buf, x, rect.y + rect.height - 1, &boundaries::BOTTOM_LEFT, style);
+        } else if x == rect.x + rect.width - 1 {
+            draw_symbol_with_style(buf, x, rect.y, &boundaries::TOP_RIGHT, style);
+            draw_symbol_with_style(buf, x, rect.y + rect.height - 1, &boundaries::BOTTOM_RIGHT, style);
+        } else {
+            draw_symbol_with_style(buf, x, rect.y, &boundaries::HORIZONTAL, style);
+            draw_symbol_with_style(buf, x, rect.y + rect.height - 1, &boundaries::HORIZONTAL, style);
+        }
+    }
+
+    // left and right
+    for y in (rect.y + 1)..(rect.y + rect.height - 1) {
+        draw_symbol_with_style(buf, rect.x, y, &boundaries::VERTICAL, style);
+        draw_symbol_with_style(buf, rect.x + rect.width - 1, y, &boundaries::VERTICAL, style);
+    }
+}
 
 pub struct BasePath {
     path: String,
     size: DisplaySize,
     num_descendants: u64,
-    bold: bool,
+    visual_indicator: u64,
     loading: bool,
 }
 
-impl BasePath { 
+impl BasePath {
     pub fn new (path: &PathBuf, size: u64, num_descendants: u64) -> Self {
         let size = DisplaySize(size as f64);
         let path = path.clone().into_os_string().into_string().expect("could not convert os string to string");
@@ -26,22 +46,15 @@ impl BasePath {
             path,
             size,
             num_descendants,
-            bold: true,
+            visual_indicator: 0,
             loading: false,
         }
     }
-    pub fn bold(mut self, should_be_bold: bool) -> Self {
-        if !self.loading {
-            self.bold = true;
-        } else {
-            self.bold = should_be_bold;
-        }
+    pub fn visual_indicator(mut self, visual_indicator: u64) -> Self {
+        self.visual_indicator = visual_indicator;
         self
     }
     pub fn loading(mut self, should_be_loading: bool) -> Self {
-        if !should_be_loading { 
-            self.bold = true;
-        }
         self.loading = should_be_loading;
         self
     }
@@ -62,17 +75,25 @@ impl BasePath {
             format!("Base: {}{}", path_text, info_string)
         }
     }
-    pub fn render(&self, frame: &mut Frame<impl Backend>, rect: Rect) {
+}
+
+impl<'a> Widget for BasePath {
+    fn draw(&mut self, rect: Rect, buf: &mut Buffer) {
         let text = self.text(Some(rect.width - 10)); // 10 so that text will not overflow
-        let text_display = if self.bold {
-            [ Text::styled(text, Style::default().fg(Color::Yellow).modifier(Modifier::BOLD)) ]
+        let text_start_position = (rect.width / 2) - (text.chars().count() / 2) as u16;
+
+        if self.loading {
+            let text_length = text.chars().count();
+            let index_in_text = (self.visual_indicator as usize % text_length) as u16;
+            let marked_style = Style::default().fg(Color::Yellow).modifier(Modifier::BOLD);
+            draw_rect_on_grid_with_style(buf, rect, Style::default().fg(Color::Yellow));
+            buf.set_string(text_start_position, rect.y + rect.height - 2, text.clone(), Style::default().fg(Color::Yellow));
+            buf.get_mut(text_start_position + index_in_text, rect.y + 1).set_style(marked_style);
+            buf.get_mut(text_start_position + index_in_text + 1, rect.y + 1).set_style(marked_style);
+            buf.get_mut(text_start_position + index_in_text + 2, rect.y + 1).set_style(marked_style);
         } else {
-            [ Text::styled(text, Style::default().fg(Color::Yellow)) ]
-        };
-        Paragraph::new(text_display.iter())
-            .block(Block::default().borders(Borders::ALL).border_style(Style::default().fg(Color::Yellow).modifier(Modifier::BOLD)))
-            .style(Style::default().fg(Color::Yellow))
-            .alignment(Alignment::Center)
-            .render(frame, rect);
+            draw_rect_on_grid_with_style(buf, rect, Style::default().fg(Color::Yellow).modifier(Modifier::BOLD));
+            buf.set_string(text_start_position, rect.y + rect.height - 2, text.clone(), Style::default().fg(Color::Yellow).modifier(Modifier::BOLD));
+        }
     }
 }
