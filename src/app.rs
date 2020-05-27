@@ -173,6 +173,7 @@ where B: Backend
         match file_removed {
             Ok(_) => {
                 self.remove_file_from_ui();
+                self.ui_mode = UiMode::Normal;
                 self.render_and_update_board();
                 let _ = self.event_sender.send(Event::FileDeleted);
             },
@@ -188,6 +189,5 @@ where B: Backend
         self.file_tree.space_freed += file_to_delete.size();
         self.file_tree.delete_file(currently_selected_name);
         self.board.reset_selected_index();
-        self.ui_mode = UiMode::Normal;
     }
 }
