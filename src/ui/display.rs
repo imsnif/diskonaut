@@ -4,7 +4,7 @@ use ::tui::backend::Backend;
 use ::tui::layout::{Layout, Constraint, Direction};
 
 use crate::state::files::FileTree;
-use crate::ui::{TitleLine, BottomLine, MessageBox, TermTooSmall};
+use crate::ui::{TitleLine, BottomLine, MessageBox, ErrorBox, TermTooSmall};
 use crate::ui::RectangleGrid;
 use crate::state::{UiEffects, Board};
 use crate::UiMode;
@@ -92,6 +92,16 @@ where B: Backend
                         BottomLine::new().render(&mut f, chunks[2]);
                         MessageBox::new(file_to_delete, &current_path).render(&mut f, full_screen);
                     },
+                    UiMode::ErrorMessage(message) => {
+                        TitleLine::new(base_path_info, current_path_info, file_tree.space_freed)
+                            .current_path_is_red(ui_effects.current_path_is_red)
+                            .frame_around_current_path(ui_effects.frame_around_current_path)
+                            .frame_around_space_freed(ui_effects.frame_around_space_freed)
+                            .render(&mut f, chunks[0]);
+                        RectangleGrid::new((&board.rectangles).to_vec()).render(&mut f, chunks[1]);
+                        BottomLine::new().render(&mut f, chunks[2]);
+                        ErrorBox::new(message).render(&mut f, full_screen);
+                    }
                 };
             }
         }).expect("failed to draw");

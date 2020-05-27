@@ -13,3 +13,13 @@ pub fn truncate_middle(row: &str, max_length: u16) -> String {
         row.to_string()
     }
 }
+
+pub fn truncate_end(row: &str, max_len: u16) -> String {
+    if row.chars().count() > max_len as usize {
+        let mut truncated = String::from(row);
+        truncated.truncate(max_len as usize - 3);
+        format!("{}...", truncated)
+    } else {
+        format!("{}", row)
+    }
+}

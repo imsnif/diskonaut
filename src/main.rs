@@ -82,17 +82,27 @@ where
             .name("stdin_handler".to_string())
             .spawn({
                 let instruction_sender = instruction_sender.clone();
+                let running = running.clone();
                 move || {
                     for evt in keyboard_events {
                         if let TermionEvent::Key(Key::Ctrl('c')) | TermionEvent::Key(Key::Char('q')) = evt {
                             // not ideal, but works in a pinch
                             let _ = instruction_sender.send(Instruction::Keypress(evt));
-                            break;
+                            park_timeout(time::Duration::from_millis(100));
+                            // if we don't wait, the app won't have time to quit
+                            if !running.load(Ordering::Acquire) {
+                                // sometimes ctrl-c doesn't shut down the app
+                                // (eg. dismissing an error message)
+                                // in order not to be aware of those particularities
+                                // we check "running"
+                                break;
+                            }
+                        } else {
+                            match instruction_sender.send(Instruction::Keypress(evt)) {
+                                Err(_) => break,
+                                _ => {}
+                            };
                         }
-                        match instruction_sender.send(Instruction::Keypress(evt)) {
-                            Err(_) => break,
-                            _ => {}
-                        };
                     }
                 }
             })

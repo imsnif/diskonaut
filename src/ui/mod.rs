@@ -5,6 +5,7 @@ mod title;
 mod bottom_line;
 mod term_too_small;
 mod message_box;
+mod error_box;
 mod display;
 
 pub use rectangle_grid::*;
@@ -15,3 +16,4 @@ pub use term_too_small::*;
 pub use display::*;
 pub use draw_symbol::*;
 pub use message_box::*;
+pub use error_box::*;

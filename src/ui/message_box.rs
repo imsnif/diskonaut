@@ -49,7 +49,7 @@ impl<'a> Widget for MessageBox<'a> {
          } else if area.width > 50 {
              (area.width / 2, 10)
          } else {
-             (10, 10) // TODO: do not render app if it's so small
+             unreachable!("app should not be rendered if window is so small")
          };
 
         // position self in the middle of the rect
@@ -91,9 +91,9 @@ impl<'a> Widget for MessageBox<'a> {
                 if text_length >= full_line.len() as u16 {
                     full_line
                 } else if text_length >= short_line.len() as u16 {
-                    format!("Delete folder?")
+                    short_line
                 } else {
-                    format!("?!?!?! {}", text_length) // TODO: donot render app if it's so small
+                    unreachable!("should not render if terminal is so small");
                 }
             }
         };

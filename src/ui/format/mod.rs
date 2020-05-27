@@ -1,5 +1,5 @@
-mod truncate_middle;
+mod truncate;
 mod display_size;
 
-pub use truncate_middle::*;
+pub use truncate::*;
 pub use display_size::*;

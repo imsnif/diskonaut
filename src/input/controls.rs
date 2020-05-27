@@ -94,3 +94,14 @@ where B: Backend // TODO: better
         _ => (),
     };
 }
+
+pub fn handle_keypress_error_message<B>(evt: Event, app: &mut App<B>)
+where B: Backend // TODO: better
+{
+    match evt {
+        Event::Key(Key::Ctrl('c')) | Event::Key(Key::Char('q')) | Event::Key(Key::Esc) => {
+            app.normal_mode();
+        }
+        _ => (),
+    };
+}

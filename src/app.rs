@@ -10,11 +10,12 @@ use crate::state::{Board, UiEffects};
 use crate::state::files::FileTree;
 use crate::messages::{Instruction, handle_instructions};
 
-#[derive(Clone, Copy)]
+#[derive(Clone)]
 pub enum UiMode {
     Loading,
     Normal,
     DeleteFile,
+    ErrorMessage(String),
 }
 
 pub struct App <B>
@@ -164,18 +165,29 @@ where B: Backend
         let file_to_delete = self.get_path_of_file_to_delete().expect("cannot find file to delete");
         let metadata = fs::metadata(&file_to_delete).expect("could not get file metadata");
         let file_type = metadata.file_type();
-        if file_type.is_dir() {
-            fs::remove_dir_all(file_to_delete).expect("failed to delete folder");
+        let file_removed = if file_type.is_dir() {
+            fs::remove_dir_all(file_to_delete)
         } else {
-            fs::remove_file(file_to_delete).expect("failed to delete file");
-        }
+            fs::remove_file(file_to_delete)
+        };
+        match file_removed {
+            Ok(_) => {
+                self.remove_file_from_ui();
+                self.render_and_update_board();
+                let _ = self.event_sender.send(Event::FileDeleted);
+            },
+            Err(msg) => {
+                self.ui_mode = UiMode::ErrorMessage(format!("{}", msg));
+                self.render();
+            }
+        };
+    }
+    fn remove_file_from_ui (&mut self) {
         let currently_selected_name = &self.board.currently_selected().expect("could not find selected file to delete").file_metadata.name;
         let file_to_delete = &self.file_tree.item_in_current_folder(currently_selected_name).expect("could not find file to delete");
         self.file_tree.space_freed += file_to_delete.size();
         self.file_tree.delete_file(currently_selected_name);
         self.board.reset_selected_index();
         self.ui_mode = UiMode::Normal;
-        self.render_and_update_board();
-        let _ = self.event_sender.send(Event::FileDeleted);
     }
 }

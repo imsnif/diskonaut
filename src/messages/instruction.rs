@@ -9,7 +9,8 @@ use crate::{App, UiMode};
 use crate::input::{
     handle_keypress_loading_mode,
     handle_keypress_normal_mode,
-    handle_keypress_delete_file_mode
+    handle_keypress_delete_file_mode,
+    handle_keypress_error_message,
 };
 
 pub enum Instruction {
@@ -83,6 +84,9 @@ where B: Backend
                     },
                     UiMode::DeleteFile => {
                         handle_keypress_delete_file_mode(evt, app);
+                    },
+                    UiMode::ErrorMessage(_) => {
+                        handle_keypress_error_message(evt, app);
                     }
                 }
                 if !app.is_running {

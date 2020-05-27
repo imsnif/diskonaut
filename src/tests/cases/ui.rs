@@ -1584,3 +1584,66 @@ fn empty_folder () {
     assert_eq!(terminal_draw_events_mirror.len(), 1);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
 }
+
+#[test]
+fn permission_denied_when_deleting () {
+   let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+
+   let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
+   events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+   events.push(None);
+   events.push(Some(Event::Key(Key::Char('\n'))));
+   events.push(None);
+   events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+   events.push(None);
+   events.push(Some(Event::Key(Key::Ctrl('d'))));
+   events.push(None);
+   events.push(Some(Event::Key(Key::Char('y'))));
+   events.push(None);
+   events.push(Some(Event::Key(Key::Esc)));
+   events.push(None);
+   events.push(Some(Event::Key(Key::Ctrl('c'))));
+   let keyboard_events = Box::new(KeyboardEvents::new(events));
+
+   let temp_dir_path = create_root_temp_dir("permission_denied_when_deleting").expect("failed to create temp dir");
+
+   let mut subfolder_1_path = PathBuf::from(&temp_dir_path);
+   subfolder_1_path.push("subfolder1");
+   create_dir(&subfolder_1_path).expect("failed to create temporary directory");
+
+   let mut file_1_path = PathBuf::from(&temp_dir_path);
+   file_1_path.push("subfolder1");
+   file_1_path.push("file1");
+   create_temp_file(&file_1_path, 4000).expect("failed to create temp file");
+
+   let mut perms = std::fs::metadata(&subfolder_1_path).unwrap().permissions();
+   perms.set_readonly(true);
+   std::fs::set_permissions(&subfolder_1_path, perms.clone()).unwrap();
+
+   start(backend, keyboard_events, temp_dir_path.clone());
+   let terminal_draw_events_mirror = terminal_draw_events.lock().expect("could not acquire lock on terminal events");
+
+   assert_eq!(std::fs::metadata(&file_1_path).is_ok(), true, "file was not deleted"); // can't really fail on its own, but left here for clarity
+   assert_eq!(std::fs::metadata(&subfolder_1_path).is_ok(), true, "containing folder was not deleted");
+
+   perms.set_readonly(false);
+   std::fs::set_permissions(&subfolder_1_path, perms).unwrap();
+   std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
+
+   let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor];
+   assert_eq!(
+       &terminal_events.lock().expect("could not acquire lock on terminal_events")[..],
+       &expected_terminal_events[..]
+   );
+
+   assert_eq!(terminal_draw_events_mirror.len(), 9);
+   assert_snapshot!(&terminal_draw_events_mirror[0]);
+   assert_snapshot!(&terminal_draw_events_mirror[1]);
+   assert_snapshot!(&terminal_draw_events_mirror[2]);
+   assert_snapshot!(&terminal_draw_events_mirror[3]);
+   assert_snapshot!(&terminal_draw_events_mirror[4]);
+   assert_snapshot!(&terminal_draw_events_mirror[5]);
+   assert_snapshot!(&terminal_draw_events_mirror[6]);
+   assert_snapshot!(&terminal_draw_events_mirror[7]);
+   assert_snapshot!(&terminal_draw_events_mirror[8]);
+}
