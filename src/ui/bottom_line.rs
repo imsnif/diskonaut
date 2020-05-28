@@ -6,11 +6,12 @@ use tui::buffer::Buffer;
 
 pub struct BottomLine {
     hide_delete: bool,
+    failed_to_read: u64,
 }
 
 impl BottomLine {
-    pub fn new() -> Self {
-        Self {hide_delete: false}
+    pub fn new(failed_to_read: u64) -> Self {
+        Self { hide_delete: false, failed_to_read }
     }
     pub fn hide_delete(mut self) -> Self {
         self.hide_delete = true;
@@ -24,6 +25,10 @@ impl<'a> Widget for BottomLine {
         bottom_left_character.set_symbol("x");
         bottom_left_character.set_style(Style::default().bg(Color::White).fg(Color::Black));
         buf.set_string(3, area.y + area.height - 2, "= Small files", Style::default());
+        if self.failed_to_read > 0 {
+            buf.set_string(16, area.y + area.height - 2, ", ", Style::default());
+            buf.set_string(18, area.y + area.height - 2, format!("failed to read {} files", self.failed_to_read), Style::default().fg(Color::Red));
+        }
         let (long_controls_line, short_controls_line) = if self.hide_delete {
             (
                 String::from("<hjkl> or <arrow keys> - move around, <ENTER> - enter folder, <ESC> - parent folder"),

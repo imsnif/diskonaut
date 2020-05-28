@@ -12,12 +12,12 @@ pub const MINIMUM_HEIGHT: u16 = 2;
 pub const MINIMUM_WIDTH: u16 = 8;
 
 #[derive(Clone)]
-pub struct RectangleGrid {
-    rectangles: Vec<FileRect>
+pub struct RectangleGrid<'a> {
+    rectangles: &'a [FileRect]
 }
 
-impl<'a> RectangleGrid {
-    pub fn new (rectangles: Vec<FileRect>) -> Self {
+impl<'a> RectangleGrid<'a> {
+    pub fn new (rectangles: &'a [FileRect]) -> Self {
         RectangleGrid { rectangles }
     }
 }
@@ -241,7 +241,7 @@ impl SmallFilesArea {
     }
 }
 
-impl<'a> Widget for RectangleGrid {
+impl<'a> Widget for RectangleGrid<'a> {
     fn draw(&mut self, area: Rect, buf: &mut Buffer) {
         if area.width < 2 || area.height < 2 {
             return;
@@ -261,7 +261,7 @@ impl<'a> Widget for RectangleGrid {
             let text_start_position = ((area.width - text_length as u16) as f64 / 2.0).ceil() as u16 + area.x;
             buf.set_string(text_start_position, (area.height / 2) + area.y - 1, empty_folder_line, text_style);
         } else {
-            for file_rect in &self.rectangles {
+            for file_rect in self.rectangles {
                 let rect = file_rect.rect.round();
 
                 if rect.height < MINIMUM_HEIGHT || rect.width < MINIMUM_WIDTH {

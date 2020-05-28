@@ -27,6 +27,7 @@ pub enum Instruction {
     Render,
     ResetUiMode,
     Keypress(TermionEvent),
+    IncrementFailedToRead,
 }
 
 pub fn handle_instructions<B> (app: &mut App<B>, receiver: Receiver<Instruction>)
@@ -92,6 +93,9 @@ where B: Backend
                 if !app.is_running {
                     break;
                 }
+            }
+            Instruction::IncrementFailedToRead => {
+                app.increment_failed_to_read();
             }
         }
     }

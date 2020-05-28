@@ -119,13 +119,27 @@ where
                 move || {
                     let path_length = path.components().count();
 
-                    'scanning: for entry in WalkDir::new(&path).into_iter().filter_map(|e| e.ok()) {
-                        if let Ok(file_metadata) = entry.metadata() {
-                            match instruction_sender.send(Instruction::AddEntryToBaseFolder((file_metadata, entry, path_length))) {
-                                Err(_) => break 'scanning,
-                                _ => {}
-                            };
-                        }
+                    'scanning: for entry in WalkDir::new(&path).into_iter() {
+                        let instruction_sent = match entry {
+                            Ok(entry) => {
+                                match entry.metadata() {
+                                    Ok(file_metadata) => {
+                                        instruction_sender.send(Instruction::AddEntryToBaseFolder((file_metadata, entry, path_length)))
+                                    },
+                                    Err(_) => {
+                                        instruction_sender.send(Instruction::IncrementFailedToRead)
+                                    }
+                                }
+                            },
+                            Err(_) => {
+                                instruction_sender.send(Instruction::IncrementFailedToRead)
+                            }
+                        };
+                        if let Err(_) = instruction_sent {
+                            // if we fail to send an instruction here, this likely means the program has
+                            // ended and we need to break this loop as well in order not to hang
+                            break 'scanning;
+                        };
                     }
                     let _ = instruction_sender.send(Instruction::StartUi);
                     loaded.store(true, Ordering::Release);

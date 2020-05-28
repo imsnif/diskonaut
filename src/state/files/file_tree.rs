@@ -7,6 +7,7 @@ pub struct FileTree {
     base_folder: Folder,
     current_folder_names: Vec<OsString>,
     pub space_freed: u64, // TODO: move elsewhere
+    pub failed_to_read: u64,
     pub path_in_filesystem: PathBuf,
 }
 
@@ -17,6 +18,7 @@ impl FileTree {
             current_folder_names: Vec::new(),
             path_in_filesystem,
             space_freed: 0,
+            failed_to_read: 0,
         }
 
     }

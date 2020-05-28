@@ -183,6 +183,9 @@ where B: Backend
             }
         };
     }
+    pub fn increment_failed_to_read(&mut self) {
+        self.file_tree.failed_to_read += 1;
+    }
     fn remove_file_from_ui (&mut self) {
         let currently_selected_name = &self.board.currently_selected().expect("could not find selected file to delete").file_metadata.name;
         let file_to_delete = &self.file_tree.item_in_current_folder(currently_selected_name).expect("could not find file to delete");
