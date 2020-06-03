@@ -2,9 +2,7 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[4]"
 ---
-                                                                   ┐                                                                                                                          
-                                                8.0K | +3 files    │                     /tmp/bandwhich_test /del t _folder | 8.0K | +3 files                           Space freed: 4.0K     
-                                                                   ┘                                                                                                                          
+        8.0K (3 files), fre d: 4.0K | /tmp/bandwhich_te ts/d l te_folder                                                                                                                      
                                                                                                                               ─                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
@@ -16,6 +14,7 @@ expression: "&terminal_draw_events_mirror[4]"
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                             file2                                                                                             
+                                                                                                                                                                                              
                                                                                                                                                                                               
                                                                                           4.0K (50%)                                                                                          
                                                                                                                                                                                               
@@ -38,6 +37,7 @@ expression: "&terminal_draw_events_mirror[4]"
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                             file3                                                                                             
+                                                                                                                                                                                              
                                                                                                                                                                                               
                                                                                           4.0K (50%)                                                                                          
                                                                                                                                                                                               

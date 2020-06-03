@@ -1,76 +1,22 @@
 use ::tui::layout::Rect;
-use ::tui::terminal::Frame;
-use ::tui::backend::Backend;
-use ::tui::layout::{Layout, Constraint, Direction};
 use ::tui::widgets::Widget;
+use ::tui::buffer::Buffer;
+use ::tui::style::{Style, Color, Modifier};
 
-use crate::ui::title::BasePath;
-use crate::ui::title::CurrentPath;
-use crate::ui::title::SpaceFreed;
+use ::std::path::PathBuf;
+
 use crate::ui::FolderInfo;
-
-fn three_part_layout (first_part_len: u16, second_part_len: u16, third_part_len: u16, rect: Rect) -> (Option<Rect>, Option<Rect>, Option<Rect>) {
-    if first_part_len + second_part_len + third_part_len <= rect.width {
-        let remainder = rect.width - first_part_len - second_part_len - third_part_len;
-        let parts = Layout::default()
-            .direction(Direction::Horizontal)
-            .margin(0)
-            .constraints(
-                [
-                    Constraint::Length(first_part_len),
-                    Constraint::Length(second_part_len + remainder),
-                    Constraint::Length(third_part_len),
-                ].as_ref()
-            )
-            .split(rect);
-        (Some(parts[0]), Some(parts[1]), Some(parts[2]))
-    } else if second_part_len + third_part_len <= rect.width {
-        let remainder = rect.width - second_part_len - third_part_len;
-        let parts = Layout::default()
-            .direction(Direction::Horizontal)
-            .margin(0)
-            .constraints(
-                [
-                    Constraint::Length(second_part_len + remainder),
-                    Constraint::Length(third_part_len),
-                ].as_ref()
-            )
-            .split(rect);
-
-        (Some(parts[0]), Some(parts[1]), None)
-    } else {
-        (Some(rect), None, None)
-    }
-}
-
-fn two_part_layout (first_part_len: u16, second_part_len: u16, rect: Rect) -> (Option<Rect>, Option<Rect>) {
-    if first_part_len + second_part_len <= rect.width {
-        let remainder = rect.width - first_part_len - second_part_len;
-        let parts = Layout::default()
-            .direction(Direction::Horizontal)
-            .margin(0)
-            .constraints(
-                [
-                    Constraint::Length(first_part_len),
-                    Constraint::Length(second_part_len + remainder),
-                ].as_ref()
-            )
-            .split(rect);
-        (Some(parts[0]), Some(parts[1]))
-    } else {
-        (Some(rect), None)
-    }
-}
+use crate::ui::format::DisplaySize;
+use crate::ui::title::{TitleText, CellSizeOpt};
 
 pub struct TitleLine <'a> {
     base_path_info: FolderInfo<'a>,
     current_path_info: FolderInfo<'a>,
     space_freed: u64,
-    show_loading: bool,
-    scanning_visual_indicator: u64,
-    frame_around_current_path: bool,
-    frame_around_space_freed: bool,
-    current_path_is_red: bool,
+    is_loading: bool,
+    progress_indicator: u64,
+    flash_space: bool,
+    path_error: bool,
 }
 
 impl <'a>TitleLine<'a> {
@@ -79,80 +25,83 @@ impl <'a>TitleLine<'a> {
             base_path_info,
             current_path_info,
             space_freed,
-            scanning_visual_indicator: 0,
-            show_loading: false,
-            frame_around_current_path: false,
-            frame_around_space_freed: false,
-            current_path_is_red: false,
+            progress_indicator: 0,
+            is_loading: false,
+            flash_space: false,
+            path_error: false,
         }
     }
-    pub fn show_loading(mut self) -> Self {
-        self.show_loading = true;
+    pub fn is_loading(mut self) -> Self {
+        self.is_loading = true;
         self
     }
-    pub fn frame_around_current_path(mut self, frame_around_current_path: bool) -> Self {
-        self.frame_around_current_path = frame_around_current_path;
+    pub fn flash_space(mut self, flash_space: bool) -> Self {
+        self.flash_space = flash_space;
         self
     }
-    pub fn frame_around_space_freed(mut self, frame_around_space_freed: bool) -> Self {
-        self.frame_around_space_freed = frame_around_space_freed;
+    pub fn path_error(mut self, path_error: bool) -> Self {
+        self.path_error = path_error;
         self
     }
-    pub fn current_path_is_red(mut self, current_path_is_red: bool) -> Self {
-        self.current_path_is_red = current_path_is_red;
+    pub fn progress_indicator(mut self, progress_indicator: u64) -> Self {
+        self.progress_indicator = progress_indicator;
         self
     }
-    pub fn scanning_visual_indicator(mut self, scanning_visual_indicator: u64) -> Self {
-        self.scanning_visual_indicator = scanning_visual_indicator;
-        self
-    }
-    pub fn render(&self, frame: &mut Frame<impl Backend>, rect: Rect) {
-        let mut base_path = BasePath::new(&self.base_path_info.path, self.base_path_info.size, self.base_path_info.num_descendants)
-            .loading(self.show_loading)
-            .visual_indicator(self.scanning_visual_indicator);
-        let current_path = CurrentPath::new(&self.current_path_info.path, self.current_path_info.size, self.current_path_info.num_descendants)
-            .frame(self.frame_around_current_path)
-            .red(self.current_path_is_red);
-        let space_freed = SpaceFreed::new(self.space_freed)
-            .frame(self.frame_around_space_freed);
+}
 
-        let min_current_path_len = current_path.len() as u16 + 10;
-        let min_base_path_len = base_path.len() as u16 + 10;
-        let min_space_freed_text_len = space_freed.len() as u16 + 10;
-
-        if self.show_loading {
-            let layout_parts = two_part_layout(min_base_path_len, min_current_path_len, rect);
-            match layout_parts {
-                (Some(left), Some(right)) => {
-                    base_path.render(frame, left);
-                    current_path.render(frame, right);
-                },
-                (Some(rect), None) => {
-                    current_path.render(frame, rect);
-                },
-                _ => {
-                    unreachable!("wrong order of layout parts");
-                }
+impl <'a>Widget for TitleLine <'a>{
+    fn draw(&mut self, rect: Rect, buf: &mut Buffer) {
+        let base_path = &self.base_path_info.path.clone().into_os_string().into_string().expect("could not convert os string to string");
+        let current_path = {
+            let mut current_path_relative_to_base = PathBuf::new();
+            let base_path_len = self.base_path_info.path.iter().count();
+            for folder in self.current_path_info.path.iter().skip(base_path_len) {
+                current_path_relative_to_base.push(folder);
             }
+            current_path_relative_to_base.to_string_lossy().into_owned()
+        };
+
+        let separator = ::std::path::MAIN_SEPARATOR;
+        let total_size = DisplaySize(self.base_path_info.size as f64);
+        let total_descendants = &self.base_path_info.num_descendants;
+        let current_folder_size = DisplaySize(self.current_path_info.size as f64);
+        let current_folder_descendants = self.current_path_info.num_descendants;
+        let space_freed = DisplaySize(self.space_freed as f64);
+
+        let mut default_style = Style::default().fg(Color::Yellow);
+        if !self.is_loading {
+            default_style = default_style.modifier(Modifier::BOLD);
+        };
+        let mut title_text = TitleText::new(default_style);
+        if self.is_loading {
+            title_text.append_to_left_side(vec![
+                CellSizeOpt::new(format!("Scanning: {} ({} files)", total_size, total_descendants)),
+                CellSizeOpt::new(format!("Scanning: {}", total_size)),
+                CellSizeOpt::new(format!("{}", total_size)),
+            ]);
         } else {
-            let layout_parts = three_part_layout(min_base_path_len, min_current_path_len, min_space_freed_text_len, rect);
-            match layout_parts {
-                (Some(left), Some(middle), Some(right)) => {
-                    base_path.render(frame, left);
-                    current_path.render(frame, middle);
-                    space_freed.render(frame, right);
-                },
-                (Some(left), Some(right), None) => {
-                    current_path.render(frame, left);
-                    space_freed.render(frame, right);
-                }
-                (Some(rect), None, None) => {
-                    current_path.render(frame, rect);
-                }
-                _ => {
-                    unreachable!("wrong order of layout parts");
-                }
-            }
+            title_text.append_to_left_side(vec![
+                CellSizeOpt::new(format!("Total: {} ({} files), freed: {}", total_size, total_descendants, space_freed)),
+                CellSizeOpt::new(format!("Total: {}, freed: {}", total_size, space_freed)),
+                CellSizeOpt::new(format!("Total: {}", total_size)),
+                CellSizeOpt::new(format!("{}", total_size)),
+            ]);
+        };
+        title_text.append_to_right_side(vec![
+            CellSizeOpt::new(format!("{}", base_path)),
+        ]);
+        if current_path.len() > 0 {
+            title_text.append_to_right_side(vec![
+                CellSizeOpt::new(format!("{}{} ({}, {} files)", separator, current_path, current_folder_size, current_folder_descendants)).style(default_style.fg(Color::Green)),
+                CellSizeOpt::new(format!("{}{} ({})", separator, current_path, current_folder_size)).style(default_style.fg(Color::Green)),
+                CellSizeOpt::new(format!("{}{}", separator, current_path)).style(default_style.fg(Color::Green)),
+            ]);
         }
+
+        title_text
+            .loading(self.is_loading, self.progress_indicator)
+            .path_error(self.path_error)
+            .size_flash(self.flash_space)
+            .render(rect, buf);
     }
 }

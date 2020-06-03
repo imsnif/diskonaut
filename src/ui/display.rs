@@ -50,7 +50,7 @@ where B: Backend
                     .margin(0)
                     .constraints(
                         [
-                            Constraint::Length(3),
+                            Constraint::Length(1),
                             Constraint::Min(10),
                             Constraint::Length(2),
                         ].as_ref()
@@ -64,19 +64,17 @@ where B: Backend
                 match ui_mode {
                     UiMode::Loading => {
                         TitleLine::new(base_path_info, current_path_info, file_tree.space_freed)
-                            .scanning_visual_indicator(ui_effects.scanning_visual_indicator)
-                            .frame_around_current_path(ui_effects.frame_around_current_path)
-                            .current_path_is_red(ui_effects.current_path_is_red)
-                            .show_loading()
+                            .progress_indicator(ui_effects.loading_progress_indicator)
+                            .path_error(ui_effects.current_path_is_red)
+                            .is_loading()
                             .render(&mut f, chunks[0]);
                         RectangleGrid::new(&board.rectangles).render(&mut f, chunks[1]);
                         BottomLine::new(file_tree.failed_to_read).hide_delete().render(&mut f, chunks[2]);
                     },
                     UiMode::Normal => {
                         TitleLine::new(base_path_info, current_path_info, file_tree.space_freed)
-                            .current_path_is_red(ui_effects.current_path_is_red)
-                            .frame_around_current_path(ui_effects.frame_around_current_path)
-                            .frame_around_space_freed(ui_effects.frame_around_space_freed)
+                            .path_error(ui_effects.current_path_is_red)
+                            .flash_space(ui_effects.frame_around_space_freed)
                             .render(&mut f, chunks[0]);
                         RectangleGrid::new(&board.rectangles).render(&mut f, chunks[1]);
                         BottomLine::new(file_tree.failed_to_read).render(&mut f, chunks[2]);
@@ -85,8 +83,7 @@ where B: Backend
                         let currently_selected_name = &board.currently_selected().expect("could not find currently selected file to delete").file_metadata.name;
                         let file_to_delete = file_tree.item_in_current_folder(&currently_selected_name).expect("could not find file to delete in current folder");
                         TitleLine::new(base_path_info, current_path_info, file_tree.space_freed)
-                            .current_path_is_red(ui_effects.current_path_is_red)
-                            .frame_around_current_path(ui_effects.frame_around_current_path)
+                            .path_error(ui_effects.current_path_is_red)
                             .render(&mut f, chunks[0]);
                         RectangleGrid::new(&board.rectangles).render(&mut f, chunks[1]);
                         BottomLine::new(file_tree.failed_to_read).render(&mut f, chunks[2]);
@@ -94,9 +91,8 @@ where B: Backend
                     },
                     UiMode::ErrorMessage(message) => {
                         TitleLine::new(base_path_info, current_path_info, file_tree.space_freed)
-                            .current_path_is_red(ui_effects.current_path_is_red)
-                            .frame_around_current_path(ui_effects.frame_around_current_path)
-                            .frame_around_space_freed(ui_effects.frame_around_space_freed)
+                            .path_error(ui_effects.current_path_is_red)
+                            .flash_space(ui_effects.frame_around_space_freed)
                             .render(&mut f, chunks[0]);
                         RectangleGrid::new(&board.rectangles).render(&mut f, chunks[1]);
                         BottomLine::new(file_tree.failed_to_read).render(&mut f, chunks[2]);

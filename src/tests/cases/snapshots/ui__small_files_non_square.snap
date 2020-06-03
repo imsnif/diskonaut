@@ -2,10 +2,9 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[0]"
 ---
-┌────────────────────────────────────────────────────────────────────────────┐                                                                                                                
-│    Base: /tmp/bandwhich_tests/small_files_non_square | 9.5M | +19 files    │             /tmp/bandwhich_tests/small_files_non_square | 9.5M | +19 files                  Space freed: 0     
-└────────────────────────────────────────────────────────────────────────────┘                                                                                                                
+ Total: 9.5M (19 files), freed: 0 | /tmp/bandwhich_tests/small_files_non_square                                                                                                               
 ┌──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┬─────────────────┐
+│                                                                                                                                                                          │                 │
 │                                                                                                                                                                          │                 │
 │                                                                                                                                                                          │                 │
 │                                                                                                                                                                          │                 │
@@ -24,8 +23,8 @@ expression: "&terminal_draw_events_mirror[0]"
 │                                                                                                                                                                          │                 │
 │                                                                                                                                                                          │      file1      │
 │                                                                                  file2                                                                                   │                 │
-│                                                                                                                                                                          │                 │
 │                                                                                                                                                                          │   784.0K (8%)   │
+│                                                                                                                                                                          │                 │
 │                                                                                7.6M (80%)                                                                                │                 │
 │                                                                                                                                                                          │                 │
 │                                                                                                                                                                          │                 │
@@ -44,6 +43,7 @@ expression: "&terminal_draw_events_mirror[0]"
 │                                                                                                                                                                          │                 │
 │                                                                                                                                                                          ├──────────┬──────┤
 │                                                                                                                                                                          │  file5   │xxxxxx│
+│                                                                                                                                                                          │  32.0K   │xxxxxx│
 ├──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┼──────────┘xxxxxx│
 │                                                                                                                                                                          │xxxxxxxxxxxxxxxxx│
 │                                                                                  file3                                                                                   │xxxxxxxxxxxxxxxxx│

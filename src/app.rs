@@ -58,8 +58,8 @@ where B: Backend
         self.board.change_files(&current_folder); // TODO: rename to change_tiles
         self.render();
     }
-    pub fn toggle_scanning_visual_indicator(&mut self) {
-        self.ui_effects.increment_scanning_visual_indicator();
+    pub fn increment_loading_progress_indicator(&mut self) {
+        self.ui_effects.increment_loading_progress_indicator();
     }
     pub fn render (&mut self) {
         self.display.render(&mut self.file_tree, &mut self.board, &self.ui_mode, &self.ui_effects);

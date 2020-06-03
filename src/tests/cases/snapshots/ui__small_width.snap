@@ -2,10 +2,9 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[0]"
 ---
-                                                  
-     /tmp/bandwhich_tes[...]| 20.0K | +3 files    
-                                                  
+ Total: 20.0K | /tmp/bandwhich_tests/small_width  
 ┌────────────────────────┬───────────────────────┐
+│                        │                       │
 │                        │                       │
 │                        │                       │
 │                        │                       │
@@ -25,6 +24,7 @@ expression: "&terminal_draw_events_mirror[0]"
 │                        │                       │
 │                        │                       │
 │       8.0K (40%)       │      8.0K (40%)       │
+│                        │                       │
 │                        │                       │
 │                        │                       │
 │                        │                       │

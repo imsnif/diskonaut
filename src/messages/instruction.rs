@@ -64,7 +64,7 @@ where B: Backend
                 app.start_ui();
             }
             Instruction::ToggleScanningVisualIndicator => {
-                app.toggle_scanning_visual_indicator();
+                app.increment_loading_progress_indicator();
             }
             Instruction::RenderAndUpdateBoard => {
                 app.render_and_update_board();

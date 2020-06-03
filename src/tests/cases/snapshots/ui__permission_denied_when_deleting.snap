@@ -2,10 +2,9 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[0]"
 ---
-┌────────────────────────────────────────────────────────────────────────────────────┐                                                                                                        
-│    Base: /tmp/bandwhich_tests/permission_denied_when_deleting | 4.0K | +2 files    │     /tmp/bandwhich_tests/permission_denied_when_deleting | 4.0K | +2 files          Space freed: 0     
-└────────────────────────────────────────────────────────────────────────────────────┘                                                                                                        
+ Total: 4.0K (2 files), freed: 0 | /tmp/bandwhich_tests/permission_denied_when_deleting                                                                                                       
 ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                                                                                                                            │
 │                                                                                                                                                                                            │
 │                                                                                                                                                                                            │
 │                                                                                                                                                                                            │
@@ -29,6 +28,7 @@ expression: "&terminal_draw_events_mirror[0]"
 │                                                                                subfolder1/ (+1 descendants)                                                                                │
 │                                                                                                                                                                                            │
 │                                                                                        4.0K (100%)                                                                                         │
+│                                                                                                                                                                                            │
 │                                                                                                                                                                                            │
 │                                                                                                                                                                                            │
 │                                                                                                                                                                                            │

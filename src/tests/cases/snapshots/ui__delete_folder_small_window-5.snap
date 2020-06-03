@@ -2,9 +2,7 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[4]"
 ---
-                                                            
-                                 kndow | 8       3          
-                                                            
+ 8.0K | /tmp/bandwhich_tests/delete_folder_smal _wikndow    
                                                             
                                                             
                                                             
@@ -22,13 +20,15 @@ expression: "&terminal_draw_events_mirror[4]"
                                                             
                                                             
                                                             
-                              │                             
+                                                            
+                                                            
                               │                             
                               │                             
                               │                             
              file2            │           file3             
                               │                             
           4.0K (50%)          │         4.0K (50%)          
+                              │                             
                               │                             
                               │                             
                               │                             

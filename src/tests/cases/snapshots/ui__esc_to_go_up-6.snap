@@ -3,8 +3,6 @@ source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[5]"
 ---
                                                                                                                                                                                               
-                                                                                           /tmp/bandwhich_t  ts/esc_to_go_up | 12.0K | +4 files                                               
-                                                                                                                                                                                              
                                                                                                                               ┬                                                               
                                                                                                                               │                                                               
                                                                                                                               │                                                               
@@ -16,6 +14,7 @@ expression: "&terminal_draw_events_mirror[5]"
                                                                                                                               │                                                               
                                                                                                                               │                                                               
                                                              file2                                                            │                                                               
+                                                                                                                              │                                                               
                                                                                                                               │                                                               
                                                           4.0K (33%)                                                          │                                                               
                                                                                                                               │                                                               
@@ -38,6 +37,7 @@ expression: "&terminal_draw_events_mirror[5]"
                                                                                                                               │                                                               
                                                                                                                               │                                                               
                                                              file3                                                            │                                                               
+                                                                                                                              │                                                               
                                                                                                                               │                                                               
                                                           4.0K (33%)                                                          │                                                               
                                                                                                                               │                                                               

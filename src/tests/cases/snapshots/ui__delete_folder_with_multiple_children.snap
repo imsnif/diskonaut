@@ -2,9 +2,7 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[0]"
 ---
-                                                                                                                                                                                              
-                                             /tmp/bandwhich_tests/delete_folder_with_multiple_children | 44.0K | +7 files                                                  Space freed: 0     
-                                                                                                                                                                                              
+ Total: 44.0K (7 files), freed: 0 | /tmp/bandwhich_tests/delete_folder_with_multiple_children                                                                                                 
 ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┬───────────────────────────────────────────────────┐
 │                                                                                                                                        │                                                   │
 │                                                                                                                                        │                                                   │
@@ -16,6 +14,7 @@ expression: "&terminal_draw_events_mirror[0]"
 │                                                                                                                                        │                                                   │
 │                                                                                                                                        │                                                   │
 │                                                                 file1                                                                  │                                                   │
+│                                                                                                                                        │                                                   │
 │                                                                                                                                        │                                                   │
 │                                                              16.0K (36%)                                                               │                                                   │
 │                                                                                                                                        │                                                   │
@@ -38,6 +37,7 @@ expression: "&terminal_draw_events_mirror[0]"
 │                                                                                                                                        │                                                   │
 │                                                                                                                                        │                                                   │
 │                                                                 file2                                                                  │                                                   │
+│                                                                                                                                        │                                                   │
 │                                                                                                                                        │                                                   │
 │                                                              16.0K (36%)                                                               │                                                   │
 │                                                                                                                                        │                                                   │
