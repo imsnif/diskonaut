@@ -8,7 +8,7 @@ use crate::ui::{draw_symbol, boundaries};
 use crate::ui::format::{DisplaySize, DisplaySizeRounded, truncate_middle};
 use crate::state::FileRect;
 
-pub const MINIMUM_HEIGHT: u16 = 2;
+pub const MINIMUM_HEIGHT: u16 = 3;
 pub const MINIMUM_WIDTH: u16 = 8;
 
 #[derive(Clone)]

@@ -69,9 +69,6 @@ impl Board {
             }
         });
 
-
-
-
         Board {
             rectangles: vec![],
             files,

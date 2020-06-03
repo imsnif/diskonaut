@@ -628,11 +628,11 @@ fn small_files_non_square() {
 
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("file1");
-    create_temp_file(file_1_path, 800000).expect("failed to create temp file");
+    create_temp_file(file_1_path, 500000).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
-    create_temp_file(file_2_path, 8000000).expect("failed to create temp file");
+    create_temp_file(file_2_path, 5000000).expect("failed to create temp file");
 
     let mut file_3_path = PathBuf::from(&temp_dir_path);
     file_3_path.push("file3");
