@@ -116,11 +116,10 @@ fn draw_rect_text_on_grid(buf: &mut Buffer, rect: &Rect, file_rect: &FileRect) {
     let second_line_length = second_line.len(); // TODO: better
     let second_line_start_position = ((rect.width - second_line_length as u16) as f64 / 2.0).ceil() as u16 + rect.x;
 
-
     let first_line_style = if file_rect.selected {
         match file_rect.file_metadata.file_type {
-            FileType::File => Style::default().bg(Color::Green).fg(Color::White).modifier(Modifier::BOLD),
-            FileType::Folder => Style::default().bg(Color::Green).fg(Color::Magenta).modifier(Modifier::BOLD)
+            FileType::File => Style::default().bg(Color::Black).fg(Color::White),
+            FileType::Folder => Style::default().bg(Color::Black).fg(Color::Blue).modifier(Modifier::BOLD)
         }
     } else {
         match file_rect.file_metadata.file_type {
@@ -130,16 +129,17 @@ fn draw_rect_text_on_grid(buf: &mut Buffer, rect: &Rect, file_rect: &FileRect) {
     };
 
     let text_style = if file_rect.selected {
-        Style::default().bg(Color::Green).fg(Color::White).modifier(Modifier::BOLD)
+        Style::default().bg(Color::Green).bg(Color::Black).fg(Color::White).modifier(Modifier::BOLD)
     } else {
         Style::default()
     };
 
     if file_rect.selected {
-        let selected_string = format!("{:1$}", " ", max_text_length as usize + 1);
-        for y in rect.y..(rect.y + rect.height) {
-            if y > rect.y {
-                buf.set_string(rect.x + 1, y, &selected_string, text_style);
+        for x in rect.x + 1..rect.x + rect.width {
+            for y in rect.y + 1..rect.y + rect.height {
+                let buf = buf.get_mut(x, y);
+                buf.set_symbol("█");
+                buf.set_style(Style::default().bg(Color::White).fg(Color::Black));
             }
         }
     }

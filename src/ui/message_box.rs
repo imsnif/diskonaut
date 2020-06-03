@@ -24,21 +24,21 @@ fn draw_rect_on_grid (buf: &mut Buffer, rect: Rect) {
     // top and bottom
     for x in rect.x..(rect.x + rect.width + 1) {
         if x == rect.x {
-            draw_symbol_with_style(buf, x, rect.y, &boundaries::TOP_LEFT, Style::default().bg(Color::Black));
-            draw_symbol_with_style(buf, x, rect.y + rect.height, &boundaries::BOTTOM_LEFT, Style::default().bg(Color::Black));
+            draw_symbol_with_style(buf, x, rect.y, &boundaries::TOP_LEFT, Style::default().bg(Color::Red));
+            draw_symbol_with_style(buf, x, rect.y + rect.height, &boundaries::BOTTOM_LEFT, Style::default().bg(Color::Red));
         } else if x == rect.x + rect.width {
-            draw_symbol_with_style(buf, x, rect.y, &boundaries::TOP_RIGHT, Style::default().bg(Color::Black));
-            draw_symbol_with_style(buf, x, rect.y + rect.height, &boundaries::BOTTOM_RIGHT, Style::default().bg(Color::Black));
+            draw_symbol_with_style(buf, x, rect.y, &boundaries::TOP_RIGHT, Style::default().bg(Color::Red));
+            draw_symbol_with_style(buf, x, rect.y + rect.height, &boundaries::BOTTOM_RIGHT, Style::default().bg(Color::Red));
         } else {
-            draw_symbol_with_style(buf, x, rect.y, &boundaries::HORIZONTAL, Style::default().bg(Color::Black));
-            draw_symbol_with_style(buf, x, rect.y + rect.height, &boundaries::HORIZONTAL, Style::default().bg(Color::Black));
+            draw_symbol_with_style(buf, x, rect.y, &boundaries::HORIZONTAL, Style::default().bg(Color::Red));
+            draw_symbol_with_style(buf, x, rect.y + rect.height, &boundaries::HORIZONTAL, Style::default().bg(Color::Red));
         }
     }
 
     // left and right
     for y in (rect.y + 1)..(rect.y + rect.height) {
-        draw_symbol_with_style(buf, rect.x, y, &boundaries::VERTICAL, Style::default().bg(Color::Black));
-        draw_symbol_with_style(buf, rect.x + rect.width, y, &boundaries::VERTICAL, Style::default().bg(Color::Black));
+        draw_symbol_with_style(buf, rect.x, y, &boundaries::VERTICAL, Style::default().bg(Color::Red));
+        draw_symbol_with_style(buf, rect.x + rect.width, y, &boundaries::VERTICAL, Style::default().bg(Color::Red));
     }
 }
 
@@ -66,12 +66,12 @@ impl<'a> Widget for MessageBox<'a> {
                     if y > message_rect.y && y < area.y + area.height {
                         let buf = buf.get_mut(x, y);
                         buf.set_symbol(" ");
-                        buf.set_style(Style::default().bg(Color::Black).fg(Color::Black));
+                        buf.set_style(Style::default().bg(Color::Red).fg(Color::Red));
                     }
                 }
             }
         }
-        let text_style = Style::default().bg(Color::Black).fg(Color::Red).modifier(Modifier::BOLD);
+        let text_style = Style::default().bg(Color::Red).fg(Color::White).modifier(Modifier::BOLD);
         let text_length = message_rect.width - 4; // TODO: do not render app if it's so small
 
         let question_line = match &self.file_to_delete {
