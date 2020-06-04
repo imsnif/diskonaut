@@ -256,8 +256,13 @@ impl<'a> Widget for RectangleGrid<'a> {
             for file_rect in self.rectangles {
                 let rect = file_rect.rect.round();
 
-                if rect.height < MINIMUM_HEIGHT || rect.width < MINIMUM_WIDTH {
+                if file_rect.rect.height < MINIMUM_HEIGHT as f64 || file_rect.rect.width < MINIMUM_WIDTH as f64 {
                     small_files.add_rect(&rect);
+                } else if rect.height < MINIMUM_HEIGHT || rect.width < MINIMUM_WIDTH {
+                    // ignore it, this is a rounding error
+                    //
+                    // TODO: fix this properly, probably by refactoring Board to do the rounding
+                    // itself
                 } else {
                     draw_rect_text_on_grid(buf, &rect, &file_rect);
                     draw_rect_on_grid(buf, rect);

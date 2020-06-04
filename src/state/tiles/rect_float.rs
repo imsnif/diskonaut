@@ -73,7 +73,7 @@ impl RectFloat {
     }
 
     pub fn is_atleast_minimum_size(&self) -> bool {
-        self.height.round() as u16 >= MINIMUM_HEIGHT && self.width.round() as u16 >= MINIMUM_WIDTH
+        self.height >= MINIMUM_HEIGHT as f64 && self.width >= MINIMUM_WIDTH as f64
     }
 
     pub fn is_aligned_left_with(&self, other: &RectFloat) -> bool {
