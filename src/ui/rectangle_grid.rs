@@ -179,7 +179,7 @@ impl SmallFilesArea {
     pub fn add_rect(&mut self, rect: &Rect) {
         match self.leftmost_top_left_coordinates {
             Some((x, y)) => {
-                if rect.x == 0 {
+                if rect.width == 0 && rect.height == 0 {
                     // do nothing
                     // this happens because of a bug in treemap.rs
                     // where somehow file_rects are created with x/y as NaN
@@ -197,7 +197,7 @@ impl SmallFilesArea {
 
         match self.highest_top_left_coordinates {
             Some((x, y)) => {
-                if rect.y == 0 {
+                if rect.width == 0 && rect.height == 0 {
                     // do nothing
                     // this happens because of a bug in treemap.rs
                     // where somehow file_rects are created with x/y as NaN
@@ -215,28 +215,20 @@ impl SmallFilesArea {
     }
     pub fn draw(&self, area: &Rect, buf: &mut Buffer) {
         if let Some((small_files_start_x, small_files_start_y)) = self.highest_top_left_coordinates {
-            if small_files_start_x > 0 && small_files_start_y > 0 {
-                draw_small_files_rect_on_grid(buf, Rect {
-                    x: small_files_start_x + 1,
-                    y: small_files_start_y + 1,
-                    width: area.x + area.width,
-                    height: area.y + area.height,
-                });
-            } else {
-                // TODO: ui indication that we have X small unrenderable files
-            }
+            draw_small_files_rect_on_grid(buf, Rect {
+                x: small_files_start_x + 1,
+                y: small_files_start_y + 1,
+                width: area.x + area.width,
+                height: area.y + area.height,
+            });
         }
         if let Some((small_files_start_x, small_files_start_y)) = self.leftmost_top_left_coordinates {
-            if small_files_start_x > 0 && small_files_start_y > 0 {
-                draw_small_files_rect_on_grid(buf, Rect {
-                    x: small_files_start_x + 1,
-                    y: small_files_start_y + 1,
-                    width: area.x + area.width,
-                    height: area.y + area.height,
-                });
-            } else {
-                // TODO: ui indication that we have X small unrenderable files
-            }
+            draw_small_files_rect_on_grid(buf, Rect {
+                x: small_files_start_x + 1,
+                y: small_files_start_y + 1,
+                width: area.x + area.width,
+                height: area.y + area.height,
+            });
         }
     }
 }

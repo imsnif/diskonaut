@@ -1850,3 +1850,73 @@ fn permission_denied_when_deleting () {
    assert_snapshot!(&terminal_draw_events_mirror[7]);
    assert_snapshot!(&terminal_draw_events_mirror[8]);
 }
+
+#[test]
+fn small_files_with_y_as_zero() {
+
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let keyboard_events = sleep_and_quit_events(1);
+    let temp_dir_path = create_root_temp_dir("small_files_with_y_as_zero").expect("failed to create temp dir");
+
+    let mut file_1_path = PathBuf::from(&temp_dir_path);
+    file_1_path.push("file1");
+    create_temp_file(file_1_path, 1000000).expect("failed to create temp file");
+
+    for i in 1..100 {
+        let mut small_file_path = PathBuf::from(&temp_dir_path);
+        small_file_path.push(format!("small_file{}", i));
+        create_temp_file(small_file_path, 1).expect("failed to create temp file");
+    }
+
+    start(backend, keyboard_events, temp_dir_path.clone());
+    std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
+    let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
+    println!("terminal_draw_events_mirror[0] {:?}", terminal_draw_events_mirror[0]);
+
+    let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
+
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
+
+    assert_eq!(terminal_draw_events_mirror.len(), 1);
+    assert_snapshot!(&terminal_draw_events_mirror[0]);
+}
+
+#[test]
+fn small_files_with_x_as_zero() {
+
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(50, 50);
+    let keyboard_events = sleep_and_quit_events(1);
+    let temp_dir_path = create_root_temp_dir("small_files_with_x_as_zero").expect("failed to create temp dir");
+
+    let mut file_1_path = PathBuf::from(&temp_dir_path);
+    file_1_path.push("file1");
+    create_temp_file(file_1_path, 1000000).expect("failed to create temp file");
+
+    let mut file_2_path = PathBuf::from(&temp_dir_path);
+    file_2_path.push("file2");
+    create_temp_file(file_2_path, 1000000).expect("failed to create temp file");
+
+    for i in 1..100 {
+        let mut small_file_path = PathBuf::from(&temp_dir_path);
+        small_file_path.push(format!("small_file{}", i));
+        create_temp_file(small_file_path, 1).expect("failed to create temp file");
+    }
+
+    start(backend, keyboard_events, temp_dir_path.clone());
+    std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
+    let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
+    println!("terminal_draw_events_mirror[0] {:?}", terminal_draw_events_mirror[0]);
+
+    let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
+
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
+
+    assert_eq!(terminal_draw_events_mirror.len(), 1);
+    assert_snapshot!(&terminal_draw_events_mirror[0]);
+}
