@@ -9,6 +9,7 @@ use crate::{App, UiMode};
 use crate::input::{
     handle_keypress_loading_mode,
     handle_keypress_normal_mode,
+    handle_keypress_screen_too_small,
     handle_keypress_delete_file_mode,
     handle_keypress_error_message,
 };
@@ -82,6 +83,10 @@ where B: Backend
                     },
                     UiMode::Normal => {
                         handle_keypress_normal_mode(evt, app);
+                    },
+                    UiMode::ScreenTooSmall => {
+                        handle_keypress_screen_too_small(evt, app);
+
                     },
                     UiMode::DeleteFile(file_to_delete) => {
                         let file_to_delete = file_to_delete.clone();

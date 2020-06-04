@@ -1364,6 +1364,60 @@ fn delete_file() {
 }
 
 #[test]
+fn cant_delete_file_with_term_too_small() {
+   let (terminal_events, terminal_draw_events, backend) = test_backend_factory(49, 50);
+
+   let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
+   events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+   events.push(None);
+   events.push(Some(Event::Key(Key::Ctrl('d'))));
+   events.push(None);
+   events.push(Some(Event::Key(Key::Char('y'))));
+   events.push(None);
+   events.push(None);
+   events.push(None);
+   events.push(None);
+   events.push(Some(Event::Key(Key::Ctrl('c'))));
+   let keyboard_events = Box::new(KeyboardEvents::new(events));
+
+   let temp_dir_path = create_root_temp_dir("cant_delete_file_with_term_too_small").expect("failed to create temp dir");
+
+   let mut subfolder_1_path = PathBuf::from(&temp_dir_path);
+   subfolder_1_path.push("subfolder1");
+   create_dir(&subfolder_1_path).expect("failed to create temporary directory");
+
+   let mut file_1_path = PathBuf::from(&temp_dir_path);
+   file_1_path.push("subfolder1");
+   file_1_path.push("file1");
+   create_temp_file(&file_1_path, 4000).expect("failed to create temp file");
+
+   let mut file_2_path = PathBuf::from(&temp_dir_path);
+   file_2_path.push("file2");
+   create_temp_file(&file_2_path, 4000).expect("failed to create temp file");
+
+   let mut file_3_path = PathBuf::from(&temp_dir_path);
+   file_3_path.push("file3");
+   create_temp_file(&file_3_path, 4000).expect("failed to create temp file");
+
+   start(backend, keyboard_events, temp_dir_path.clone());
+   let terminal_draw_events_mirror = terminal_draw_events.lock().expect("could not acquire lock on terminal events");
+
+   let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
+   assert_eq!(
+       &terminal_events.lock().expect("could not acquire lock on terminal_events")[..],
+       &expected_terminal_events[..]
+   );
+   assert_eq!(std::fs::metadata(&file_2_path).is_ok(), true, "file not deleted");
+   assert_eq!(std::fs::metadata(&subfolder_1_path).is_ok(), true, "different folder stayed the same");
+   assert_eq!(std::fs::metadata(&file_1_path).is_ok(), true, "different file was untoucehd");
+   assert_eq!(std::fs::metadata(&file_3_path).is_ok(), true, "second different file was untouched");
+   std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
+
+   assert_eq!(terminal_draw_events_mirror.len(), 1);
+   assert_snapshot!(&terminal_draw_events_mirror[0]);
+}
+
+#[test]
 fn delete_folder() {
    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 

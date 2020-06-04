@@ -34,6 +34,7 @@ impl FileToDelete {
 pub enum UiMode {
     Loading,
     Normal,
+    ScreenTooSmall,
     DeleteFile(FileToDelete),
     ErrorMessage(String),
 }
@@ -82,6 +83,10 @@ where B: Backend
         self.ui_effects.increment_loading_progress_indicator();
     }
     pub fn render (&mut self) {
+        let full_screen_size = self.display.size();
+        if full_screen_size.width < 50 || full_screen_size.height < 15 {
+            self.ui_mode = UiMode::ScreenTooSmall;
+        }
         self.display.render(&mut self.file_tree, &mut self.board, &self.ui_mode, &self.ui_effects);
     }
     pub fn set_frame_around_current_path(&mut self) {

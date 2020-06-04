@@ -106,3 +106,14 @@ where B: Backend // TODO: better
         _ => (),
     };
 }
+
+pub fn handle_keypress_screen_too_small<B>(evt: Event, app: &mut App<B>)
+where B: Backend // TODO: better
+{
+    match evt {
+        Event::Key(Key::Ctrl('c')) | Event::Key(Key::Char('q')) | Event::Key(Key::Esc) => {
+            app.exit();
+        }
+        _ => (),
+    };
+}
