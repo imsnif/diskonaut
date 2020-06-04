@@ -79,15 +79,13 @@ where B: Backend
                         RectangleGrid::new(&board.rectangles).render(&mut f, chunks[1]);
                         BottomLine::new(file_tree.failed_to_read).render(&mut f, chunks[2]);
                     }
-                    UiMode::DeleteFile => {
-                        let currently_selected_name = &board.currently_selected().expect("could not find currently selected file to delete").file_metadata.name;
-                        let file_to_delete = file_tree.item_in_current_folder(&currently_selected_name).expect("could not find file to delete in current folder");
+                    UiMode::DeleteFile(file_to_delete) => {
                         TitleLine::new(base_path_info, current_path_info, file_tree.space_freed)
                             .path_error(ui_effects.current_path_is_red)
                             .render(&mut f, chunks[0]);
                         RectangleGrid::new(&board.rectangles).render(&mut f, chunks[1]);
                         BottomLine::new(file_tree.failed_to_read).render(&mut f, chunks[2]);
-                        MessageBox::new(file_to_delete, &current_path).render(&mut f, full_screen);
+                        MessageBox::new(file_to_delete).render(&mut f, full_screen);
                     },
                     UiMode::ErrorMessage(message) => {
                         TitleLine::new(base_path_info, current_path_info, file_tree.space_freed)

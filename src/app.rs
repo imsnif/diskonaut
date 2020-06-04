@@ -1,20 +1,40 @@
 use ::std::sync::mpsc::{Sender, Receiver};
 use ::std::path::{Path, PathBuf};
 use ::std::fs::{self, Metadata};
+use ::std::ffi::OsString;
 use ::tui::backend::Backend;
 
 use crate::Event;
 use crate::state::files::{Folder, FileOrFolder};
+use crate::state::board::FileMetadata;
 use crate::ui::Display;
 use crate::state::{Board, UiEffects};
 use crate::state::files::FileTree;
 use crate::messages::{Instruction, handle_instructions};
 
+// TODO: move elsewhere
+#[derive(Clone)]
+pub struct FileToDelete {
+  pub path_in_filesystem: PathBuf,
+  pub path_to_file: Vec<OsString>,
+  pub file_metadata: FileMetadata,
+}
+
+impl FileToDelete {
+    pub fn full_path (&self) -> PathBuf {
+        let mut full_path = self.path_in_filesystem.clone();
+        for component in &self.path_to_file {
+            full_path.push(component);
+        }
+        full_path
+    }
+}
+
 #[derive(Clone)]
 pub enum UiMode {
     Loading,
     Normal,
-    DeleteFile,
+    DeleteFile(FileToDelete),
     ErrorMessage(String),
 }
 
@@ -141,13 +161,20 @@ where B: Backend
             let _ = self.event_sender.send(Event::PathError);
         }
     }
-    pub fn get_file_to_delete(&self) -> Option<&FileOrFolder> {
-        let currently_selected_name = &self.board.currently_selected()?.file_metadata.name;
-        self.file_tree.item_in_current_folder(currently_selected_name)
+    pub fn get_file_to_delete(&self) -> Option<FileToDelete> {
+        let currently_selected_metadata = &self.board.currently_selected()?.file_metadata;
+        let mut path_to_file = self.file_tree.current_folder_names.clone();
+        path_to_file.push(currently_selected_metadata.name.clone());
+        let file_to_delete = FileToDelete {
+            path_in_filesystem: self.file_tree.path_in_filesystem.clone(),
+            path_to_file,
+            file_metadata: currently_selected_metadata.clone(),
+        };
+        Some(file_to_delete)
     }
     pub fn prompt_file_deletion(&mut self) {
-        if let Some(_) = self.get_file_to_delete() {
-            self.ui_mode = UiMode::DeleteFile;
+        if let Some(file_to_delete) = self.get_file_to_delete() {
+            self.ui_mode = UiMode::DeleteFile(file_to_delete);
             self.render();
         }
     }
@@ -155,24 +182,19 @@ where B: Backend
         self.ui_mode = UiMode::Normal;
         self.render_and_update_board();
     }
-    pub fn get_path_of_file_to_delete(&self) -> Option<PathBuf> {
-        let file_to_delete = self.get_file_to_delete()?;
-        let mut path = self.file_tree.get_current_path();
-        path.push(file_to_delete.name());
-        Some(path)
-    }
-    pub fn delete_file(&mut self) {
-        let file_to_delete = self.get_path_of_file_to_delete().expect("cannot find file to delete");
-        let metadata = fs::metadata(&file_to_delete).expect("could not get file metadata");
+    pub fn delete_file(&mut self, file_to_delete: &FileToDelete) {
+        let full_path = file_to_delete.full_path();
+
+        let metadata = fs::metadata(&full_path).expect("could not get file metadata");
         let file_type = metadata.file_type();
         let file_removed = if file_type.is_dir() {
-            fs::remove_dir_all(file_to_delete)
+            fs::remove_dir_all(&full_path)
         } else {
-            fs::remove_file(file_to_delete)
+            fs::remove_file(&full_path)
         };
         match file_removed {
             Ok(_) => {
-                self.remove_file_from_ui();
+                self.remove_file_from_ui(file_to_delete);
                 self.ui_mode = UiMode::Normal;
                 self.render_and_update_board();
                 let _ = self.event_sender.send(Event::FileDeleted);
@@ -186,11 +208,9 @@ where B: Backend
     pub fn increment_failed_to_read(&mut self) {
         self.file_tree.failed_to_read += 1;
     }
-    fn remove_file_from_ui (&mut self) {
-        let currently_selected_name = &self.board.currently_selected().expect("could not find selected file to delete").file_metadata.name;
-        let file_to_delete = &self.file_tree.item_in_current_folder(currently_selected_name).expect("could not find file to delete");
-        self.file_tree.space_freed += file_to_delete.size();
-        self.file_tree.delete_file(currently_selected_name);
+    fn remove_file_from_ui (&mut self, file_to_delete: &FileToDelete) {
+        self.file_tree.space_freed += file_to_delete.file_metadata.size;
+        self.file_tree.delete_file(file_to_delete);
         self.board.reset_selected_index();
     }
 }

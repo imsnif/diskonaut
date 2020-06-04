@@ -3,6 +3,7 @@ use ::termion::input::TermRead;
 use ::termion::event::Event;
 use termion::event::Key;
 use crate::App;
+use crate::app::FileToDelete;
 
 use ::tui::backend::Backend;
 
@@ -81,7 +82,7 @@ where B: Backend // TODO: better
     };
 }
 
-pub fn handle_keypress_delete_file_mode<B>(evt: Event, app: &mut App<B>)
+pub fn handle_keypress_delete_file_mode<B>(evt: Event, app: &mut App<B>, file_to_delete: FileToDelete)
 where B: Backend // TODO: better
 {
     match evt {
@@ -89,7 +90,7 @@ where B: Backend // TODO: better
             app.normal_mode();
         }
         Event::Key(Key::Char('y')) => {
-            app.delete_file();
+            app.delete_file(&file_to_delete);
         }
         _ => (),
     };

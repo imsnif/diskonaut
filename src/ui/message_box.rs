@@ -2,20 +2,19 @@ use tui::buffer::Buffer;
 use tui::layout::Rect;
 use tui::style::{Style, Color, Modifier};
 use tui::widgets::{Widget};
-use std::path::PathBuf;
 
 use crate::ui::{draw_symbol_with_style, boundaries};
 use crate::ui::format::truncate_middle;
-use crate::state::files::FileOrFolder;
+use crate::state::board::FileType;
+use crate::app::FileToDelete;
 
-pub struct MessageBox<'a> {
-    current_path: &'a PathBuf,
-    file_to_delete: &'a FileOrFolder,
+pub struct MessageBox <'a>{
+    file_to_delete: &'a FileToDelete
 }
 
-impl <'a>MessageBox<'a> {
-    pub fn new (file_to_delete: &'a FileOrFolder, current_path: &'a PathBuf) -> Self {
-        Self { current_path, file_to_delete }
+impl <'a> MessageBox <'a>{
+    pub fn new (file_to_delete: &'a FileToDelete) -> Self {
+        Self { file_to_delete }
     }
 }
 
@@ -42,7 +41,7 @@ fn draw_rect_on_grid (buf: &mut Buffer, rect: Rect) {
     }
 }
 
-impl<'a> Widget for MessageBox<'a> {
+impl <'a> Widget for MessageBox <'a>{
     fn draw(&mut self, area: Rect, buf: &mut Buffer) {
          let (width, height) = if area.width > 150 {
              (150, 10)
@@ -72,10 +71,10 @@ impl<'a> Widget for MessageBox<'a> {
             }
         }
         let text_style = Style::default().bg(Color::Red).fg(Color::White).modifier(Modifier::BOLD);
-        let text_length = message_rect.width - 4; // TODO: do not render app if it's so small
+        let text_length = message_rect.width - 4;
 
-        let question_line = match &self.file_to_delete {
-            FileOrFolder::File(_) => {
+        let question_line = match self.file_to_delete.file_metadata.file_type {
+            FileType::File => {
                 if text_length >= 17 {
                     format!("Delete this file?")
                 } else if text_length >= 3 {
@@ -84,8 +83,8 @@ impl<'a> Widget for MessageBox<'a> {
                     unreachable!("should not render if terminal is so small");
                 }
             },
-            FileOrFolder::Folder(folder) => {
-                let children = folder.num_descendants;
+            FileType::Folder => {
+                let children = self.file_to_delete.file_metadata.descendants.expect("folder should have descendants");
                 let full_line = format!("Delete folder with {} children?", children);
                 let short_line = format!("Delete folder?");
                 if text_length >= full_line.len() as u16 {
@@ -98,11 +97,11 @@ impl<'a> Widget for MessageBox<'a> {
             }
         };
 
-        let mut full_path = PathBuf::from(self.current_path);
-        full_path.push(&self.file_to_delete.name());
-
-        let full_path = full_path.into_os_string().into_string().expect("could not convert os string to string");
-        let file_name = &self.file_to_delete.name().to_string_lossy();
+        let full_path = self.file_to_delete.full_path()
+            .into_os_string()
+            .into_string()
+            .expect("could not convert os string to string");
+        let file_name = &self.file_to_delete.path_to_file.last().expect("could not find file to delete").to_string_lossy();
 
         let full_path_display = String::from(full_path);
         let file_name_line = if text_length > full_path_display.len() as u16 {
@@ -117,7 +116,6 @@ impl<'a> Widget for MessageBox<'a> {
         buf.set_string(question_line_start_position, message_rect.y + message_rect.height / 2 - 3, question_line, text_style);
         buf.set_string(file_name_line_start_position, message_rect.y + message_rect.height / 2, file_name_line, text_style);
         buf.set_string(y_n_line_start_position, message_rect.y + message_rect.height / 2 + 3, y_n_line, text_style);
-
     }
 
 }

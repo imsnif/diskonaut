@@ -76,15 +76,16 @@ where B: Backend
                 app.reset_ui_mode();
             }
             Instruction::Keypress(evt) => {
-                match app.ui_mode {
+                match &app.ui_mode {
                     UiMode::Loading => {
                         handle_keypress_loading_mode(evt, app);
                     },
                     UiMode::Normal => {
                         handle_keypress_normal_mode(evt, app);
                     },
-                    UiMode::DeleteFile => {
-                        handle_keypress_delete_file_mode(evt, app);
+                    UiMode::DeleteFile(file_to_delete) => {
+                        let file_to_delete = file_to_delete.clone();
+                        handle_keypress_delete_file_mode(evt, app, file_to_delete);
                     },
                     UiMode::ErrorMessage(_) => {
                         handle_keypress_error_message(evt, app);

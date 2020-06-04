@@ -1,11 +1,13 @@
+use ::std::path::{Path, PathBuf};
+use ::std::ffi::{OsString, OsStr};
+use ::std::fs::Metadata;
+
+use crate::app::FileToDelete;
 use crate::state::files::{FileOrFolder, Folder};
-use std::path::{Path, PathBuf};
-use std::ffi::{OsString, OsStr};
-use std::fs::Metadata;
 
 pub struct FileTree {
     base_folder: Folder,
-    current_folder_names: Vec<OsString>,
+    pub current_folder_names: Vec<OsString>,
     pub space_freed: u64, // TODO: move elsewhere
     pub failed_to_read: u64,
     pub path_in_filesystem: PathBuf,
@@ -62,9 +64,8 @@ impl FileTree {
             None => false
         }
     }
-    pub fn delete_file(&mut self, file_name: &OsStr) {
-        let path_to_delete = &mut self.current_folder_names.clone();
-        path_to_delete.push(file_name.to_os_string());
+    pub fn delete_file(&mut self, file_to_delete: &FileToDelete) {
+        let path_to_delete = &file_to_delete.path_to_file;
         self.base_folder.delete_path(&path_to_delete);
     }
     pub fn add_entry(&mut self, entry_metadata: &Metadata, entry_full_path: &Path, base_path_length: &usize) {
