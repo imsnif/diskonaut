@@ -11,7 +11,7 @@ use ::std::env;
 use ::std::io;
 use ::std::{thread, time};
 use ::std::thread::park_timeout;
-use ::std::sync::mpsc::{SyncSender, Sender, Receiver};
+use ::std::sync::mpsc::{SyncSender, Receiver};
 use ::std::sync::mpsc;
 use ::termion::event::{Event as TermionEvent, Key};
 use ::failure;
@@ -62,7 +62,7 @@ where
     let mut active_threads = vec![];
     let (on_sigwinch, cleanup) = sigwinch();
 
-    let (event_sender, event_receiver): (Sender<Event>, Receiver<Event>) = mpsc::channel();
+    let (event_sender, event_receiver): (SyncSender<Event>, Receiver<Event>) = mpsc::sync_channel(1);
     let (instruction_sender, instruction_receiver): (SyncSender<Instruction>, Receiver<Instruction>) = mpsc::sync_channel(100);
 
     let running = Arc::new(AtomicBool::new(true));

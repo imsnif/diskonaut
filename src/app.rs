@@ -1,4 +1,4 @@
-use ::std::sync::mpsc::{Sender, Receiver};
+use ::std::sync::mpsc::{SyncSender, Receiver};
 use ::std::path::{Path, PathBuf};
 use ::std::fs::{self, Metadata};
 use ::std::ffi::OsString;
@@ -47,14 +47,14 @@ where B: Backend
     board: Board,
     file_tree: FileTree,
     display: Display<B>,
-    event_sender: Sender<Event>,
+    event_sender: SyncSender<Event>,
     ui_effects: UiEffects,
 }
 
 impl <B>App <B>
 where B: Backend
 {
-    pub fn new (terminal_backend: B, path_in_filesystem: PathBuf, event_sender: Sender<Event>) -> Self {
+    pub fn new (terminal_backend: B, path_in_filesystem: PathBuf, event_sender: SyncSender<Event>) -> Self {
         let display = Display::new(terminal_backend);
         let board = Board::new(&Folder::new(&path_in_filesystem));
         let base_folder = Folder::new(&path_in_filesystem); // TODO: better
@@ -122,6 +122,10 @@ where B: Backend
     }
     pub fn exit (&mut self) {
         self.is_running = false;
+        // here we do a blocking send rather than a try_send
+        // because we want to make sure that if the receiver
+        // is active, it received this event so that the app
+        // would exit cleanly
         let _ = self.event_sender.send(Event::AppExit);
     }
     pub fn move_selected_right (&mut self) {
@@ -149,7 +153,7 @@ where B: Backend
                         self.file_tree.enter_folder(&selected_name);
                         self.board.reset_selected_index();
                         self.render_and_update_board();
-                        let _ = self.event_sender.send(Event::PathChange);
+                        let _ = self.event_sender.try_send(Event::PathChange);
                     }
                     FileOrFolder::File(_) => {} // do not enter if currently_selected is a file
                 }
@@ -161,9 +165,9 @@ where B: Backend
         self.board.reset_selected_index();
         self.render_and_update_board();
         if succeeded {
-            let _ = self.event_sender.send(Event::PathChange);
+            let _ = self.event_sender.try_send(Event::PathChange);
         } else {
-            let _ = self.event_sender.send(Event::PathError);
+            let _ = self.event_sender.try_send(Event::PathError);
         }
     }
     pub fn get_file_to_delete(&self) -> Option<FileToDelete> {
@@ -202,7 +206,7 @@ where B: Backend
                 self.remove_file_from_ui(file_to_delete);
                 self.ui_mode = UiMode::Normal;
                 self.render_and_update_board();
-                let _ = self.event_sender.send(Event::FileDeleted);
+                let _ = self.event_sender.try_send(Event::FileDeleted);
             },
             Err(msg) => {
                 self.ui_mode = UiMode::ErrorMessage(format!("{}", msg));
