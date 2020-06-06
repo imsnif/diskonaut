@@ -2,7 +2,7 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[5]"
 ---
- 8.0K                                                       
+ 8.0K | /tmp/bandwhich_tests/delete_folder_smal _wikndow    
                                                             
                                                             
                                                             
@@ -22,34 +22,34 @@ expression: "&terminal_draw_events_mirror[5]"
                                                             
                                                             
                                                             
+                              │                             
+                              │                             
+                              │                             
+             file2            │           file3             
+                              │                             
+          4.0K (50%)          │         4.0K (50%)          
+                              │                             
+                              │                             
+                              │                             
+                              │                             
+                              │                             
                                                             
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
-                                                            
+│                             │                            │
+                              │                             
+                              │                             
+                              │                             
+                              │                             
+                              │                             
+                              │                             
+                              │                             
+                              │                             
+                              │                             
+                              │                             
+                              │                             
+                              │                             
+                              │                             
+                              │                             
+                              ┴                             
                                                             
                                                             
 

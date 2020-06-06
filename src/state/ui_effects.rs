@@ -2,6 +2,7 @@ pub struct UiEffects {
     pub frame_around_current_path: bool,
     pub frame_around_space_freed: bool,
     pub current_path_is_red: bool,
+    pub deletion_in_progress: bool,
     pub loading_progress_indicator: u64,
 }
 
@@ -11,6 +12,7 @@ impl UiEffects {
             frame_around_current_path: false,
             frame_around_space_freed: false,
             current_path_is_red: false,
+            deletion_in_progress: false,
             loading_progress_indicator: 0,
         }
     }

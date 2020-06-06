@@ -1343,7 +1343,7 @@ fn delete_file() {
    start(backend, keyboard_events, temp_dir_path.clone());
    let terminal_draw_events_mirror = terminal_draw_events.lock().expect("could not acquire lock on terminal events");
 
-   let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor];
+   let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor];
    assert_eq!(
        &terminal_events.lock().expect("could not acquire lock on terminal_events")[..],
        &expected_terminal_events[..]
@@ -1354,13 +1354,14 @@ fn delete_file() {
    assert_eq!(std::fs::metadata(&file_3_path).is_ok(), true, "second different file was untouched");
    std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
 
-   assert_eq!(terminal_draw_events_mirror.len(), 6);
+   assert_eq!(terminal_draw_events_mirror.len(), 7);
    assert_snapshot!(&terminal_draw_events_mirror[0]);
    assert_snapshot!(&terminal_draw_events_mirror[1]);
    assert_snapshot!(&terminal_draw_events_mirror[2]);
    assert_snapshot!(&terminal_draw_events_mirror[3]);
    assert_snapshot!(&terminal_draw_events_mirror[4]);
    assert_snapshot!(&terminal_draw_events_mirror[5]);
+   assert_snapshot!(&terminal_draw_events_mirror[6]);
 }
 
 #[test]
@@ -1460,7 +1461,7 @@ fn delete_folder() {
    start(backend, keyboard_events, temp_dir_path.clone());
    let terminal_draw_events_mirror = terminal_draw_events.lock().expect("could not acquire lock on terminal events");
 
-   let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor];
+   let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor];
    assert_eq!(
        &terminal_events.lock().expect("could not acquire lock on terminal_events")[..],
        &expected_terminal_events[..]
@@ -1471,7 +1472,7 @@ fn delete_folder() {
    assert_eq!(std::fs::metadata(&file_3_path).is_ok(), true, "second different file was untouched");
    std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
 
-   assert_eq!(terminal_draw_events_mirror.len(), 7);
+   assert_eq!(terminal_draw_events_mirror.len(), 8);
    assert_snapshot!(&terminal_draw_events_mirror[0]);
    assert_snapshot!(&terminal_draw_events_mirror[1]);
    assert_snapshot!(&terminal_draw_events_mirror[2]);
@@ -1479,6 +1480,7 @@ fn delete_folder() {
    assert_snapshot!(&terminal_draw_events_mirror[4]);
    assert_snapshot!(&terminal_draw_events_mirror[5]);
    assert_snapshot!(&terminal_draw_events_mirror[6]);
+   assert_snapshot!(&terminal_draw_events_mirror[7]);
 }
 
 #[test]
@@ -1525,7 +1527,7 @@ fn delete_folder_small_window () {
    start(backend, keyboard_events, temp_dir_path.clone());
    let terminal_draw_events_mirror = terminal_draw_events.lock().expect("could not acquire lock on terminal events");
 
-   let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor];
+   let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor];
    assert_eq!(
        &terminal_events.lock().expect("could not acquire lock on terminal_events")[..],
        &expected_terminal_events[..]
@@ -1536,7 +1538,7 @@ fn delete_folder_small_window () {
    assert_eq!(std::fs::metadata(&file_3_path).is_ok(), true, "second different file was untouched");
    std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
 
-   assert_eq!(terminal_draw_events_mirror.len(), 7);
+   assert_eq!(terminal_draw_events_mirror.len(), 8);
    assert_snapshot!(&terminal_draw_events_mirror[0]);
    assert_snapshot!(&terminal_draw_events_mirror[1]);
    assert_snapshot!(&terminal_draw_events_mirror[2]);
@@ -1544,6 +1546,7 @@ fn delete_folder_small_window () {
    assert_snapshot!(&terminal_draw_events_mirror[4]);
    assert_snapshot!(&terminal_draw_events_mirror[5]);
    assert_snapshot!(&terminal_draw_events_mirror[6]);
+   assert_snapshot!(&terminal_draw_events_mirror[7]);
 }
 
 #[test]
@@ -1606,7 +1609,7 @@ fn delete_folder_with_multiple_children() {
    start(backend, keyboard_events, temp_dir_path.clone());
    let terminal_draw_events_mirror = terminal_draw_events.lock().expect("could not acquire lock on terminal events");
 
-   let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor];
+   let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor];
    assert_eq!(
        &terminal_events.lock().expect("could not acquire lock on terminal_events")[..],
        &expected_terminal_events[..]
@@ -1620,7 +1623,7 @@ fn delete_folder_with_multiple_children() {
    assert_eq!(std::fs::metadata(&file_5_path).is_err(), true, "internal file in folder deleted");
    std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
 
-   assert_eq!(terminal_draw_events_mirror.len(), 7);
+   assert_eq!(terminal_draw_events_mirror.len(), 8);
    assert_snapshot!(&terminal_draw_events_mirror[0]);
    assert_snapshot!(&terminal_draw_events_mirror[1]);
    assert_snapshot!(&terminal_draw_events_mirror[2]);
@@ -1628,6 +1631,7 @@ fn delete_folder_with_multiple_children() {
    assert_snapshot!(&terminal_draw_events_mirror[4]);
    assert_snapshot!(&terminal_draw_events_mirror[5]);
    assert_snapshot!(&terminal_draw_events_mirror[6]);
+   assert_snapshot!(&terminal_draw_events_mirror[7]);
 }
 
 #[test]
@@ -1833,13 +1837,13 @@ fn permission_denied_when_deleting () {
    std::fs::set_permissions(&subfolder_1_path, perms).unwrap();
    std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
 
-   let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor];
+   let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor];
    assert_eq!(
        &terminal_events.lock().expect("could not acquire lock on terminal_events")[..],
        &expected_terminal_events[..]
    );
 
-   assert_eq!(terminal_draw_events_mirror.len(), 9);
+   assert_eq!(terminal_draw_events_mirror.len(), 10);
    assert_snapshot!(&terminal_draw_events_mirror[0]);
    assert_snapshot!(&terminal_draw_events_mirror[1]);
    assert_snapshot!(&terminal_draw_events_mirror[2]);
@@ -1849,6 +1853,7 @@ fn permission_denied_when_deleting () {
    assert_snapshot!(&terminal_draw_events_mirror[6]);
    assert_snapshot!(&terminal_draw_events_mirror[7]);
    assert_snapshot!(&terminal_draw_events_mirror[8]);
+   assert_snapshot!(&terminal_draw_events_mirror[9]);
 }
 
 #[test]

@@ -2,7 +2,8 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[4]"
 ---
- Total: 8.0K (3 files), freed: 4.0K                                                                                                                                                           
+        8.0K (3 files), fre d: 4.0K | /tmp/bandwhich_te ts/d l te_file                                                                                                                        
+                                                                                                                              ─                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
@@ -12,6 +13,10 @@ expression: "&terminal_draw_events_mirror[4]"
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
+                                                                                            file3                                                                                             
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                          4.0K (50%)                                                                                          
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
@@ -21,6 +26,7 @@ expression: "&terminal_draw_events_mirror[4]"
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
+                    ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
@@ -30,6 +36,10 @@ expression: "&terminal_draw_events_mirror[4]"
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
+                                                                                 subfolder1/ (+1 descendants)                                                                                 
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+                                                                                          4.0K (50%)                                                                                          
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
@@ -39,17 +49,7 @@ expression: "&terminal_draw_events_mirror[4]"
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
-                                                                                                                                                                                              
+                                                                                                                              ─                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
 

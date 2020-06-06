@@ -9,12 +9,13 @@ use crate::state::board::FileType;
 use crate::app::FileToDelete;
 
 pub struct MessageBox <'a>{
-    file_to_delete: &'a FileToDelete
+    file_to_delete: &'a FileToDelete,
+    deletion_in_progress: bool,
 }
 
 impl <'a> MessageBox <'a>{
-    pub fn new (file_to_delete: &'a FileToDelete) -> Self {
-        Self { file_to_delete }
+    pub fn new (file_to_delete: &'a FileToDelete, deletion_in_progress: bool) -> Self {
+        Self { file_to_delete, deletion_in_progress }
     }
 }
 
@@ -55,7 +56,6 @@ impl <'a> Widget for MessageBox <'a>{
         let x = ((area.x + area.width) / 2) - width / 2;
         let y = ((area.y + area.height) / 2) - height / 2;
 
-
         let message_rect = Rect { x, y, width, height };
         draw_rect_on_grid(buf, message_rect);
 
@@ -73,49 +73,56 @@ impl <'a> Widget for MessageBox <'a>{
         let text_style = Style::default().bg(Color::Red).fg(Color::White).modifier(Modifier::BOLD);
         let text_length = message_rect.width - 4;
 
-        let question_line = match self.file_to_delete.file_metadata.file_type {
-            FileType::File => {
-                if text_length >= 17 {
-                    format!("Delete this file?")
-                } else if text_length >= 3 {
-                    format!("Delete?")
-                } else {
-                    unreachable!("should not render if terminal is so small");
-                }
-            },
-            FileType::Folder => {
-                let children = self.file_to_delete.file_metadata.descendants.expect("folder should have descendants");
-                let full_line = format!("Delete folder with {} children?", children);
-                let short_line = format!("Delete folder?");
-                if text_length >= full_line.len() as u16 {
-                    full_line
-                } else if text_length >= short_line.len() as u16 {
-                    short_line
-                } else {
-                    unreachable!("should not render if terminal is so small");
-                }
-            }
-        };
-
         let full_path = self.file_to_delete.full_path()
             .into_os_string()
             .into_string()
             .expect("could not convert os string to string");
         let file_name = &self.file_to_delete.path_to_file.last().expect("could not find file to delete").to_string_lossy();
-
         let full_path_display = String::from(full_path);
         let file_name_line = if text_length > full_path_display.len() as u16 {
             full_path_display
         } else {
             truncate_middle(file_name, text_length)
         };
-        let y_n_line = "(y/n)";
-        let question_line_start_position = ((message_rect.width - question_line.len() as u16) as f64 / 2.0).ceil() as u16 + message_rect.x;
-        let file_name_line_start_position = ((message_rect.width - file_name_line.len() as u16) as f64 / 2.0).ceil() as u16 + message_rect.x;
-        let y_n_line_start_position = ((message_rect.width - y_n_line.len() as u16) as f64 / 2.0).ceil() as u16 + message_rect.x;
-        buf.set_string(question_line_start_position, message_rect.y + message_rect.height / 2 - 3, question_line, text_style);
-        buf.set_string(file_name_line_start_position, message_rect.y + message_rect.height / 2, file_name_line, text_style);
-        buf.set_string(y_n_line_start_position, message_rect.y + message_rect.height / 2 + 3, y_n_line, text_style);
+
+        if self.deletion_in_progress {
+            let deleting_line = "Deleting";
+            let deleting_line_start_position = ((message_rect.width - deleting_line.len() as u16) as f64 / 2.0).ceil() as u16 + message_rect.x;
+            let file_line_start_position = ((message_rect.width - file_name_line.len() as u16) as f64 / 2.0).ceil() as u16 + message_rect.x;
+            buf.set_string(deleting_line_start_position, message_rect.y + message_rect.height / 2 - 1, deleting_line, text_style);
+            buf.set_string(file_line_start_position, message_rect.y + message_rect.height / 2 + 1, file_name_line, text_style);
+        } else {
+            let question_line = match self.file_to_delete.file_metadata.file_type {
+                FileType::File => {
+                    if text_length >= 17 {
+                        format!("Delete this file?")
+                    } else if text_length >= 3 {
+                        format!("Delete?")
+                    } else {
+                        unreachable!("should not render if terminal is so small");
+                    }
+                },
+                FileType::Folder => {
+                    let children = self.file_to_delete.file_metadata.descendants.expect("folder should have descendants");
+                    let full_line = format!("Delete folder with {} children?", children);
+                    let short_line = format!("Delete folder?");
+                    if text_length >= full_line.len() as u16 {
+                        full_line
+                    } else if text_length >= short_line.len() as u16 {
+                        short_line
+                    } else {
+                        unreachable!("should not render if terminal is so small");
+                    }
+                }
+            };
+            let y_n_line = "(y/n)";
+            let question_line_start_position = ((message_rect.width - question_line.len() as u16) as f64 / 2.0).ceil() as u16 + message_rect.x;
+            let file_name_line_start_position = ((message_rect.width - file_name_line.len() as u16) as f64 / 2.0).ceil() as u16 + message_rect.x;
+            let y_n_line_start_position = ((message_rect.width - y_n_line.len() as u16) as f64 / 2.0).ceil() as u16 + message_rect.x;
+            buf.set_string(question_line_start_position, message_rect.y + message_rect.height / 2 - 3, question_line, text_style);
+            buf.set_string(file_name_line_start_position, message_rect.y + message_rect.height / 2, file_name_line, text_style);
+            buf.set_string(y_n_line_start_position, message_rect.y + message_rect.height / 2 + 3, y_n_line, text_style);
+        }
     }
 
 }

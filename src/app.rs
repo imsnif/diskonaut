@@ -192,6 +192,10 @@ where B: Backend
         self.render_and_update_board();
     }
     pub fn delete_file(&mut self, file_to_delete: &FileToDelete) {
+        self.ui_effects.deletion_in_progress = true;
+        self.render();
+        self.ui_effects.deletion_in_progress = false;
+
         let full_path = file_to_delete.full_path();
 
         let metadata = fs::metadata(&full_path).expect("could not get file metadata");

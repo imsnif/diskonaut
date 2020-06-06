@@ -88,7 +88,7 @@ where B: Backend
                         .render(&mut f, chunks[0]);
                     RectangleGrid::new(&board.rectangles).render(&mut f, chunks[1]);
                     BottomLine::new(file_tree.failed_to_read).render(&mut f, chunks[2]);
-                    MessageBox::new(file_to_delete).render(&mut f, full_screen);
+                    MessageBox::new(file_to_delete, ui_effects.deletion_in_progress).render(&mut f, full_screen);
                 },
                 UiMode::ErrorMessage(message) => {
                     TitleLine::new(base_path_info, current_path_info, file_tree.space_freed)

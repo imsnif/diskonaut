@@ -2,9 +2,9 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[7]"
 ---
-                                                                                                                                                                   ┌─────────────────────────┐
-                                                                                                                                                                   │                         │
-                                                                                                                                                                   └─────────────────────────┘
+ Total: 8.0K (3 files), freed: 4.0K                                                                                                                                                           
+                                                                                                                                                                                              
+                                                                                                                                                                                              
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
