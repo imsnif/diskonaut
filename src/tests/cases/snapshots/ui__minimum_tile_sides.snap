@@ -50,6 +50,6 @@ expression: "&terminal_draw_events_mirror[0]"
 │                                                                                       │                                     │ file17 │ file28  │ file37 │ file44  │xxxxxxxxxxxxxxxxxxxxxxxx│
 │                                                                                       │                                     │  4.0K  │  4.0K   │  4.0K  │  4.0K   │xxxxxxxxxxxxxxxxxxxxxxxx│
 └───────────────────────────────────────────────────────────────────────────────────────┴─────────────────────────────────────┴────────┴─────────┴────────┴─────────┴────────────────────────┘
- x = Small files                                                                                                                                                                              
+                                                                                                                                                                            (x = Small files) 
  <hjkl> or <arrow keys> - move around, <ENTER> - enter folder, <ESC> - parent folder, <Ctrl-D> - delete                                                                                       
 

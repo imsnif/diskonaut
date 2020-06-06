@@ -50,6 +50,6 @@ expression: "&terminal_draw_events_mirror[0]"
 │                                                                                        │
 │                                                                                        │
 └────────────────────────────────────────────────────────────────────────────────────────┘
- x = Small files                                                                          
+                                                                        (x = Small files) 
  ←↓↑→/<ENTER>/<ESC>: navigate, <Ctrl-D>: del                                              
 

@@ -21,14 +21,14 @@ impl BottomLine {
 
 impl<'a> Widget for BottomLine {
     fn draw(&mut self, area: Rect, buf: &mut Buffer) {
-        let bottom_left_character = buf.get_mut(1, area.y + area.height - 2);
-        bottom_left_character.set_symbol("x");
-        bottom_left_character.set_style(Style::default().bg(Color::White).fg(Color::Black));
-        buf.set_string(3, area.y + area.height - 2, "= Small files", Style::default());
         if self.failed_to_read > 0 {
-            buf.set_string(16, area.y + area.height - 2, ", ", Style::default());
-            buf.set_string(18, area.y + area.height - 2, format!("failed to read {} files", self.failed_to_read), Style::default().fg(Color::Red));
+            buf.set_string(1, area.y + area.height - 2, format!("Failed to read {} files", self.failed_to_read), Style::default().fg(Color::Red));
         }
+
+        buf.set_string(area.width - 18, area.y + area.height - 2, "(x = Small files)", Style::default());
+        let bottom_left_character = buf.get_mut(area.width - 17, area.y + area.height - 2);
+        bottom_left_character.set_style(Style::default().bg(Color::White).fg(Color::Black));
+
         let (long_controls_line, short_controls_line) = if self.hide_delete {
             (
                 String::from("<hjkl> or <arrow keys> - move around, <ENTER> - enter folder, <ESC> - parent folder"),
