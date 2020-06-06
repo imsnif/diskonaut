@@ -197,26 +197,32 @@ where B: Backend
         self.ui_effects.deletion_in_progress = false;
 
         let full_path = file_to_delete.full_path();
-
-        let metadata = fs::metadata(&full_path).expect("could not get file metadata");
-        let file_type = metadata.file_type();
-        let file_removed = if file_type.is_dir() {
-            fs::remove_dir_all(&full_path)
-        } else {
-            fs::remove_file(&full_path)
-        };
-        match file_removed {
-            Ok(_) => {
-                self.remove_file_from_ui(file_to_delete);
-                self.ui_mode = UiMode::Normal;
-                self.render_and_update_board();
-                let _ = self.event_sender.try_send(Event::FileDeleted);
+        match fs::metadata(&full_path) {
+            Ok(metadata) => {
+                let file_type = metadata.file_type();
+                let file_removed = if file_type.is_dir() {
+                    fs::remove_dir_all(&full_path)
+                } else {
+                    fs::remove_file(&full_path)
+                };
+                match file_removed {
+                    Ok(_) => {
+                        self.remove_file_from_ui(file_to_delete);
+                        self.ui_mode = UiMode::Normal;
+                        self.render_and_update_board();
+                        let _ = self.event_sender.try_send(Event::FileDeleted);
+                    },
+                    Err(msg) => {
+                        self.ui_mode = UiMode::ErrorMessage(format!("{}", msg));
+                        self.render();
+                    }
+                };
             },
             Err(msg) => {
                 self.ui_mode = UiMode::ErrorMessage(format!("{}", msg));
                 self.render();
             }
-        };
+        }
     }
     pub fn increment_failed_to_read(&mut self) {
         self.file_tree.failed_to_read += 1;
