@@ -2,7 +2,7 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[5]"
 ---
-        32     3                12.0K |  tmp/bandwhich_tests/d lete_folder_with_mu tiple_children                                                                                             
+        32     3                12.0K |  tmp/cosmonaut_tests/d lete_folder_with_mu tiple_children                                                                                             
                                                                                                                                          ─                                                    
                                                                                                                                                                                               
                                                                                                                                                                                               

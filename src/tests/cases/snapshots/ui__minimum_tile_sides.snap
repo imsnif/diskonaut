@@ -2,7 +2,7 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[0]"
 ---
- Total: 1.1M (59 files), freed: 0 | /tmp/bandwhich_tests/minimum_tile_sides                                                                                                                   
+ Total: 1.1M (59 files), freed: 0 | /tmp/cosmonaut_tests/minimum_tile_sides                                                                                                                   
 ┌───────────────────────────────────────────────────────────────────────────────────────┬─────────────────────────────────────────────────┬──────────────────────────────────────────────────┐
 │                                                                                       │                                                 │                                                  │
 │                                                                                       │                                                 │                                                  │

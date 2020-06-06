@@ -2,7 +2,7 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[0]"
 ---
- Total: 12.0K (4 files), freed: 0 | /tmp/bandwhich_tests/esc_to_go_up                                                                                                                         
+ Total: 12.0K (4 files), freed: 0 | /tmp/cosmonaut_tests/esc_to_go_up                                                                                                                         
 ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┬──────────────────────────────────────────────────────────────┐
 │                                                                                                                             │                                                              │
 │                                                                                                                             │                                                              │

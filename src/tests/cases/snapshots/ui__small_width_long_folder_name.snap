@@ -2,7 +2,7 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[0]"
 ---
- 20.0K | /tmp/bandwhich_tes[...]h_long_folder_name
+ 20.0K | /tmp/cosmonaut_tes[...]h_long_folder_name
 ┌────────────────────────┬───────────────────────┐
 │                        │                       │
 │                        │                       │

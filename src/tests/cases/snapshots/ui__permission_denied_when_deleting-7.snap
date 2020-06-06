@@ -27,7 +27,7 @@ expression: "&terminal_draw_events_mirror[6]"
                     │                                                                  Delete this file?                                                                  │                   
                     │                                                                                                                                                     │                   
                     │                                                                                                                                                     │                   
-                    │                                        /tmp/bandwhich_tests/permission_denied_when_deleting/subfolder1/file1                                        │                   
+                    │                                        /tmp/cosmonaut_tests/permission_denied_when_deleting/subfolder1/file1                                        │                   
                     │                                                                                                                                                     │                   
                     │                                                                                                                                                     │                   
                     │                                                                        (y/n)                                                                        │                   

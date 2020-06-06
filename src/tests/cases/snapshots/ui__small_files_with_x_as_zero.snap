@@ -2,7 +2,7 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[0]"
 ---
- 2.3M | /tmp/bandwhich_tes[..]les_with_x_as_zero  
+ 2.3M | /tmp/cosmonaut_tes[..]les_with_x_as_zero  
 ┌────────────────────────┬───────────────────────┐
 │                        │                       │
 │                        │                       │

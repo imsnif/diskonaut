@@ -1,6 +1,6 @@
 [package]
-name = "visual-size-ls"
-version = "0.6.2"
+name = "cosmonaut"
+version = "0.0.0"
 authors = ["Aram Drevekenin <aram@poor.dev>"]
 description = ""
 license = "MIT"

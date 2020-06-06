@@ -2,7 +2,7 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[0]"
 ---
- Total: 4.0K (2 files), freed: 0 | /tmp/bandwhich_tests/permission_denied_when_deleting                                                                                                       
+ Total: 4.0K (2 files), freed: 0 | /tmp/cosmonaut_tests/permission_denied_when_deleting                                                                                                       
 ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┐
 │                                                                                                                                                                                            │
 │                                                                                                                                                                                            │

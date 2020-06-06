@@ -2,7 +2,7 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[0]"
 ---
- Total: 448.0K (11 files), freed: 0 | /tmp/bandwhich_tests/eleven_files                                                                                                                       
+ Total: 448.0K (11 files), freed: 0 | /tmp/cosmonaut_tests/eleven_files                                                                                                                       
 ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────┬─────────────────────────────────────────┬────────────────────────────────────────┐
 │                                                                                                         │                                         │                                        │
 │                                                                                                         │                                         │                                        │

@@ -16,7 +16,7 @@ use crate::tests::fakes::{KeyboardEvents};
 
 fn create_root_temp_dir (name: &str) -> Result<PathBuf, failure::Error> {
     let mut dir = env::temp_dir();
-    dir.push(String::from("bandwhich_tests"));
+    dir.push(String::from("cosmonaut_tests"));
     dir.push(name.to_string());
 
     remove_dir_all(&dir).ok(); // atomic remove

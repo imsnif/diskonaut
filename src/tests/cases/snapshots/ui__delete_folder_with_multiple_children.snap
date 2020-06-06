@@ -2,7 +2,7 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[0]"
 ---
- Total: 44.0K (7 files), freed: 0 | /tmp/bandwhich_tests/delete_folder_with_multiple_children                                                                                                 
+ Total: 44.0K (7 files), freed: 0 | /tmp/cosmonaut_tests/delete_folder_with_multiple_children                                                                                                 
 ┌────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┬───────────────────────────────────────────────────┐
 │                                                                                                                                        │                                                   │
 │                                                                                                                                        │                                                   │

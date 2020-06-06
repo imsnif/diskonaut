@@ -3,7 +3,7 @@ source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[0]"
 ---
                                                   
-     /tmp/bandwhich_tests/delete_file (12.3K)     
+     /tmp/cosmonaut_tests/delete_file (12.3K)     
                                                   
 ┌────────────────────────┬───────────────────────┐
 │                        │                       │

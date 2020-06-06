@@ -2,7 +2,7 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[0]"
 ---
- 16.0K | /tmp/bandwhich_tests/enter_folder_small_width      
+ 16.0K | /tmp/cosmonaut_tests/enter_folder_small_width      
 ┌──────────────────────────────────────┬───────────────────┐
 │                                      │                   │
 │                                      │                   │

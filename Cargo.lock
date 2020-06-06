@@ -211,6 +211,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "cosmonaut"
+version = "0.0.0"
+dependencies = [
+ "cargo-insta 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "failure 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "insta 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "signal-hook 0.1.15 (registry+https://github.com/rust-lang/crates.io-index)",
+ "termion 1.5.3 (registry+https://github.com/rust-lang/crates.io-index)",
+ "tui 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "walkdir 2.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
 name = "difference"
 version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -915,19 +928,6 @@ dependencies = [
 name = "vec_map"
 version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-
-[[package]]
-name = "visual-size-ls"
-version = "0.6.2"
-dependencies = [
- "cargo-insta 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "failure 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
- "insta 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "signal-hook 0.1.15 (registry+https://github.com/rust-lang/crates.io-index)",
- "termion 1.5.3 (registry+https://github.com/rust-lang/crates.io-index)",
- "tui 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "walkdir 2.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
-]
 
 [[package]]
 name = "walkdir"

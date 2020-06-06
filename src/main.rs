@@ -55,7 +55,7 @@ fn try_main() -> Result<(), failure::Error> {
             start(terminal_backend, Box::new(keyboard_events), env::current_dir()?);
         }
         Err(_) => failure::bail!(
-            "Failed to get stdout: if you are trying to pipe 'bandwhich' you should use the --raw flag"
+            "Failed to get stdout: are you trying to pipe 'cosmonaut'?"
         ),
     }
     Ok(())
