@@ -34,6 +34,12 @@ const SHOULD_SHOW_LOADING_ANIMATION: bool = true;
 #[cfg(test)]
 const SHOULD_SHOW_LOADING_ANIMATION: bool = false;
 
+#[cfg(not(test))]
+const SHOULD_HANDLE_WIN_CHANGE: bool = true;
+
+#[cfg(test)]
+const SHOULD_HANDLE_WIN_CHANGE: bool = false;
+
 fn main() {
     if let Err(err) = try_main() {
         println!("Error: {}", err);
@@ -168,20 +174,22 @@ where
         );
     }
 
-    active_threads.push(
-        thread::Builder::new()
-            .name("resize_handler".to_string())
-            .spawn({
-                let instruction_sender = instruction_sender.clone();
-                move || {
-                    on_sigwinch(Box::new(move || {
-                        let _ = instruction_sender.send(Instruction::ResetUiMode);
-                        let _ = instruction_sender.send(Instruction::Render);
-                    }));
-                }
-            })
-            .unwrap(),
-    );
+    if SHOULD_HANDLE_WIN_CHANGE {
+        active_threads.push(
+            thread::Builder::new()
+                .name("resize_handler".to_string())
+                .spawn({
+                    let instruction_sender = instruction_sender.clone();
+                    move || {
+                        on_sigwinch(Box::new(move || {
+                            let _ = instruction_sender.send(Instruction::ResetUiMode);
+                            let _ = instruction_sender.send(Instruction::Render);
+                        }));
+                    }
+                })
+                .unwrap(),
+        );
+    }
 
     let mut app = App::new(terminal_backend, path.clone(), event_sender.clone());
     app.start(instruction_receiver);
