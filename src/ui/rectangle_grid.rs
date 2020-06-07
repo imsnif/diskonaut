@@ -116,10 +116,26 @@ fn draw_rect_text_on_grid(buf: &mut Buffer, rect: &Rect, file_rect: &FileRect) {
     let second_line_length = second_line.len(); // TODO: better
     let second_line_start_position = ((rect.width - second_line_length as u16) as f64 / 2.0).ceil() as u16 + rect.x;
 
+
+    if file_rect.selected {
+        for x in rect.x + 1..rect.x + rect.width {
+            for y in rect.y + 1..rect.y + rect.height {
+                let buf = buf.get_mut(x, y);
+                buf.set_symbol("█");
+                buf.set_style(Style::default());
+            }
+        }
+    }
+
+    let text_style = if file_rect.selected {
+        Style::default().bg(Color::White).fg(Color::Black)
+    } else {
+        Style::default().fg(Color::White)
+    };
     let first_line_style = if file_rect.selected {
         match file_rect.file_metadata.file_type {
-            FileType::File => Style::default().bg(Color::Black).fg(Color::White),
-            FileType::Folder => Style::default().bg(Color::Black).fg(Color::Blue).modifier(Modifier::BOLD)
+            FileType::File => Style::default().bg(Color::White).fg(Color::Black),
+            FileType::Folder => Style::default().fg(Color::Blue).bg(Color::White).modifier(Modifier::BOLD)
         }
     } else {
         match file_rect.file_metadata.file_type {
@@ -128,21 +144,6 @@ fn draw_rect_text_on_grid(buf: &mut Buffer, rect: &Rect, file_rect: &FileRect) {
         }
     };
 
-    let text_style = if file_rect.selected {
-        Style::default().bg(Color::Green).bg(Color::Black).fg(Color::White).modifier(Modifier::BOLD)
-    } else {
-        Style::default()
-    };
-
-    if file_rect.selected {
-        for x in rect.x + 1..rect.x + rect.width {
-            for y in rect.y + 1..rect.y + rect.height {
-                let buf = buf.get_mut(x, y);
-                buf.set_symbol("█");
-                buf.set_style(Style::default().bg(Color::White).fg(Color::Black));
-            }
-        }
-    }
     if rect.height > 5 {
         let line_gap = if rect.height % 2 == 0 { 1 } else { 2 };
         buf.set_string(first_line_start_position, (rect.height / 2) + rect.y - 1, first_line, first_line_style);
