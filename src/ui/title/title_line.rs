@@ -61,7 +61,14 @@ impl <'a>Widget for TitleLine <'a>{
             current_path_relative_to_base.to_string_lossy().into_owned()
         };
 
-        let separator = ::std::path::MAIN_SEPARATOR;
+        let separator = if base_path.ends_with("/") {
+            // eg. if base_path is "/", we don't want current path to
+            // also start with "/" otherwise we'll have "//path_to_my/location"
+            // instead of "/path_to_my/location"
+            format!("")
+        } else {
+            format!("{}", ::std::path::MAIN_SEPARATOR)
+        };
         let total_size = DisplaySize(self.base_path_info.size as f64);
         let total_descendants = &self.base_path_info.num_descendants;
         let current_folder_size = DisplaySize(self.current_path_info.size as f64);
