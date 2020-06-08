@@ -116,50 +116,66 @@ fn draw_rect_text_on_grid(buf: &mut Buffer, rect: &Rect, file_rect: &FileRect) {
     let second_line_length = second_line.len(); // TODO: better
     let second_line_start_position = ((rect.width - second_line_length as u16) as f64 / 2.0).ceil() as u16 + rect.x;
 
+    let ( background_style, first_line_style, second_line_style ) = match ( file_rect.selected, &file_rect.file_metadata.file_type ) {
+        ( true, FileType::File ) => {
+            (
+                Some(Style::default().fg(Color::DarkGray).bg(Color::DarkGray)),
+                Style::default().fg(Color::Black).bg(Color::DarkGray),
+                Style::default().fg(Color::Black).bg(Color::DarkGray)
+            )
+        },
+        ( false, FileType::File ) => {
+            (
+                None,
+                Style::default(),
+                Style::default(),
+            )
+        },
+        ( true, FileType::Folder) => {
+            (
+                Some(Style::default().fg(Color::Blue).bg(Color::Blue)),
+                Style::default().fg(Color::White).bg(Color::Blue).modifier(Modifier::BOLD),
+                Style::default().fg(Color::Black).bg(Color::Blue),
+            )
+        },
+        ( false, FileType::Folder) => {
+            (
+                None,
+                Style::default().fg(Color::Blue).modifier(Modifier::BOLD),
+                Style::default(),
+            )
+        }
+    };
 
-    if file_rect.selected {
+    if let Some(background_style) = background_style {
         for x in rect.x + 1..rect.x + rect.width {
             for y in rect.y + 1..rect.y + rect.height {
-                let buf = buf.get_mut(x, y);
-                buf.set_symbol("█");
-                buf.set_style(Style::default());
+                buf.get_mut(x, y).set_symbol("█").set_style(background_style);
+                // we set both the filling symbol and the style
+                // because some terminals do not show this symbol on the one side
+                // and our tests need it in order to pass on the other side
+                // some terminals also don't have colors and would need this
+                // as an indication so... best of all worlds!
             }
         }
     }
 
-    let text_style = if file_rect.selected {
-        Style::default().bg(Color::White).fg(Color::Black)
-    } else {
-        Style::default().fg(Color::White)
-    };
-    let first_line_style = if file_rect.selected {
-        match file_rect.file_metadata.file_type {
-            FileType::File => Style::default().bg(Color::White).fg(Color::Black),
-            FileType::Folder => Style::default().fg(Color::Blue).bg(Color::White).modifier(Modifier::BOLD)
-        }
-    } else {
-        match file_rect.file_metadata.file_type {
-            FileType::File => Style::default().fg(Color::White),
-            FileType::Folder => Style::default().fg(Color::Blue).modifier(Modifier::BOLD)
-        }
-    };
-
     if rect.height > 5 {
         let line_gap = if rect.height % 2 == 0 { 1 } else { 2 };
         buf.set_string(first_line_start_position, (rect.height / 2) + rect.y - 1, first_line, first_line_style);
-        buf.set_string(second_line_start_position, (rect.height / 2) + rect.y + line_gap, second_line, text_style);
+        buf.set_string(second_line_start_position, (rect.height / 2) + rect.y + line_gap, second_line, second_line_style);
     } else if rect.height == 5 {
         buf.set_string(first_line_start_position, (rect.height / 2) + rect.y, first_line, first_line_style);
-        buf.set_string(second_line_start_position, (rect.height / 2) + rect.y + 1, second_line, text_style);
+        buf.set_string(second_line_start_position, (rect.height / 2) + rect.y + 1, second_line, second_line_style);
     } else if rect.height > 4 {
         buf.set_string(first_line_start_position, rect.y + 1, first_line, first_line_style);
-        buf.set_string(second_line_start_position, rect.y + 2, second_line, text_style);
+        buf.set_string(second_line_start_position, rect.y + 2, second_line, second_line_style);
     } else if rect.height == 4 {
         buf.set_string(first_line_start_position, rect.y + 1, first_line, first_line_style);
-        buf.set_string(second_line_start_position, rect.y + 3, second_line, text_style);
+        buf.set_string(second_line_start_position, rect.y + 3, second_line, second_line_style);
     } else if rect.height > 2 {
         buf.set_string(first_line_start_position, rect.y + 1, first_line, first_line_style);
-        buf.set_string(second_line_start_position, rect.y + 2, second_line, text_style);
+        buf.set_string(second_line_start_position, rect.y + 2, second_line, second_line_style);
     } else {
         buf.set_string(first_line_start_position, rect.y + 1, first_line, first_line_style);
     }
