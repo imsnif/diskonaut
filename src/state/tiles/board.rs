@@ -156,6 +156,12 @@ impl Board {
         next_selected.selected = true;
         self.selected_index = Some(*next_index);
     }
+    pub fn has_selected_index (&self) -> bool {
+        match self.selected_index {
+            Some(_) => true,
+            None => false
+        }
+    }
     pub fn reset_selected_index (&mut self) {
         if let Some(selected_index) = self.selected_index {
             let mut existing_selected = self.rectangles.get_mut(selected_index).expect(&format!("could not find selected rect at index {}", selected_index));

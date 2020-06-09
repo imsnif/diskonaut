@@ -171,13 +171,16 @@ where B: Backend
         }
     }
     pub fn go_up (&mut self) {
-        let succeeded = self.file_tree.leave_folder();
-        self.board.reset_selected_index();
-        self.render_and_update_board();
-        if succeeded {
-            let _ = self.event_sender.try_send(Event::PathChange);
+        if self.board.has_selected_index() {
+            self.board.reset_selected_index();
         } else {
-            let _ = self.event_sender.try_send(Event::PathError);
+            let succeeded = self.file_tree.leave_folder();
+            self.render_and_update_board();
+            if succeeded {
+                let _ = self.event_sender.try_send(Event::PathChange);
+            } else {
+                let _ = self.event_sender.try_send(Event::PathError);
+            }
         }
     }
     pub fn get_file_to_delete(&self) -> Option<FileToDelete> {
