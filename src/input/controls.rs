@@ -43,7 +43,7 @@ where B: Backend // TODO: better
         Event::Key(Key::Char('\n')) => {
             app.enter_selected();
         }
-        Event::Key(Key::Esc) => {
+        Event::Key(Key::Esc) | Event::Key(Key::Backspace) => {
             app.go_up();
         }
         _ => (),
@@ -75,7 +75,7 @@ where B: Backend // TODO: better
         Event::Key(Key::Char('\n')) => {
             app.enter_selected();
         }
-        Event::Key(Key::Esc) => {
+        Event::Key(Key::Esc) | Event::Key(Key::Backspace) => {
             app.go_up();
         }
         _ => (),
@@ -86,7 +86,7 @@ pub fn handle_keypress_delete_file_mode<B>(evt: Event, app: &mut App<B>, file_to
 where B: Backend // TODO: better
 {
     match evt {
-        Event::Key(Key::Ctrl('c')) | Event::Key(Key::Char('q')) | Event::Key(Key::Esc) | Event::Key(Key::Char('n')) => {
+        Event::Key(Key::Ctrl('c')) | Event::Key(Key::Char('q')) | Event::Key(Key::Esc) | Event::Key(Key::Backspace) | Event::Key(Key::Char('n')) => {
             app.normal_mode();
         }
         Event::Key(Key::Char('y')) => {
@@ -100,7 +100,7 @@ pub fn handle_keypress_error_message<B>(evt: Event, app: &mut App<B>)
 where B: Backend // TODO: better
 {
     match evt {
-        Event::Key(Key::Ctrl('c')) | Event::Key(Key::Char('q')) | Event::Key(Key::Esc) => {
+        Event::Key(Key::Ctrl('c')) | Event::Key(Key::Char('q')) | Event::Key(Key::Esc) | Event::Key(Key::Backspace) => {
             app.normal_mode();
         }
         _ => (),
@@ -111,7 +111,7 @@ pub fn handle_keypress_screen_too_small<B>(evt: Event, app: &mut App<B>)
 where B: Backend // TODO: better
 {
     match evt {
-        Event::Key(Key::Ctrl('c')) | Event::Key(Key::Char('q')) | Event::Key(Key::Esc) => {
+        Event::Key(Key::Ctrl('c')) | Event::Key(Key::Char('q')) => {
             app.exit();
         }
         _ => (),
