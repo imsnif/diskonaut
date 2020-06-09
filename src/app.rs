@@ -43,6 +43,7 @@ pub struct App <B>
 where B: Backend
 {
     pub is_running: bool,
+    pub loaded: bool,
     pub ui_mode: UiMode,
     board: Board,
     file_tree: FileTree,
@@ -62,6 +63,7 @@ where B: Backend
         let ui_effects = UiEffects::new();
         App {
             is_running: true,
+            loaded: false,
             board,
             file_tree,
             display,
@@ -109,15 +111,23 @@ where B: Backend
     }
     pub fn start_ui(&mut self) {
         self.ui_mode = UiMode::Normal;
+        self.loaded = true;
         self.render_and_update_board();
     }
     pub fn add_entry_to_base_folder(&mut self, file_metadata: &Metadata, entry_path: &Path, path_length: &usize) {
         self.file_tree.add_entry(file_metadata, entry_path, path_length);
+        self.ui_effects.last_read_path = Some(PathBuf::from(entry_path));
     }
     pub fn reset_ui_mode (&mut self) {
         match self.ui_mode {
             UiMode::Loading | UiMode::Normal => {},
-            _ => self.ui_mode = UiMode::Normal,
+            _ => self.ui_mode = {
+                if self.loaded {
+                    UiMode::Normal
+                } else {
+                    UiMode::Loading
+                }
+            }
         };
     }
     pub fn exit (&mut self) {

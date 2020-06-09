@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use tui::layout::Rect;
 use tui::style::{Style, Color, Modifier};
 use tui::widgets::Widget;
@@ -5,20 +7,29 @@ use tui::widgets::Widget;
 use tui::buffer::Buffer;
 
 use crate::state::{FileRect, FileType};
-use crate::ui::format::DisplaySize;
+use crate::ui::format::{DisplaySize, truncate_middle};
 
 pub struct BottomLine <'a>{
     hide_delete: bool,
     currently_selected: Option<&'a FileRect>,
+    last_read_path: Option<&'a PathBuf>,
     failed_to_read: u64,
 }
 
 impl <'a>BottomLine <'a>{
-    pub fn new(failed_to_read: u64, currently_selected: Option<&'a FileRect>) -> Self {
-        Self { hide_delete: false, failed_to_read, currently_selected }
+    pub fn new(failed_to_read: u64) -> Self {
+        Self { hide_delete: false, failed_to_read, currently_selected: None, last_read_path: None }
     }
     pub fn hide_delete(mut self) -> Self {
         self.hide_delete = true;
+        self
+    }
+    pub fn currently_selected(mut self, currently_selected: Option<&'a FileRect>) -> Self {
+        self.currently_selected = currently_selected;
+        self
+    }
+    pub fn last_read_path(mut self, last_read_path: Option<&'a PathBuf>) -> Self {
+        self.last_read_path = last_read_path;
         self
     }
 }
@@ -56,6 +67,14 @@ impl<'a> Widget for BottomLine <'a>{
                     break;
                 }
             }
+        } else if let Some(last_read_path) = self.last_read_path {
+            let max_len = area.width - small_files_legend.chars().count() as u16 - 5;
+            let last_read_path = last_read_path.to_string_lossy();
+            if (last_read_path.chars().count() as u16) < max_len {
+                buf.set_string(1, area.y + area.height - 2, last_read_path, Style::default());
+            } else {
+                buf.set_string(1, area.y + area.height - 2, truncate_middle(&last_read_path, max_len), Style::default());
+            }
         } else if self.failed_to_read > 0 {
             // this line is (most likely!) less than 50 characters, so no need to telescope it
             buf.set_string(1, area.y + area.height - 2, format!("Failed to read {} files", self.failed_to_read), Style::default().fg(Color::Red));
@@ -79,11 +98,11 @@ impl<'a> Widget for BottomLine <'a>{
         };
         let too_small_line = "(...)";
         if area.width >= long_controls_line.chars().count() as u16 {
-            buf.set_string(1, area.y + area.height - 1, long_controls_line, Style::default());
+            buf.set_string(1, area.y + area.height - 1, long_controls_line, Style::default().modifier(Modifier::BOLD));
         } else if area.width >= short_controls_line.chars().count() as u16 {
-            buf.set_string(1, area.y + area.height - 1, short_controls_line, Style::default());
+            buf.set_string(1, area.y + area.height - 1, short_controls_line, Style::default().modifier(Modifier::BOLD));
         } else {
-            buf.set_string(1, area.y + area.height - 1, too_small_line, Style::default());
+            buf.set_string(1, area.y + area.height - 1, too_small_line, Style::default().modifier(Modifier::BOLD));
         }
     }
 }
