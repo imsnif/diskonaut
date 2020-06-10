@@ -21,9 +21,7 @@ impl Iterator for KeyboardEvents {
 }
 
 
-pub fn handle_keypress_loading_mode<B>(evt: Event, app: &mut App<B>)
-where B: Backend // TODO: better
-{
+pub fn handle_keypress_loading_mode<B: Backend>(evt: Event, app: &mut App<B>) {
     match evt {
         Event::Key(Key::Ctrl('c')) | Event::Key(Key::Char('q')) => {
             app.exit();
@@ -50,9 +48,7 @@ where B: Backend // TODO: better
     };
 }
 
-pub fn handle_keypress_normal_mode<B>(evt: Event, app: &mut App<B>)
-where B: Backend // TODO: better
-{
+pub fn handle_keypress_normal_mode<B: Backend>(evt: Event, app: &mut App<B>) {
     match evt {
         Event::Key(Key::Ctrl('c')) | Event::Key(Key::Char('q')) => {
             app.exit();
@@ -82,9 +78,7 @@ where B: Backend // TODO: better
     };
 }
 
-pub fn handle_keypress_delete_file_mode<B>(evt: Event, app: &mut App<B>, file_to_delete: FileToDelete)
-where B: Backend // TODO: better
-{
+pub fn handle_keypress_delete_file_mode<B: Backend>(evt: Event, app: &mut App<B>, file_to_delete: FileToDelete) {
     match evt {
         Event::Key(Key::Ctrl('c')) | Event::Key(Key::Char('q')) | Event::Key(Key::Esc) | Event::Key(Key::Backspace) | Event::Key(Key::Char('n')) => {
             app.normal_mode();
@@ -96,9 +90,7 @@ where B: Backend // TODO: better
     };
 }
 
-pub fn handle_keypress_error_message<B>(evt: Event, app: &mut App<B>)
-where B: Backend // TODO: better
-{
+pub fn handle_keypress_error_message<B: Backend>(evt: Event, app: &mut App<B>) {
     match evt {
         Event::Key(Key::Ctrl('c')) | Event::Key(Key::Char('q')) | Event::Key(Key::Esc) | Event::Key(Key::Backspace) => {
             app.normal_mode();
@@ -107,9 +99,7 @@ where B: Backend // TODO: better
     };
 }
 
-pub fn handle_keypress_screen_too_small<B>(evt: Event, app: &mut App<B>)
-where B: Backend // TODO: better
-{
+pub fn handle_keypress_screen_too_small<B: Backend>(evt: Event, app: &mut App<B>) {
     match evt {
         Event::Key(Key::Ctrl('c')) | Event::Key(Key::Char('q')) => {
             app.exit();

@@ -8,7 +8,7 @@ use crate::state::files::{FileOrFolder, Folder};
 pub struct FileTree {
     base_folder: Folder,
     pub current_folder_names: Vec<OsString>,
-    pub space_freed: u64, // TODO: move elsewhere
+    pub space_freed: u64,
     pub failed_to_read: u64,
     pub path_in_filesystem: PathBuf,
 }

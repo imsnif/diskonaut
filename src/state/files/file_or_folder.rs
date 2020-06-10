@@ -73,6 +73,7 @@ impl Folder {
         if path_length > 1 {
             let name = path.iter().next().expect("could not get next path element for folder").to_os_string();
             let path_entry = self.contents.entry(name.clone()).or_insert( 
+                // TODO: make this FileOrFolder::Folder::new
                 FileOrFolder::Folder(
                     Folder {
                         name,
