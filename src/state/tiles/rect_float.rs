@@ -1,4 +1,3 @@
-use crate::ui::rectangle_grid::{MINIMUM_HEIGHT, MINIMUM_WIDTH};
 use tui::layout::Rect;
 
 #[derive(Clone, Debug)]
@@ -10,87 +9,6 @@ pub struct RectFloat {
 }
 
 impl RectFloat {
-    pub fn is_right_of(&self, other: &RectFloat) -> bool {
-        self.x >= other.x + other.width
-    }
-
-    pub fn is_left_of(&self, other: &RectFloat) -> bool {
-        self.x + self.width <= other.x
-    }
-
-    pub fn is_below(&self, other: &RectFloat) -> bool {
-       self.y >= other.y + other.height
-    }
-
-    pub fn is_above(&self, other: &RectFloat) -> bool {
-       self.y + self.height <= other.y
-    }
-
-    pub fn horizontally_overlaps_with(&self, other: &RectFloat) -> bool {
-        ( self.y >= other.y && self.y <= (other.y + other.height) ) ||
-        ( (self.y + self.height) <= (other.y + other.height) && (self.y + self.height) > other.y) ||
-        (self.y <= other.y && (self.y + self.height >= (other.y + other.height)) ) ||
-        ( other.y <= self.y && (other.y + other.height >= (self.y + self.height)) )
-    }
-
-    pub fn vertically_overlaps_with(&self, other: &RectFloat) -> bool {
-        ( self.x >= other.x && self.x <= (other.x + other.width) ) ||
-        ( (self.x + self.width) <= (other.x + other.width) && (self.x + self.width) > other.x) ||
-        ( self.x <= other.x && (self.x + self.width >= (other.x + other.width)) ) ||
-        ( other.x <= self.x && (other.x + other.width >= (self.x + self.width)) )
-    } 
-
-    pub fn get_vertical_overlap_with(&self, other: &RectFloat) -> f64 {
-        if self.x < other.x {
-            if self.x + self.width >= other.x + other.width {
-                other.width
-            } else {
-                self.x + self.width - other.x
-            } 
-        } else {
-            if other.x + other.width >= self.x + self.width {
-                self.width
-            } else {
-                other.x + other.width - self.x
-            } 
-        }
-    }
-
-    pub fn get_horizontal_overlap_with(&self, other: &RectFloat) -> f64 {
-        if self.y < other.y {
-            if self.y + self.height >= other.y + other.height {
-                other.height
-            } else {
-                self.y + self.height - other.y
-            } 
-        } else {
-            if other.y + other.height >= self.y + self.height {
-                self.height
-            } else {
-                other.y + other.height - self.y
-            } 
-        }
-    }
-
-    pub fn is_atleast_minimum_size(&self) -> bool {
-        self.height >= MINIMUM_HEIGHT as f64 && self.width >= MINIMUM_WIDTH as f64
-    }
-
-    pub fn is_aligned_left_with(&self, other: &RectFloat) -> bool {
-        self.x.round() == other.x.round()
-    }
-    pub fn is_aligned_right_with(&self, other: &RectFloat) -> bool {
-        (self.x + self.width).round() == (other.x + other.width).round()
-    }
-
-    pub fn is_aligned_top_with(&self, other: &RectFloat) -> bool {
-        self.y.round() == other.y.round()
-    }
-
-    pub fn is_aligned_bottom_with(&self, other: &RectFloat) -> bool {
-        (self.y + self.height).round() == (other.y + other.height).round()
-    }
-    
     pub fn round(&self) -> Rect {
         let rounded_x = self.x.round();
         let rounded_y = self.y.round();

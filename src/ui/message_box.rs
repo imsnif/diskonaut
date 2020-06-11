@@ -92,7 +92,7 @@ impl <'a> Widget for MessageBox <'a>{
             buf.set_string(deleting_line_start_position, message_rect.y + message_rect.height / 2 - 1, deleting_line, text_style);
             buf.set_string(file_line_start_position, message_rect.y + message_rect.height / 2 + 1, file_name_line, text_style);
         } else {
-            let question_line = match self.file_to_delete.file_metadata.file_type {
+            let question_line = match self.file_to_delete.file_type {
                 FileType::File => {
                     if text_length >= 17 {
                         format!("Delete this file?")
@@ -103,7 +103,7 @@ impl <'a> Widget for MessageBox <'a>{
                     }
                 },
                 FileType::Folder => {
-                    let children = self.file_to_delete.file_metadata.descendants.expect("folder should have descendants");
+                    let children = self.file_to_delete.num_descendants.expect("folder should have descendants");
                     let full_line = format!("Delete folder with {} children?", children);
                     let short_line = format!("Delete folder?");
                     if text_length >= full_line.len() as u16 {

@@ -6,12 +6,12 @@ use tui::widgets::Widget;
 
 use tui::buffer::Buffer;
 
-use crate::state::{FileRect, FileType};
+use crate::state::{Tile, FileType};
 use crate::ui::format::{DisplaySize, truncate_middle};
 
 pub struct BottomLine <'a>{
     hide_delete: bool,
-    currently_selected: Option<&'a FileRect>,
+    currently_selected: Option<&'a Tile>,
     last_read_path: Option<&'a PathBuf>,
     failed_to_read: u64,
 }
@@ -24,7 +24,7 @@ impl <'a>BottomLine <'a>{
         self.hide_delete = true;
         self
     }
-    pub fn currently_selected(mut self, currently_selected: Option<&'a FileRect>) -> Self {
+    pub fn currently_selected(mut self, currently_selected: Option<&'a Tile>) -> Self {
         self.currently_selected = currently_selected;
         self
     }
@@ -39,10 +39,10 @@ impl<'a> Widget for BottomLine <'a>{
         // status line TODO: make own component
         let small_files_legend = "(x = Small files)";
         if let Some(currently_selected) = self.currently_selected {
-            let file_name = currently_selected.file_metadata.name.to_string_lossy();
-            let size = DisplaySize(currently_selected.file_metadata.size as f64);
-            let descendants = currently_selected.file_metadata.descendants;
-            let (style, lines) = match currently_selected.file_metadata.file_type {
+            let file_name = currently_selected.name.to_string_lossy();
+            let size = DisplaySize(currently_selected.size as f64);
+            let descendants = currently_selected.descendants;
+            let (style, lines) = match currently_selected.file_type {
                 FileType::File => (
                     Style::default().modifier(Modifier::BOLD),
                     vec![

@@ -6,7 +6,7 @@ use ::tui::backend::Backend;
 
 use crate::Event;
 use crate::state::files::{Folder, FileOrFolder};
-use crate::state::board::FileMetadata;
+use crate::state::board::FileType;
 use crate::ui::Display;
 use crate::state::{Board, UiEffects};
 use crate::state::files::FileTree;
@@ -17,7 +17,9 @@ use crate::messages::{Instruction, handle_instructions};
 pub struct FileToDelete {
   pub path_in_filesystem: PathBuf,
   pub path_to_file: Vec<OsString>,
-  pub file_metadata: FileMetadata,
+  pub file_type: FileType,
+  pub num_descendants: Option<u64>,
+  pub size: u64,
 }
 
 impl FileToDelete {
@@ -155,8 +157,8 @@ where B: Backend
         self.render();
     }
     pub fn enter_selected (&mut self) {
-        if let Some(file_size_rect) = &self.board.currently_selected() {
-            let selected_name = &file_size_rect.file_metadata.name;
+        if let Some(tile) = &self.board.currently_selected() {
+            let selected_name = &tile.name;
             if let Some(file_or_folder) = self.file_tree.item_in_current_folder(&selected_name) {
                 match file_or_folder {
                     FileOrFolder::Folder(_) => {
@@ -173,6 +175,7 @@ where B: Backend
     pub fn go_up (&mut self) {
         if self.board.has_selected_index() {
             self.board.reset_selected_index();
+            self.render_and_update_board();
         } else {
             let succeeded = self.file_tree.leave_folder();
             self.render_and_update_board();
@@ -184,13 +187,15 @@ where B: Backend
         }
     }
     pub fn get_file_to_delete(&self) -> Option<FileToDelete> {
-        let currently_selected_metadata = &self.board.currently_selected()?.file_metadata;
+        let currently_selected = self.board.currently_selected()?;
         let mut path_to_file = self.file_tree.current_folder_names.clone();
-        path_to_file.push(currently_selected_metadata.name.clone());
+        path_to_file.push(currently_selected.name.clone());
         let file_to_delete = FileToDelete {
             path_in_filesystem: self.file_tree.path_in_filesystem.clone(),
             path_to_file,
-            file_metadata: currently_selected_metadata.clone(),
+            file_type: currently_selected.file_type,
+            num_descendants: currently_selected.descendants,
+            size: currently_selected.size,
         };
         Some(file_to_delete)
     }
@@ -241,7 +246,7 @@ where B: Backend
         self.file_tree.failed_to_read += 1;
     }
     fn remove_file_from_ui (&mut self, file_to_delete: &FileToDelete) {
-        self.file_tree.space_freed += file_to_delete.file_metadata.size;
+        self.file_tree.space_freed += file_to_delete.size;
         self.file_tree.delete_file(file_to_delete);
         self.board.reset_selected_index();
     }

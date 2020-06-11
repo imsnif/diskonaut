@@ -3,21 +3,23 @@ use tui::layout::Rect;
 use tui::style::{Style, Color, Modifier};
 use tui::widgets::{Widget};
 
+use std::ffi::OsString;
+
 use crate::state::FileType;
 use crate::ui::{draw_symbol, boundaries};
 use crate::ui::format::{DisplaySize, DisplaySizeRounded, truncate_middle};
-use crate::state::FileRect;
+use crate::state::Tile;
 
 pub const MINIMUM_HEIGHT: u16 = 3;
 pub const MINIMUM_WIDTH: u16 = 8;
 
 #[derive(Clone)]
 pub struct RectangleGrid<'a> {
-    rectangles: &'a [FileRect]
+    rectangles: &'a [Tile]
 }
 
 impl<'a> RectangleGrid<'a> {
-    pub fn new (rectangles: &'a [FileRect]) -> Self {
+    pub fn new (rectangles: &'a [Tile]) -> Self {
         RectangleGrid { rectangles }
     }
 }
@@ -42,8 +44,7 @@ fn truncate_size_line (size: &u64, percentage: &f64, max_length: &u16) -> String
     }
 }
 
-fn draw_rect_on_grid (buf: &mut Buffer, rect: Rect) {
-    // top and bottom
+fn draw_rect_on_grid (buf: &mut Buffer, rect: &Tile) {
     for x in rect.x..(rect.x + rect.width + 1) {
         if x == rect.x {
             draw_symbol(buf, x, rect.y, &boundaries::TOP_LEFT);
@@ -74,24 +75,24 @@ fn draw_small_files_rect_on_grid(buf: &mut Buffer, rect: Rect) {
     }
 }
 
-fn draw_rect_text_on_grid(buf: &mut Buffer, rect: &Rect, file_rect: &FileRect) { // TODO: better, combine args
-    let max_text_length = if rect.width > 2 { rect.width - 2 } else { 0 };
-    let name = &file_rect.file_metadata.name.to_string_lossy();
-    let descendant_count = &file_rect.file_metadata.descendants;
-    let percentage = &file_rect.file_metadata.percentage;
+fn draw_rect_text_on_grid(buf: &mut Buffer, tile: &Tile) { // TODO: better, combine args
+    let max_text_length = if tile.width > 2 { tile.width - 2 } else { 0 };
+    let name = &tile.name.to_string_lossy();
+    let descendant_count = &tile.descendants;
+    let percentage = &tile.percentage;
 
-    let filename_text = if file_rect.selected {
-        match file_rect.file_metadata.file_type {
+    let filename_text = if tile.selected {
+        match tile.file_type {
             FileType::File => format!("{}", name),
             FileType::Folder => format!("{}/", name),
         }
     } else {
-        match file_rect.file_metadata.file_type {
+        match tile.file_type {
             FileType::File => format!("{}", name),
             FileType::Folder=> format!("{}/", name),
         }
     };
-    let first_line = match file_rect.file_metadata.file_type {
+    let first_line = match tile.file_type {
         FileType::File => {
             truncate_middle(&filename_text, max_text_length)
         },
@@ -109,14 +110,14 @@ fn draw_rect_text_on_grid(buf: &mut Buffer, rect: &Rect, file_rect: &FileRect) {
         }
     };
     let first_line_length = first_line.len(); // TODO: better
-    let first_line_start_position = ((rect.width - first_line_length as u16) as f64 / 2.0).ceil() as u16 + rect.x;
+    let first_line_start_position = ((tile.width - first_line_length as u16) as f64 / 2.0).ceil() as u16 + tile.x;
 
-    let second_line = truncate_size_line(&file_rect.file_metadata.size, &percentage, &max_text_length);
+    let second_line = truncate_size_line(&tile.size, &percentage, &max_text_length);
 
     let second_line_length = second_line.len(); // TODO: better
-    let second_line_start_position = ((rect.width - second_line_length as u16) as f64 / 2.0).ceil() as u16 + rect.x;
+    let second_line_start_position = ((tile.width - second_line_length as u16) as f64 / 2.0).ceil() as u16 + tile.x;
 
-    let ( background_style, first_line_style, second_line_style ) = match ( file_rect.selected, &file_rect.file_metadata.file_type ) {
+    let ( background_style, first_line_style, second_line_style ) = match ( tile.selected, &tile.file_type ) {
         ( true, FileType::File ) => {
             (
                 Some(Style::default().fg(Color::DarkGray).bg(Color::DarkGray)),
@@ -148,8 +149,8 @@ fn draw_rect_text_on_grid(buf: &mut Buffer, rect: &Rect, file_rect: &FileRect) {
     };
 
     if let Some(background_style) = background_style {
-        for x in rect.x + 1..rect.x + rect.width {
-            for y in rect.y + 1..rect.y + rect.height {
+        for x in tile.x + 1..tile.x + tile.width {
+            for y in tile.y + 1..tile.y + tile.height {
                 buf.get_mut(x, y).set_symbol("█").set_style(background_style);
                 // we set both the filling symbol and the style
                 // because some terminals do not show this symbol on the one side
@@ -160,24 +161,24 @@ fn draw_rect_text_on_grid(buf: &mut Buffer, rect: &Rect, file_rect: &FileRect) {
         }
     }
 
-    if rect.height > 5 {
-        let line_gap = if rect.height % 2 == 0 { 1 } else { 2 };
-        buf.set_string(first_line_start_position, (rect.height / 2) + rect.y - 1, first_line, first_line_style);
-        buf.set_string(second_line_start_position, (rect.height / 2) + rect.y + line_gap, second_line, second_line_style);
-    } else if rect.height == 5 {
-        buf.set_string(first_line_start_position, (rect.height / 2) + rect.y, first_line, first_line_style);
-        buf.set_string(second_line_start_position, (rect.height / 2) + rect.y + 1, second_line, second_line_style);
-    } else if rect.height > 4 {
-        buf.set_string(first_line_start_position, rect.y + 1, first_line, first_line_style);
-        buf.set_string(second_line_start_position, rect.y + 2, second_line, second_line_style);
-    } else if rect.height == 4 {
-        buf.set_string(first_line_start_position, rect.y + 1, first_line, first_line_style);
-        buf.set_string(second_line_start_position, rect.y + 3, second_line, second_line_style);
-    } else if rect.height > 2 {
-        buf.set_string(first_line_start_position, rect.y + 1, first_line, first_line_style);
-        buf.set_string(second_line_start_position, rect.y + 2, second_line, second_line_style);
+    if tile.height > 5 {
+        let line_gap = if tile.height % 2 == 0 { 1 } else { 2 };
+        buf.set_string(first_line_start_position, (tile.height / 2) + tile.y - 1, first_line, first_line_style);
+        buf.set_string(second_line_start_position, (tile.height / 2) + tile.y + line_gap, second_line, second_line_style);
+    } else if tile.height == 5 {
+        buf.set_string(first_line_start_position, (tile.height / 2) + tile.y, first_line, first_line_style);
+        buf.set_string(second_line_start_position, (tile.height / 2) + tile.y + 1, second_line, second_line_style);
+    } else if tile.height > 4 {
+        buf.set_string(first_line_start_position, tile.y + 1, first_line, first_line_style);
+        buf.set_string(second_line_start_position, tile.y + 2, second_line, second_line_style);
+    } else if tile.height == 4 {
+        buf.set_string(first_line_start_position, tile.y + 1, first_line, first_line_style);
+        buf.set_string(second_line_start_position, tile.y + 3, second_line, second_line_style);
+    } else if tile.height > 2 {
+        buf.set_string(first_line_start_position, tile.y + 1, first_line, first_line_style);
+        buf.set_string(second_line_start_position, tile.y + 2, second_line, second_line_style);
     } else {
-        buf.set_string(first_line_start_position, rect.y + 1, first_line, first_line_style);
+        buf.set_string(first_line_start_position, tile.y + 1, first_line, first_line_style);
     }
 }
 
@@ -193,7 +194,7 @@ impl SmallFilesArea {
             highest_top_left_coordinates: None,
         }
     }
-    pub fn add_rect(&mut self, rect: &Rect) {
+    pub fn add_rect(&mut self, rect: &Tile) {
         match self.leftmost_top_left_coordinates {
             Some((x, y)) => {
                 if rect.width == 0 && rect.height == 0 {
@@ -270,23 +271,33 @@ impl<'a> Widget for RectangleGrid<'a> {
             let text_start_position = ((area.width - text_length as u16) as f64 / 2.0).ceil() as u16 + area.x;
             buf.set_string(text_start_position, (area.height / 2) + area.y - 1, empty_folder_line, text_style);
         } else {
-            for file_rect in self.rectangles {
-                let rect = file_rect.rect.round();
+            for tile in self.rectangles {
 
-                if file_rect.rect.height < MINIMUM_HEIGHT as f64 || file_rect.rect.width < MINIMUM_WIDTH as f64 {
-                    small_files.add_rect(&rect);
-                } else if rect.height < MINIMUM_HEIGHT || rect.width < MINIMUM_WIDTH {
+                if tile.height < MINIMUM_HEIGHT || tile.width < MINIMUM_WIDTH {
+                    small_files.add_rect(&tile);
+                } else if tile.height < MINIMUM_HEIGHT || tile.width < MINIMUM_WIDTH {
                     // ignore it, this is a rounding error
                     //
                     // TODO: fix this properly, probably by refactoring Board to do the rounding
                     // itself
                 } else {
-                    draw_rect_text_on_grid(buf, &rect, &file_rect);
-                    draw_rect_on_grid(buf, rect);
+                    draw_rect_text_on_grid(buf, &tile);
+                    draw_rect_on_grid(buf, &tile);
                 }
             }
             small_files.draw(&area, buf);
         }
-        draw_rect_on_grid(buf, area); // draw a frame around the whole area (to properly support the small files and empty folder cases)
+        draw_rect_on_grid(buf, &Tile { // TODO: either do not do this and draw a fame around SmallFiles (best!) or make it accept a Rectangle trait
+            x: area.x,
+            y: area.y,
+            width: area.width,
+            height: area.height,
+            name: OsString::new(),
+            size: 0,
+            descendants: None,
+            percentage: 0.0,
+            file_type: FileType::Folder,
+            selected: false
+        }); // draw a frame around the whole area (to properly support the small files and empty folder cases)
     }
 }

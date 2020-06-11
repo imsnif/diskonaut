@@ -3,8 +3,9 @@ use std::ffi::OsString;
 
 use crate::state::files::{FileOrFolder, Folder};
 use crate::state::tiles::{TreeMap, RectFloat};
+use crate::ui::rectangle_grid::{MINIMUM_HEIGHT, MINIMUM_WIDTH};
 
-#[derive(Clone, Debug)]
+#[derive(Copy, Clone, Debug)]
 pub enum FileType {
     File,
     Folder,
@@ -20,14 +21,119 @@ pub struct FileMetadata {
 }
 
 #[derive(Clone, Debug)]
-pub struct FileRect {
-    pub rect: RectFloat,
-    pub file_metadata: FileMetadata,
-    pub selected: bool,
+pub struct Tile {
+    pub x: u16,
+    pub y: u16,
+    pub width: u16,
+    pub height: u16,
+    pub name: OsString,
+    pub size: u64,
+    pub descendants: Option<u64>,
+    pub percentage: f64,
+    pub file_type: FileType,
+    pub selected: bool
+}
+
+impl Tile {
+    pub fn new (rect: &RectFloat, file_metadata: &FileMetadata) -> Self {
+        let rounded = rect.round(); // TODO: do not allocate
+        Tile {
+            x: rounded.x,
+            y: rounded.y,
+            width: rounded.width,
+            height: rounded.height,
+            name: file_metadata.name.clone(),
+            size: file_metadata.size,
+            descendants: file_metadata.descendants,
+            percentage: file_metadata.percentage,
+            file_type: file_metadata.file_type.clone(),
+            selected: false,
+        }
+    }
+    pub fn is_right_of(&self, other: &Tile) -> bool {
+        self.x >= other.x + other.width
+    }
+
+    pub fn is_left_of(&self, other: &Tile) -> bool {
+        self.x + self.width <= other.x
+    }
+
+    pub fn is_below(&self, other: &Tile) -> bool {
+       self.y >= other.y + other.height
+    }
+
+    pub fn is_above(&self, other: &Tile) -> bool {
+       self.y + self.height <= other.y
+    }
+
+    pub fn horizontally_overlaps_with(&self, other: &Tile) -> bool {
+        ( self.y >= other.y && self.y <= (other.y + other.height) ) ||
+        ( (self.y + self.height) <= (other.y + other.height) && (self.y + self.height) > other.y) ||
+        (self.y <= other.y && (self.y + self.height >= (other.y + other.height)) ) ||
+        ( other.y <= self.y && (other.y + other.height >= (self.y + self.height)) )
+    }
+
+    pub fn vertically_overlaps_with(&self, other: &Tile) -> bool {
+        ( self.x >= other.x && self.x <= (other.x + other.width) ) ||
+        ( (self.x + self.width) <= (other.x + other.width) && (self.x + self.width) > other.x) ||
+        ( self.x <= other.x && (self.x + self.width >= (other.x + other.width)) ) ||
+        ( other.x <= self.x && (other.x + other.width >= (self.x + self.width)) )
+    }
+
+    pub fn get_vertical_overlap_with(&self, other: &Tile) -> u16 {
+        if self.x < other.x {
+            if self.x + self.width >= other.x + other.width {
+                other.width
+            } else {
+                self.x + self.width - other.x
+            }
+        } else {
+            if other.x + other.width >= self.x + self.width {
+                self.width
+            } else {
+                other.x + other.width - self.x
+            }
+        }
+    }
+
+    pub fn get_horizontal_overlap_with(&self, other: &Tile) -> u16 {
+        if self.y < other.y {
+            if self.y + self.height >= other.y + other.height {
+                other.height
+            } else {
+                self.y + self.height - other.y
+            }
+        } else {
+            if other.y + other.height >= self.y + self.height {
+                self.height
+            } else {
+                other.y + other.height - self.y
+            }
+        }
+    }
+
+    pub fn is_atleast_minimum_size(&self) -> bool {
+        self.height >= MINIMUM_HEIGHT && self.width >= MINIMUM_WIDTH
+    }
+
+    pub fn is_aligned_left_with(&self, other: &Tile) -> bool {
+        self.x == other.x
+    }
+    pub fn is_aligned_right_with(&self, other: &Tile) -> bool {
+        self.x + self.width == other.x + other.width
+    }
+
+    pub fn is_aligned_top_with(&self, other: &Tile) -> bool {
+        self.y == other.y
+    }
+
+    pub fn is_aligned_bottom_with(&self, other: &Tile) -> bool {
+        self.y + self.height == other.y + other.height
+    }
 }
 
 pub struct Board {
-    pub rectangles: Vec<FileRect>,
+    pub tiles: Vec<Tile>,
     selected_index: Option<usize>, // None means nothing is selected
     area: Option<Rect>,
     files: Vec<FileMetadata>,
@@ -70,7 +176,7 @@ impl Board {
         });
 
         Board {
-            rectangles: vec![],
+            tiles: vec![],
             files,
             selected_index: None,
             area: None,
@@ -137,22 +243,22 @@ impl Board {
 
             let empty_space = RectFloat { x: area.x as f64, y: area.y as f64, height: area.height as f64, width: area.width as f64 };
             let mut tree_map = TreeMap::new(empty_space);
-            
-            tree_map.squarify(self.files.clone(), vec![]); // TODO: do not clone
-            let mut rectangles = tree_map.rectangles;
+
+            tree_map.squarify(self.files.iter().collect(), vec![]); // TODO: do not clone
+            let mut tiles = tree_map.tiles;
             if let Some(selected_index) = self.selected_index {
-                let mut selected_rect = rectangles.get_mut(selected_index).expect(&format!("could not find selected rect at index {}", selected_index));
-                selected_rect.selected = true;
+                let mut selected_tile = tiles.get_mut(selected_index).expect(&format!("could not find selected rect at index {}", selected_index));
+                selected_tile.selected = true;
             }
-            self.rectangles = rectangles;
+            self.tiles = tiles;
         }
     }
     pub fn set_selected_index (&mut self, next_index: &usize) {
         if let Some(selected_index) = self.selected_index {
-            let mut existing_selected = self.rectangles.get_mut(selected_index).expect(&format!("could not find selected rect at index {}", selected_index));
+            let mut existing_selected = self.tiles.get_mut(selected_index).expect(&format!("could not find selected rect at index {}", selected_index));
             existing_selected.selected = false;
         }
-        let mut next_selected = self.rectangles.get_mut(*next_index).expect(&format!("could not find selected rect at index {}", next_index));
+        let mut next_selected = self.tiles.get_mut(*next_index).expect(&format!("could not find selected rect at index {}", next_index));
         next_selected.selected = true;
         self.selected_index = Some(*next_index);
     }
@@ -164,42 +270,42 @@ impl Board {
     }
     pub fn reset_selected_index (&mut self) {
         if let Some(selected_index) = self.selected_index {
-            let mut existing_selected = self.rectangles.get_mut(selected_index).expect(&format!("could not find selected rect at index {}", selected_index));
+            let mut existing_selected = self.tiles.get_mut(selected_index).expect(&format!("could not find selected rect at index {}", selected_index));
             existing_selected.selected = false;
         }
         self.selected_index = None;
     }
-    pub fn currently_selected (&self) -> Option<&FileRect> {
+    pub fn currently_selected (&self) -> Option<&Tile> {
         match &self.selected_index {
-            Some(selected_index) => self.rectangles.get(*selected_index),
+            Some(selected_index) => self.tiles.get(*selected_index),
             None => None,
         }
     }
     pub fn move_selected_right (&mut self) {
         if let Some(selected_index) = self.selected_index {
 
-            let currently_selected = self.rectangles.get(selected_index).expect(&format!("could not find selected rectangle at index {}", selected_index));
-            
+            let currently_selected = self.tiles.get(selected_index).expect(&format!("could not find selected rectangle at index {}", selected_index));
+
             let mut next_rectangle_index = None;
 
-            for (candidate_index, candidate) in self.rectangles.iter().enumerate().filter(|(_, c)| {
-                c.rect.is_atleast_minimum_size() &&
-                c.rect.is_right_of(&currently_selected.rect) &&
-                c.rect.horizontally_overlaps_with(&currently_selected.rect)
+            for (candidate_index, candidate) in self.tiles.iter().enumerate().filter(|(_, c)| {
+                c.is_atleast_minimum_size() &&
+                c.is_right_of(&currently_selected) &&
+                c.horizontally_overlaps_with(&currently_selected)
             }) {
                 match next_rectangle_index {
                     Some(existing_candidate_index) => {
-                        
-                        let existing_candidate: &FileRect = self.rectangles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
-                        
-                        if existing_candidate.rect.is_aligned_left_with(&candidate.rect) {
-                            let existing_candidate_overlap = existing_candidate.rect.get_horizontal_overlap_with(&currently_selected.rect);
-                            let candidate_overlap = candidate.rect.get_horizontal_overlap_with(&currently_selected.rect);
+
+                        let existing_candidate: &Tile = self.tiles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
+
+                        if existing_candidate.is_aligned_left_with(&candidate) {
+                            let existing_candidate_overlap = existing_candidate.get_horizontal_overlap_with(&currently_selected);
+                            let candidate_overlap = candidate.get_horizontal_overlap_with(&currently_selected);
                             if existing_candidate_overlap < candidate_overlap {
                                 next_rectangle_index = Some(candidate_index);
                             }
                         } else {
-                            if candidate.rect.x < existing_candidate.rect.x {
+                            if candidate.x < existing_candidate.x {
                                 next_rectangle_index = Some(candidate_index);
                             }
                         }
@@ -210,7 +316,7 @@ impl Board {
             if let Some(next_index) = next_rectangle_index {
                 self.set_selected_index(&next_index);
             }
-        } else if self.rectangles.len() > 0 {
+        } else if self.tiles.len() > 0 {
             self.set_selected_index(&0);
         }
 
@@ -218,27 +324,27 @@ impl Board {
     pub fn move_selected_left (&mut self) {
         if let Some(selected_index) = self.selected_index {
 
-            let currently_selected = self.rectangles.get(selected_index).expect(&format!("could not find selected rectangle at index {}", selected_index));
-        
+            let currently_selected = self.tiles.get(selected_index).expect(&format!("could not find selected rectangle at index {}", selected_index));
+
             let mut next_rectangle_index = None;
-            for (candidate_index, candidate) in self.rectangles.iter().enumerate().filter(|(_, c)| {
-                c.rect.is_atleast_minimum_size() &&
-                c.rect.is_left_of(&currently_selected.rect) &&
-                c.rect.horizontally_overlaps_with(&currently_selected.rect)
+            for (candidate_index, candidate) in self.tiles.iter().enumerate().filter(|(_, c)| {
+                c.is_atleast_minimum_size() &&
+                c.is_left_of(&currently_selected) &&
+                c.horizontally_overlaps_with(&currently_selected)
             }) {
                 match next_rectangle_index {
                     Some(existing_candidate_index) => {
-                        
-                        let existing_candidate: &FileRect = self.rectangles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
-                        
-                        if existing_candidate.rect.is_aligned_right_with(&candidate.rect) {
-                            let existing_candidate_overlap = existing_candidate.rect.get_horizontal_overlap_with(&currently_selected.rect);
-                            let candidate_overlap = candidate.rect.get_horizontal_overlap_with(&currently_selected.rect);
+
+                        let existing_candidate: &Tile = self.tiles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
+
+                        if existing_candidate.is_aligned_right_with(&candidate) {
+                            let existing_candidate_overlap = existing_candidate.get_horizontal_overlap_with(&currently_selected);
+                            let candidate_overlap = candidate.get_horizontal_overlap_with(&currently_selected);
                             if existing_candidate_overlap < candidate_overlap {
                                 next_rectangle_index = Some(candidate_index);
                             }
                         } else {
-                            if candidate.rect.x + candidate.rect.width > existing_candidate.rect.x + existing_candidate.rect.width {
+                            if candidate.x + candidate.width > existing_candidate.x + existing_candidate.width {
                                 next_rectangle_index = Some(candidate_index);
                             }
                         }
@@ -249,30 +355,30 @@ impl Board {
             if let Some(next_index) = next_rectangle_index {
                 self.set_selected_index(&next_index);
             }
-        } else if self.rectangles.len() > 0 {
+        } else if self.tiles.len() > 0 {
             self.set_selected_index(&0);
         }
     }
     pub fn move_selected_down (&mut self) {
         if let Some(selected_index) = self.selected_index {
-            let currently_selected = self.rectangles.get(selected_index).expect(&format!("could not find selected rectangle at index {}", selected_index));
+            let currently_selected = self.tiles.get(selected_index).expect(&format!("could not find selected rectangle at index {}", selected_index));
             let mut next_rectangle_index = None;
-            for (candidate_index, candidate) in self.rectangles.iter().enumerate().filter(|(_, c)| {
-                c.rect.is_atleast_minimum_size() &&
-                c.rect.is_below(&currently_selected.rect) &&
-                c.rect.vertically_overlaps_with(&currently_selected.rect)
+            for (candidate_index, candidate) in self.tiles.iter().enumerate().filter(|(_, c)| {
+                c.is_atleast_minimum_size() &&
+                c.is_below(&currently_selected) &&
+                c.vertically_overlaps_with(&currently_selected)
             }) {
                 match next_rectangle_index {
                     Some(existing_candidate_index) => {
-                        let existing_candidate: &FileRect = self.rectangles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
-                        if existing_candidate.rect.is_aligned_top_with(&candidate.rect) {
-                            let existing_candidate_overlap = existing_candidate.rect.get_vertical_overlap_with(&currently_selected.rect);
-                            let candidate_overlap = candidate.rect.get_vertical_overlap_with(&currently_selected.rect);
+                        let existing_candidate: &Tile = self.tiles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
+                        if existing_candidate.is_aligned_top_with(&candidate) {
+                            let existing_candidate_overlap = existing_candidate.get_vertical_overlap_with(&currently_selected);
+                            let candidate_overlap = candidate.get_vertical_overlap_with(&currently_selected);
                             if existing_candidate_overlap < candidate_overlap {
                                 next_rectangle_index = Some(candidate_index);
                             }
                         } else {
-                            if candidate.rect.y < existing_candidate.rect.y {
+                            if candidate.y < existing_candidate.y {
                                 next_rectangle_index = Some(candidate_index);
                             }
                         }
@@ -283,30 +389,30 @@ impl Board {
             if let Some(next_index) = next_rectangle_index {
                 self.set_selected_index(&next_index);
             }
-        } else if self.rectangles.len() > 0 {
+        } else if self.tiles.len() > 0 {
             self.set_selected_index(&0);
         }
     }
     pub fn move_selected_up (&mut self) {
         if let Some(selected_index) = self.selected_index {
-            let currently_selected = self.rectangles.get(selected_index).expect(&format!("could not find selected rectangle at index {}", selected_index));
+            let currently_selected = self.tiles.get(selected_index).expect(&format!("could not find selected rectangle at index {}", selected_index));
             let mut next_rectangle_index = None;
-            for (candidate_index, candidate) in self.rectangles.iter().enumerate().filter(|(_, c)| {
-                c.rect.is_atleast_minimum_size() &&
-                c.rect.is_above(&currently_selected.rect) &&
-                c.rect.vertically_overlaps_with(&currently_selected.rect)
+            for (candidate_index, candidate) in self.tiles.iter().enumerate().filter(|(_, c)| {
+                c.is_atleast_minimum_size() &&
+                c.is_above(&currently_selected) &&
+                c.vertically_overlaps_with(&currently_selected)
             }) {
                 match next_rectangle_index {
                     Some(existing_candidate_index) => {
-                        let existing_candidate: &FileRect = self.rectangles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
-                        if existing_candidate.rect.is_aligned_bottom_with(&candidate.rect) {
-                            let existing_candidate_overlap = existing_candidate.rect.get_vertical_overlap_with(&currently_selected.rect);
-                            let candidate_overlap = candidate.rect.get_vertical_overlap_with(&currently_selected.rect);
+                        let existing_candidate: &Tile = self.tiles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
+                        if existing_candidate.is_aligned_bottom_with(&candidate) {
+                            let existing_candidate_overlap = existing_candidate.get_vertical_overlap_with(&currently_selected);
+                            let candidate_overlap = candidate.get_vertical_overlap_with(&currently_selected);
                             if existing_candidate_overlap < candidate_overlap {
                                 next_rectangle_index = Some(candidate_index);
                             }
                         } else {
-                            if candidate.rect.y + candidate.rect.height > existing_candidate.rect.y + existing_candidate.rect.height {
+                            if candidate.y + candidate.height > existing_candidate.y + existing_candidate.height {
                                 next_rectangle_index = Some(candidate_index);
                             }
                         }
@@ -317,7 +423,7 @@ impl Board {
             if let Some(next_index) = next_rectangle_index {
                 self.set_selected_index(&next_index);
             }
-        } else if self.rectangles.len() > 0 {
+        } else if self.tiles.len() > 0 {
             self.set_selected_index(&0);
         }
     }
