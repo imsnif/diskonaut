@@ -31,7 +31,6 @@ pub struct Tile {
     pub descendants: Option<u64>,
     pub percentage: f64,
     pub file_type: FileType,
-    pub selected: bool
 }
 
 impl Tile {
@@ -47,7 +46,6 @@ impl Tile {
             descendants: file_metadata.descendants,
             percentage: file_metadata.percentage,
             file_type: file_metadata.file_type.clone(),
-            selected: false,
         }
     }
     pub fn is_right_of(&self, other: &Tile) -> bool {
@@ -134,7 +132,7 @@ impl Tile {
 
 pub struct Board {
     pub tiles: Vec<Tile>,
-    selected_index: Option<usize>, // None means nothing is selected
+    pub selected_index: Option<usize>, // None means nothing is selected
     area: Option<Rect>,
     files: Vec<FileMetadata>,
 }
@@ -211,21 +209,10 @@ impl Board {
             let mut tree_map = TreeMap::new(empty_space);
 
             tree_map.squarify(self.files.iter().collect(), vec![]); // TODO: do not clone
-            let mut tiles = tree_map.tiles;
-            if let Some(selected_index) = self.selected_index {
-                let mut selected_tile = tiles.get_mut(selected_index).expect(&format!("could not find selected rect at index {}", selected_index));
-                selected_tile.selected = true;
-            }
-            self.tiles = tiles;
+            self.tiles = tree_map.tiles;
         }
     }
     pub fn set_selected_index (&mut self, next_index: &usize) {
-        if let Some(selected_index) = self.selected_index {
-            let mut existing_selected = self.tiles.get_mut(selected_index).expect(&format!("could not find selected rect at index {}", selected_index));
-            existing_selected.selected = false;
-        }
-        let mut next_selected = self.tiles.get_mut(*next_index).expect(&format!("could not find selected rect at index {}", next_index));
-        next_selected.selected = true;
         self.selected_index = Some(*next_index);
     }
     pub fn has_selected_index (&self) -> bool {
@@ -235,10 +222,6 @@ impl Board {
         }
     }
     pub fn reset_selected_index (&mut self) {
-        if let Some(selected_index) = self.selected_index {
-            let mut existing_selected = self.tiles.get_mut(selected_index).expect(&format!("could not find selected rect at index {}", selected_index));
-            existing_selected.selected = false;
-        }
         self.selected_index = None;
     }
     pub fn currently_selected (&self) -> Option<&Tile> {

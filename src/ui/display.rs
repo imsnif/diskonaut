@@ -68,7 +68,7 @@ where B: Backend
                         .path_error(ui_effects.current_path_is_red)
                         .is_loading()
                         .render(&mut f, chunks[0]);
-                    RectangleGrid::new(&board.tiles).render(&mut f, chunks[1]);
+                    RectangleGrid::new(&board.tiles, board.selected_index).render(&mut f, chunks[1]);
                     BottomLine::new(file_tree.failed_to_read)
                         .currently_selected(board.currently_selected())
                         .last_read_path(ui_effects.last_read_path.as_ref())
@@ -80,7 +80,7 @@ where B: Backend
                         .path_error(ui_effects.current_path_is_red)
                         .flash_space(ui_effects.frame_around_space_freed)
                         .render(&mut f, chunks[0]);
-                    RectangleGrid::new(&board.tiles).render(&mut f, chunks[1]);
+                    RectangleGrid::new(&board.tiles, board.selected_index).render(&mut f, chunks[1]);
                     BottomLine::new(file_tree.failed_to_read).currently_selected(board.currently_selected()).render(&mut f, chunks[2]);
                 },
                 UiMode::ScreenTooSmall => {
@@ -90,7 +90,7 @@ where B: Backend
                     TitleLine::new(base_path_info, current_path_info, file_tree.space_freed)
                         .path_error(ui_effects.current_path_is_red)
                         .render(&mut f, chunks[0]);
-                    RectangleGrid::new(&board.tiles).render(&mut f, chunks[1]);
+                    RectangleGrid::new(&board.tiles, board.selected_index).render(&mut f, chunks[1]);
                     BottomLine::new(file_tree.failed_to_read).currently_selected(board.currently_selected()).render(&mut f, chunks[2]);
                     MessageBox::new(file_to_delete, ui_effects.deletion_in_progress).render(&mut f, full_screen);
                 },
@@ -99,7 +99,7 @@ where B: Backend
                         .path_error(ui_effects.current_path_is_red)
                         .flash_space(ui_effects.frame_around_space_freed)
                         .render(&mut f, chunks[0]);
-                    RectangleGrid::new(&board.tiles).render(&mut f, chunks[1]);
+                    RectangleGrid::new(&board.tiles, board.selected_index).render(&mut f, chunks[1]);
                     BottomLine::new(file_tree.failed_to_read).currently_selected(board.currently_selected()).render(&mut f, chunks[2]);
                     ErrorBox::new(message).render(&mut f, full_screen);
                 }

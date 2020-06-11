@@ -15,12 +15,13 @@ pub const MINIMUM_WIDTH: u16 = 8;
 
 #[derive(Clone)]
 pub struct RectangleGrid<'a> {
-    rectangles: &'a [Tile]
+    rectangles: &'a [Tile],
+    selected_rect_index: Option<usize>,
 }
 
 impl<'a> RectangleGrid<'a> {
-    pub fn new (rectangles: &'a [Tile]) -> Self {
-        RectangleGrid { rectangles }
+    pub fn new (rectangles: &'a [Tile], selected_rect_index: Option<usize>) -> Self {
+        RectangleGrid { rectangles, selected_rect_index }
     }
 }
 
@@ -75,13 +76,13 @@ fn draw_small_files_rect_on_grid(buf: &mut Buffer, rect: Rect) {
     }
 }
 
-fn draw_rect_text_on_grid(buf: &mut Buffer, tile: &Tile) { // TODO: better, combine args
+fn draw_rect_text_on_grid(buf: &mut Buffer, tile: &Tile, selected: bool) { // TODO: better, combine args
     let max_text_length = if tile.width > 2 { tile.width - 2 } else { 0 };
     let name = &tile.name.to_string_lossy();
     let descendant_count = &tile.descendants;
     let percentage = &tile.percentage;
 
-    let filename_text = if tile.selected {
+    let filename_text = if selected {
         match tile.file_type {
             FileType::File => format!("{}", name),
             FileType::Folder => format!("{}/", name),
@@ -117,7 +118,7 @@ fn draw_rect_text_on_grid(buf: &mut Buffer, tile: &Tile) { // TODO: better, comb
     let second_line_length = second_line.len(); // TODO: better
     let second_line_start_position = ((tile.width - second_line_length as u16) as f64 / 2.0).ceil() as u16 + tile.x;
 
-    let ( background_style, first_line_style, second_line_style ) = match ( tile.selected, &tile.file_type ) {
+    let ( background_style, first_line_style, second_line_style ) = match ( selected, &tile.file_type ) {
         ( true, FileType::File ) => {
             (
                 Some(Style::default().fg(Color::DarkGray).bg(Color::DarkGray)),
@@ -271,8 +272,13 @@ impl<'a> Widget for RectangleGrid<'a> {
             let text_start_position = ((area.width - text_length as u16) as f64 / 2.0).ceil() as u16 + area.x;
             buf.set_string(text_start_position, (area.height / 2) + area.y - 1, empty_folder_line, text_style);
         } else {
-            for tile in self.rectangles {
+            for (index, tile) in self.rectangles.into_iter().enumerate() {
 
+                let selected = if let Some(selected_rect_index) = self.selected_rect_index {
+                    index == selected_rect_index
+                } else {
+                    false
+                };
                 if tile.height < MINIMUM_HEIGHT || tile.width < MINIMUM_WIDTH {
                     small_files.add_rect(&tile);
                 } else if tile.height < MINIMUM_HEIGHT || tile.width < MINIMUM_WIDTH {
@@ -281,7 +287,7 @@ impl<'a> Widget for RectangleGrid<'a> {
                     // TODO: fix this properly, probably by refactoring Board to do the rounding
                     // itself
                 } else {
-                    draw_rect_text_on_grid(buf, &tile);
+                    draw_rect_text_on_grid(buf, &tile, selected);
                     draw_rect_on_grid(buf, &tile);
                 }
             }
@@ -297,7 +303,6 @@ impl<'a> Widget for RectangleGrid<'a> {
             descendants: None,
             percentage: 0.0,
             file_type: FileType::Folder,
-            selected: false
         }); // draw a frame around the whole area (to properly support the small files and empty folder cases)
     }
 }
