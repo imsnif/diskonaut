@@ -139,86 +139,54 @@ pub struct Board {
     files: Vec<FileMetadata>,
 }
 
-impl Board {
-    pub fn new (folder: &Folder) -> Self {
-        let mut files = Vec::new();
-        let total_size = folder.size;
-        for (name, file_or_folder) in &folder.contents {
-            files.push({
-                let size = file_or_folder.size();
-                let name = name.clone();
-                let (descendants, file_type) = match file_or_folder {
-                    FileOrFolder::Folder(folder) => (Some(folder.num_descendants), FileType::Folder),
-                    FileOrFolder::File(_file) => (None, FileType::File),
-                };
-                let percentage = if size == 0 && total_size == 0 {
-                    // if all files in the folder are of size 0, we'll want to display them all as
-                    // the same size
-                    1.0 / folder.contents.len() as f64
-                } else {
-                    size as f64 / total_size as f64
-                };
-                FileMetadata {
-                    size,
-                    name,
-                    descendants,
-                    percentage,
-                    file_type,
-                }
-            });
-        }
-        files.sort_by(|a, b| {
-            if a.percentage == b.percentage {
-                a.name.partial_cmp(&b.name).expect("could not compare name")
+fn files_in_folder(folder: &Folder) -> Vec<FileMetadata> {
+    let mut files = Vec::new();
+    let total_size = folder.size;
+    for (name, file_or_folder) in &folder.contents {
+        files.push({
+            let size = file_or_folder.size();
+            let name = name.clone();
+            let (descendants, file_type) = match file_or_folder {
+                FileOrFolder::Folder(folder) => (Some(folder.num_descendants), FileType::Folder),
+                FileOrFolder::File(_file) => (None, FileType::File),
+            };
+            let percentage = if size == 0 && total_size == 0 {
+                // if all files in the folder are of size 0, we'll want to display them all as
+                // the same size
+                1.0 / folder.contents.len() as f64
             } else {
-                b.percentage.partial_cmp(&a.percentage).expect("could not compare percentage")
+                size as f64 / total_size as f64
+            };
+            FileMetadata {
+                size,
+                name,
+                descendants,
+                percentage,
+                file_type,
             }
         });
+    }
+    files.sort_by(|a, b| {
+        if a.percentage == b.percentage {
+            a.name.partial_cmp(&b.name).expect("could not compare name")
+        } else {
+            b.percentage.partial_cmp(&a.percentage).expect("could not compare percentage")
+        }
+    });
+    files
+}
 
+impl Board {
+    pub fn new (folder: &Folder) -> Self {
         Board {
             tiles: vec![],
-            files,
+            files: files_in_folder(folder),
             selected_index: None,
             area: None,
         }
     }
     pub fn change_files(&mut self, folder: &Folder) {
-        // TODO: better - this is basically a copy of the new function above
-        // maybe just hold a reference to this folder and calculate on fill?
-        let mut files = Vec::new();
-        let total_size = folder.size;
-        for (name, file_or_folder) in &folder.contents {
-            files.push({
-                let size = file_or_folder.size();
-                let name = name.clone();
-                let (descendants, file_type) = match file_or_folder {
-                    FileOrFolder::Folder(folder) => (Some(folder.num_descendants), FileType::Folder),
-                    FileOrFolder::File(_file) => (None, FileType::File),
-                };
-                let percentage = if size == 0 && total_size == 0 {
-                    // if all files in the folder are of size 0, we'll want to display them all as
-                    // the same size
-                    1.0 / folder.contents.len() as f64
-                } else {
-                    size as f64 / total_size as f64
-                };
-                FileMetadata {
-                    size,
-                    name,
-                    descendants,
-                    percentage,
-                    file_type,
-                }
-            });
-        }
-        files.sort_by(|a, b| {
-            if a.percentage == b.percentage {
-                a.name.partial_cmp(&b.name).expect("could not compare name")
-            } else {
-                b.percentage.partial_cmp(&a.percentage).expect("could not compare percentage")
-            }
-        });
-        self.files = files;
+        self.files = files_in_folder(folder);
         self.fill();
     }
     pub fn change_area(&mut self, area: &Rect) {
@@ -238,9 +206,7 @@ impl Board {
         }
     }
     fn fill(&mut self) {
-
         if let Some(area) = self.area {
-
             let empty_space = RectFloat { x: area.x as f64, y: area.y as f64, height: area.height as f64, width: area.width as f64 };
             let mut tree_map = TreeMap::new(empty_space);
 
