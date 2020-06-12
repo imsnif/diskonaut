@@ -48,20 +48,20 @@ impl Tile {
             file_type: file_metadata.file_type.clone(),
         }
     }
-    pub fn is_right_of(&self, other: &Tile) -> bool {
-        self.x >= other.x + other.width
+    pub fn is_directly_right_of(&self, other: &Tile) -> bool {
+        self.x == other.x + other.width
     }
 
-    pub fn is_left_of(&self, other: &Tile) -> bool {
-        self.x + self.width <= other.x
+    pub fn is_directly_left_of(&self, other: &Tile) -> bool {
+        self.x + self.width == other.x
     }
 
-    pub fn is_below(&self, other: &Tile) -> bool {
-       self.y >= other.y + other.height
+    pub fn is_directly_below(&self, other: &Tile) -> bool {
+       self.y == other.y + other.height
     }
 
-    pub fn is_above(&self, other: &Tile) -> bool {
-       self.y + self.height <= other.y
+    pub fn is_directly_above(&self, other: &Tile) -> bool {
+       self.y + self.height == other.y
     }
 
     pub fn horizontally_overlaps_with(&self, other: &Tile) -> bool {
@@ -113,27 +113,12 @@ impl Tile {
     pub fn is_atleast_minimum_size(&self) -> bool {
         self.height >= MINIMUM_HEIGHT && self.width >= MINIMUM_WIDTH
     }
-
-    pub fn is_aligned_left_with(&self, other: &Tile) -> bool {
-        self.x == other.x
-    }
-    pub fn is_aligned_right_with(&self, other: &Tile) -> bool {
-        self.x + self.width == other.x + other.width
-    }
-
-    pub fn is_aligned_top_with(&self, other: &Tile) -> bool {
-        self.y == other.y
-    }
-
-    pub fn is_aligned_bottom_with(&self, other: &Tile) -> bool {
-        self.y + self.height == other.y + other.height
-    }
 }
 
 pub struct Board {
     pub tiles: Vec<Tile>,
     pub selected_index: Option<usize>, // None means nothing is selected
-    area: Option<Rect>,
+    area: Rect,
     files: Vec<FileMetadata>,
 }
 
@@ -180,7 +165,7 @@ impl Board {
             tiles: vec![],
             files: files_in_folder(folder),
             selected_index: None,
-            area: None,
+            area: Rect { x: 0, y: 0, width: 0, height: 0 },
         }
     }
     pub fn change_files(&mut self, folder: &Folder) {
@@ -188,24 +173,15 @@ impl Board {
         self.fill();
     }
     pub fn change_area(&mut self, area: &Rect) {
-        match self.area {
-            Some(current_area) => {
-                if current_area != *area {
-                    self.area = Some(area.clone());
-                    self.selected_index = None;
-                    self.fill();
-                }
-            },
-            None => {
-                self.area = Some(area.clone());
-                self.selected_index = None;
-                self.fill();
-            }
+        if self.area != *area {
+            self.area = area.clone();
+            self.selected_index = None;
+            self.fill();
         }
     }
     fn fill(&mut self) {
-        if let Some(area) = self.area {
-            let empty_space = RectFloat { x: area.x as f64, y: area.y as f64, height: area.height as f64, width: area.width as f64 };
+        if self.area.width > MINIMUM_WIDTH && self.area.height > MINIMUM_HEIGHT {
+            let empty_space = RectFloat { x: self.area.x as f64, y: self.area.y as f64, height: self.area.height as f64, width: self.area.width as f64 };
             let mut tree_map = TreeMap::new(empty_space);
 
             tree_map.squarify(self.files.iter().collect(), vec![]); // TODO: do not clone
@@ -231,149 +207,111 @@ impl Board {
         }
     }
     pub fn move_selected_right (&mut self) {
-        if let Some(selected_index) = self.selected_index {
-
-            let currently_selected = self.tiles.get(selected_index).expect(&format!("could not find selected rectangle at index {}", selected_index));
-
-            let mut next_rectangle_index = None;
-
-            for (candidate_index, candidate) in self.tiles.iter().enumerate().filter(|(_, c)| {
-                c.is_atleast_minimum_size() &&
-                c.is_right_of(&currently_selected) &&
-                c.horizontally_overlaps_with(&currently_selected)
-            }) {
-                match next_rectangle_index {
-                    Some(existing_candidate_index) => {
-
-                        let existing_candidate: &Tile = self.tiles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
-
-                        if existing_candidate.is_aligned_left_with(&candidate) {
-                            let existing_candidate_overlap = existing_candidate.get_horizontal_overlap_with(&currently_selected);
-                            let candidate_overlap = candidate.get_horizontal_overlap_with(&currently_selected);
-                            if existing_candidate_overlap < candidate_overlap {
-                                next_rectangle_index = Some(candidate_index);
-                            }
-                        } else {
-                            if candidate.x < existing_candidate.x {
-                                next_rectangle_index = Some(candidate_index);
-                            }
-                        }
-                    },
-                    None => next_rectangle_index = Some(candidate_index),
+        match self.currently_selected() {
+            Some(currently_selected) => {
+                let next_index = {
+                    let mut candidates_to_the_right: Vec<(usize, &Tile)> = self.tiles.iter()
+                        .enumerate()
+                        .filter(|(_, c)| {
+                            c.is_atleast_minimum_size() &&
+                            c.is_directly_right_of(&currently_selected) &&
+                            c.horizontally_overlaps_with(&currently_selected)
+                        })
+                        .collect();
+                    candidates_to_the_right.sort_by(|(_, a), (_, b)| {
+                        let a_overlap = a.get_horizontal_overlap_with(&currently_selected);
+                        let b_overlap = b.get_horizontal_overlap_with(&currently_selected);
+                        b_overlap.cmp(&a_overlap)
+                    });
+                    // get the index of the tile with the most overlap with currently selected
+                    candidates_to_the_right.iter().map(|(index, _)| *index).nth(0)
                 };
+                if let Some(i) = next_index {
+                    self.set_selected_index(&i);
+                }
             }
-            if let Some(next_index) = next_rectangle_index {
-                self.set_selected_index(&next_index);
-            }
-        } else if self.tiles.len() > 0 {
-            self.set_selected_index(&0);
+            None => self.set_selected_index(&0)
         }
-
     }
     pub fn move_selected_left (&mut self) {
-        if let Some(selected_index) = self.selected_index {
-
-            let currently_selected = self.tiles.get(selected_index).expect(&format!("could not find selected rectangle at index {}", selected_index));
-
-            let mut next_rectangle_index = None;
-            for (candidate_index, candidate) in self.tiles.iter().enumerate().filter(|(_, c)| {
-                c.is_atleast_minimum_size() &&
-                c.is_left_of(&currently_selected) &&
-                c.horizontally_overlaps_with(&currently_selected)
-            }) {
-                match next_rectangle_index {
-                    Some(existing_candidate_index) => {
-
-                        let existing_candidate: &Tile = self.tiles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
-
-                        if existing_candidate.is_aligned_right_with(&candidate) {
-                            let existing_candidate_overlap = existing_candidate.get_horizontal_overlap_with(&currently_selected);
-                            let candidate_overlap = candidate.get_horizontal_overlap_with(&currently_selected);
-                            if existing_candidate_overlap < candidate_overlap {
-                                next_rectangle_index = Some(candidate_index);
-                            }
-                        } else {
-                            if candidate.x + candidate.width > existing_candidate.x + existing_candidate.width {
-                                next_rectangle_index = Some(candidate_index);
-                            }
-                        }
-                    },
-                    None => next_rectangle_index = Some(candidate_index),
+        match self.currently_selected() {
+            Some(currently_selected) => {
+                let next_index = {
+                    let mut candidates_to_the_left: Vec<(usize, &Tile)> = self.tiles.iter()
+                        .enumerate()
+                        .filter(|(_, c)| {
+                            c.is_atleast_minimum_size() &&
+                            c.is_directly_left_of(&currently_selected) &&
+                            c.horizontally_overlaps_with(&currently_selected)
+                        })
+                        .collect();
+                    candidates_to_the_left.sort_by(|(_, a), (_, b)| {
+                        let a_overlap = a.get_horizontal_overlap_with(&currently_selected);
+                        let b_overlap = b.get_horizontal_overlap_with(&currently_selected);
+                        b_overlap.cmp(&a_overlap)
+                    });
+                    // get the index of the tile with the most overlap with currently selected
+                    candidates_to_the_left.iter().map(|(index, _)| *index).nth(0)
                 };
+                if let Some(i) = next_index {
+                    self.set_selected_index(&i);
+                }
             }
-            if let Some(next_index) = next_rectangle_index {
-                self.set_selected_index(&next_index);
-            }
-        } else if self.tiles.len() > 0 {
-            self.set_selected_index(&0);
+            None => self.set_selected_index(&0)
         }
     }
     pub fn move_selected_down (&mut self) {
-        if let Some(selected_index) = self.selected_index {
-            let currently_selected = self.tiles.get(selected_index).expect(&format!("could not find selected rectangle at index {}", selected_index));
-            let mut next_rectangle_index = None;
-            for (candidate_index, candidate) in self.tiles.iter().enumerate().filter(|(_, c)| {
-                c.is_atleast_minimum_size() &&
-                c.is_below(&currently_selected) &&
-                c.vertically_overlaps_with(&currently_selected)
-            }) {
-                match next_rectangle_index {
-                    Some(existing_candidate_index) => {
-                        let existing_candidate: &Tile = self.tiles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
-                        if existing_candidate.is_aligned_top_with(&candidate) {
-                            let existing_candidate_overlap = existing_candidate.get_vertical_overlap_with(&currently_selected);
-                            let candidate_overlap = candidate.get_vertical_overlap_with(&currently_selected);
-                            if existing_candidate_overlap < candidate_overlap {
-                                next_rectangle_index = Some(candidate_index);
-                            }
-                        } else {
-                            if candidate.y < existing_candidate.y {
-                                next_rectangle_index = Some(candidate_index);
-                            }
-                        }
-                    },
-                    None => next_rectangle_index = Some(candidate_index),
+        match self.currently_selected() {
+            Some(currently_selected) => {
+                let next_index = {
+                    let mut candidates_below: Vec<(usize, &Tile)> = self.tiles.iter()
+                        .enumerate()
+                        .filter(|(_, c)| {
+                            c.is_atleast_minimum_size() &&
+                            c.is_directly_below(&currently_selected) &&
+                            c.vertically_overlaps_with(&currently_selected)
+                        })
+                        .collect();
+                    candidates_below.sort_by(|(_, a), (_, b)| {
+                        let a_overlap = a.get_vertical_overlap_with(&currently_selected);
+                        let b_overlap = b.get_vertical_overlap_with(&currently_selected);
+                        b_overlap.cmp(&a_overlap)
+                    });
+                    // get the index of the tile with the most overlap with currently selected
+                    candidates_below.iter().map(|(index, _)| *index).nth(0)
                 };
+                if let Some(i) = next_index {
+                    self.set_selected_index(&i);
+                }
             }
-            if let Some(next_index) = next_rectangle_index {
-                self.set_selected_index(&next_index);
-            }
-        } else if self.tiles.len() > 0 {
-            self.set_selected_index(&0);
+            None => self.set_selected_index(&0)
         }
     }
     pub fn move_selected_up (&mut self) {
-        if let Some(selected_index) = self.selected_index {
-            let currently_selected = self.tiles.get(selected_index).expect(&format!("could not find selected rectangle at index {}", selected_index));
-            let mut next_rectangle_index = None;
-            for (candidate_index, candidate) in self.tiles.iter().enumerate().filter(|(_, c)| {
-                c.is_atleast_minimum_size() &&
-                c.is_above(&currently_selected) &&
-                c.vertically_overlaps_with(&currently_selected)
-            }) {
-                match next_rectangle_index {
-                    Some(existing_candidate_index) => {
-                        let existing_candidate: &Tile = self.tiles.get(existing_candidate_index).expect(&format!("could not find existing candidate at index {}", existing_candidate_index));
-                        if existing_candidate.is_aligned_bottom_with(&candidate) {
-                            let existing_candidate_overlap = existing_candidate.get_vertical_overlap_with(&currently_selected);
-                            let candidate_overlap = candidate.get_vertical_overlap_with(&currently_selected);
-                            if existing_candidate_overlap < candidate_overlap {
-                                next_rectangle_index = Some(candidate_index);
-                            }
-                        } else {
-                            if candidate.y + candidate.height > existing_candidate.y + existing_candidate.height {
-                                next_rectangle_index = Some(candidate_index);
-                            }
-                        }
-                    },
-                    None => next_rectangle_index = Some(candidate_index),
+        match self.currently_selected() {
+            Some(currently_selected) => {
+                let next_index = {
+                    let mut candidates_below: Vec<(usize, &Tile)> = self.tiles.iter()
+                        .enumerate()
+                        .filter(|(_, c)| {
+                            c.is_atleast_minimum_size() &&
+                            c.is_directly_above(&currently_selected) &&
+                            c.vertically_overlaps_with(&currently_selected)
+                        })
+                        .collect();
+                    candidates_below.sort_by(|(_, a), (_, b)| {
+                        let a_overlap = a.get_vertical_overlap_with(&currently_selected);
+                        let b_overlap = b.get_vertical_overlap_with(&currently_selected);
+                        b_overlap.cmp(&a_overlap)
+                    });
+                    // get the index of the tile with the most overlap with currently selected
+                    candidates_below.iter().map(|(index, _)| *index).nth(0)
                 };
+                if let Some(i) = next_index {
+                    self.set_selected_index(&i);
+                }
             }
-            if let Some(next_index) = next_rectangle_index {
-                self.set_selected_index(&next_index);
-            }
-        } else if self.tiles.len() > 0 {
-            self.set_selected_index(&0);
+            None => self.set_selected_index(&0)
         }
     }
 }
