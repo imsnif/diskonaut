@@ -1,9 +1,8 @@
 use std::collections::{HashMap, VecDeque};
 use std::fs::Metadata;
 use std::os::unix::fs::MetadataExt; // TODO: support other OSs
-use std::ffi::{OsString, OsStr};
-
-use std::path::{Path, PathBuf};
+use std::ffi::OsString;
+use std::path::PathBuf;
 
 #[derive(Debug, Clone)]
 pub enum FileOrFolder {
@@ -12,12 +11,6 @@ pub enum FileOrFolder {
 }
 
 impl FileOrFolder {
-    pub fn name (&self) -> &OsStr {
-        match self {
-            FileOrFolder::Folder(folder) => &folder.name,
-            FileOrFolder::File(file) => &file.name,
-        }
-    }
     pub fn size (&self) -> u64 {
         match self {
             FileOrFolder::Folder(folder) => folder.size,
@@ -40,6 +33,16 @@ pub struct Folder {
     pub num_descendants: u64,
 }
 
+impl From<OsString> for Folder {
+    fn from(name: OsString) -> Self {
+        Folder {
+            name,
+            contents: HashMap::new(),
+            size: 0,
+            num_descendants: 0,
+        }
+    }
+}
 impl Folder {
     pub fn new (path: &PathBuf) -> Self {
         let base_folder_name = path.iter().last().expect("could not get path base name");
@@ -68,34 +71,17 @@ impl Folder {
         if path_length > 1 {
             let name = path.iter().next().expect("could not get next path element for folder").to_os_string();
             let path_entry = self.contents.entry(name.clone()).or_insert( 
-                // TODO: make this FileOrFolder::Folder::new
-                FileOrFolder::Folder(
-                    Folder {
-                        name,
-                        contents: HashMap::new(),
-                        size: 0,
-                        num_descendants: 0,
-                    }
-                )
+                FileOrFolder::Folder(Folder::from(name))
             );
             self.num_descendants += 1;
-            match path_entry { // TODO: less ugly
+            match path_entry {
                 FileOrFolder::Folder(folder) => folder.add_folder(path.iter().skip(1).collect()),
-                _ => {}
+                _ => unreachable!("got a file in the middle of a path"),
             };
         } else {
             let name = path.iter().next().expect("could not get next path element for file").to_os_string();
             self.num_descendants += 1;
-            self.contents.insert(name.clone(),
-                FileOrFolder::Folder(
-                    Folder {
-                        name,
-                        contents: HashMap::new(),
-                        size: 0,
-                        num_descendants: 0,
-                    }
-                )
-            );
+            self.contents.insert(name.clone(), FileOrFolder::Folder(Folder::from(name)));
         }
     }
     pub fn add_file (&mut self, path: PathBuf, size: u64) {
@@ -106,22 +92,15 @@ impl Folder {
         if path_length > 1 {
             let name = path.iter().next().expect("could not get next path element for folder").to_os_string();
             let path_entry = self.contents.entry(name.clone()).or_insert( 
-                FileOrFolder::Folder(
-                    Folder {
-                        name,
-                        contents: HashMap::new(),
-                        size: 0,
-                        num_descendants: 0,
-                    }
-                )
+                FileOrFolder::Folder(Folder::from(name))
             );
             self.size += size;
             self.num_descendants += 1;
-            match path_entry { // TODO: less ugly
+            match path_entry {
                 FileOrFolder::Folder(folder) => {
                     folder.add_file(path.iter().skip(1).collect(), size);
                 },
-                _ => {}
+                _ => unreachable!("got a file in the middle of a path"),
             };
         } else {
             let name = path.iter().next().expect("could not get next path element for file").to_os_string();
@@ -129,28 +108,27 @@ impl Folder {
             self.num_descendants += 1;
             self.contents.insert(name.clone(),
                 FileOrFolder::File(
-                    File {
-                        name,
-                        size,
-                    }
+                    File { name, size }
                 )
             );
         }
     }
-    pub fn path(&self, folder_names: &Vec<OsString>) -> Option<&FileOrFolder> {
-        let mut folders_to_traverse: VecDeque<OsString> = VecDeque::from(folder_names.to_owned());
-        let next_name = folders_to_traverse.pop_front().expect("could not find next path folder1");
-        let next_in_path = &self.contents.get(&next_name)?;
-        if folders_to_traverse.is_empty() {
+    pub fn path(&self, mut folder_names: Vec<OsString>) -> Option<&FileOrFolder> {
+        let next_folder_name = folder_names.remove(0);
+        let next_in_path = &self.contents.get(&next_folder_name)?;
+        if folder_names.len() == 0 {
             Some(next_in_path)
         } else if let FileOrFolder::Folder(next_folder) = next_in_path {
-            next_folder.path(&Vec::from(folders_to_traverse)) // TODO: less allocations
+            next_folder.path(folder_names)
         } else {
             Some(next_in_path)
         }
     }
     pub fn delete_path(&mut self, folder_names: &Vec<OsString>) {
-        let mut folders_to_traverse: VecDeque<OsString> = VecDeque::from(folder_names.to_owned()); // TODO: better
+        // TODO: there are some needless allocations here, this is not terrible since
+        // the deletion itself takes an order of magnitude longer, but it can be nice
+        // to reduce them
+        let mut folders_to_traverse: VecDeque<OsString> = VecDeque::from(folder_names.to_owned());
         if folder_names.len() == 1 {
             let name = folder_names.last().expect("could not find last item in path");
             let removed_size = &self.contents.get(name).expect("could not find folder").size();
@@ -163,7 +141,7 @@ impl Folder {
             &self.contents.remove(name);
         } else {
             let (removed_size, removed_descendents) = {
-                let item_to_remove = self.path(&Vec::from(folders_to_traverse.clone())).expect("could not find item to delete");
+                let item_to_remove = self.path(Vec::from(folders_to_traverse.clone())).expect("could not find item to delete");
                 let removed_size = item_to_remove.size();
                 let removed_descendents = match item_to_remove {
                     FileOrFolder::Folder(folder) => folder.num_descendants,
@@ -172,14 +150,12 @@ impl Folder {
                 (removed_size, removed_descendents)
             };
             let next_name = folders_to_traverse.pop_front().expect("could not find next path folder");
-            let next_item = &mut self.contents.get_mut(&next_name).expect("could not find folder in path"); // TODO: better
+            let next_item = &mut self.contents.get_mut(&next_name).expect("could not find folder in path");
             match next_item {
                 FileOrFolder::Folder(folder) => {
-                    // TODO: look into a move performance way of doing this
                     self.size -= removed_size;
                     self.num_descendants -= removed_descendents;
-
-                    folder.delete_path(&Vec::from(folders_to_traverse)); // TODO: better
+                    folder.delete_path(&Vec::from(folders_to_traverse));
                 },
                 FileOrFolder::File(_) => {
                     panic!("got a file in the middle of a path");

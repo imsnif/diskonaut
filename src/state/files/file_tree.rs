@@ -33,7 +33,7 @@ impl FileTree {
     pub fn get_current_folder (&self) -> &Folder {
         if self.current_folder_names.is_empty() {
             &self.base_folder
-        } else if let Some(FileOrFolder::Folder(current_folder)) = self.base_folder.path(&self.current_folder_names) {
+        } else if let Some(FileOrFolder::Folder(current_folder)) = self.base_folder.path(self.current_folder_names.clone()) {
             &current_folder
         } else {
             // here we have something in current_folder_names but the last
@@ -53,7 +53,7 @@ impl FileTree {
     }
     pub fn item_in_current_folder(&self, item_name: &OsStr) -> Option<&FileOrFolder> {
         let current_folder = &self.get_current_folder();
-        current_folder.path(&vec![item_name.to_os_string()])
+        current_folder.path(vec![item_name.to_os_string()])
     }
     pub fn enter_folder(&mut self, folder_name: &OsStr) {
         self.current_folder_names.push(folder_name.to_os_string());
