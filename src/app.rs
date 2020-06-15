@@ -6,7 +6,7 @@ use ::tui::backend::Backend;
 
 use crate::Event;
 use crate::state::files::{Folder, FileOrFolder};
-use crate::state::board::FileType;
+use crate::state::tiles::FileType;
 use crate::ui::Display;
 use crate::state::{Board, UiEffects};
 use crate::state::files::FileTree;

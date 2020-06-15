@@ -5,7 +5,7 @@ use tui::widgets::{Widget};
 
 use crate::ui::{draw_symbol_with_style, boundaries};
 use crate::ui::format::truncate_middle;
-use crate::state::board::FileType;
+use crate::state::tiles::FileType;
 use crate::app::FileToDelete;
 
 pub struct MessageBox <'a>{

@@ -10,18 +10,17 @@ use crate::ui::{draw_symbol, boundaries};
 use crate::ui::format::{DisplaySize, DisplaySizeRounded, truncate_middle};
 use crate::state::Tile;
 
-pub const MINIMUM_HEIGHT: u16 = 3;
-pub const MINIMUM_WIDTH: u16 = 8;
 
 #[derive(Clone)]
 pub struct RectangleGrid<'a> {
     rectangles: &'a [Tile],
+    small_files_coordinates: Option<(u16, u16)>,
     selected_rect_index: Option<usize>,
 }
 
 impl<'a> RectangleGrid<'a> {
-    pub fn new (rectangles: &'a [Tile], selected_rect_index: Option<usize>) -> Self {
-        RectangleGrid { rectangles, selected_rect_index }
+    pub fn new (rectangles: &'a [Tile], small_files_coordinates: Option<(u16, u16)>, selected_rect_index: Option<usize>) -> Self {
+        RectangleGrid { rectangles, small_files_coordinates, selected_rect_index }
     }
 }
 
@@ -67,12 +66,31 @@ fn draw_rect_on_grid (buf: &mut Buffer, rect: &Tile) {
 }
 
 fn draw_small_files_rect_on_grid(buf: &mut Buffer, rect: Rect) {
-    for x in rect.x..rect.width {
-        for y in rect.y..rect.height {
+    for x in rect.x + 1..(rect.x + rect.width) {
+        for y in rect.y + 1..(rect.y + rect.height) {
             let buf = buf.get_mut(x, y);
             buf.set_symbol("x");
             buf.set_style(Style::default().bg(Color::White).fg(Color::Black));
         }
+    }
+    // TODO: combine with draw_rect_on_grid
+    for x in rect.x..(rect.x + rect.width + 1) {
+        if x == rect.x {
+            draw_symbol(buf, x, rect.y, &boundaries::TOP_LEFT);
+            draw_symbol(buf, x, rect.y + rect.height, &boundaries::BOTTOM_LEFT);
+        } else if x == rect.x + rect.width {
+            draw_symbol(buf, x, rect.y, &boundaries::TOP_RIGHT);
+            draw_symbol(buf, x, rect.y + rect.height, &boundaries::BOTTOM_RIGHT);
+        } else {
+            draw_symbol(buf, x, rect.y, &boundaries::HORIZONTAL);
+            draw_symbol(buf, x, rect.y + rect.height, &boundaries::HORIZONTAL);
+        }
+    }
+
+    // left and right
+    for y in (rect.y + 1)..(rect.y + rect.height) {
+        draw_symbol(buf, rect.x, y, &boundaries::VERTICAL);
+        draw_symbol(buf, rect.x + rect.width, y, &boundaries::VERTICAL);
     }
 }
 
@@ -183,81 +201,11 @@ fn draw_rect_text_on_grid(buf: &mut Buffer, tile: &Tile, selected: bool) { // TO
     }
 }
 
-struct SmallFilesArea {
-    leftmost_top_left_coordinates: Option<(u16, u16)>,
-    highest_top_left_coordinates: Option<(u16, u16)>,
-}
-
-impl SmallFilesArea {
-    pub fn new () -> Self {
-        Self {
-            leftmost_top_left_coordinates: None,
-            highest_top_left_coordinates: None,
-        }
-    }
-    pub fn add_rect(&mut self, rect: &Tile) {
-        match self.leftmost_top_left_coordinates {
-            Some((x, y)) => {
-                if rect.width == 0 && rect.height == 0 {
-                    // do nothing
-                    // this happens because of a bug in treemap.rs
-                    // where somehow file_rects are created with x/y as NaN
-                    // TODO: fix this properly
-                } else if rect.x < x {
-                    self.leftmost_top_left_coordinates = Some((rect.x, rect.y));
-                } else if rect.x == x && rect.y < y {
-                    self.leftmost_top_left_coordinates = Some((rect.x, rect.y));
-                }
-            },
-            None => {
-                self.leftmost_top_left_coordinates = Some((rect.x, rect.y));
-            }
-        }
-
-        match self.highest_top_left_coordinates {
-            Some((x, y)) => {
-                if rect.width == 0 && rect.height == 0 {
-                    // do nothing
-                    // this happens because of a bug in treemap.rs
-                    // where somehow file_rects are created with x/y as NaN
-                    // TODO: fix this properly
-                } else if rect.y < y {
-                    self.highest_top_left_coordinates = Some((rect.x, rect.y));
-                } else if rect.y == y && rect.x < x {
-                    self.highest_top_left_coordinates = Some((rect.x, rect.y));
-                }
-            },
-            None => {
-                self.highest_top_left_coordinates = Some((rect.x, rect.y));
-            }
-        }
-    }
-    pub fn draw(&self, area: &Rect, buf: &mut Buffer) {
-        if let Some((small_files_start_x, small_files_start_y)) = self.highest_top_left_coordinates {
-            draw_small_files_rect_on_grid(buf, Rect {
-                x: small_files_start_x + 1,
-                y: small_files_start_y + 1,
-                width: area.x + area.width,
-                height: area.y + area.height,
-            });
-        }
-        if let Some((small_files_start_x, small_files_start_y)) = self.leftmost_top_left_coordinates {
-            draw_small_files_rect_on_grid(buf, Rect {
-                x: small_files_start_x + 1,
-                y: small_files_start_y + 1,
-                width: area.x + area.width,
-                height: area.y + area.height,
-            });
-        }
-    }
-}
-
 impl<'a> Widget for RectangleGrid<'a> {
     fn draw(&mut self, area: Rect, buf: &mut Buffer) {
         if area.width < 2 || area.height < 2 {
             return;
         }
-        let mut small_files = SmallFilesArea::new();
         if self.rectangles.len() == 0 {
             for x in area.x + 1..area.x + area.width {
                 for y in area.y + 1..area.y + area.height {
@@ -271,38 +219,37 @@ impl<'a> Widget for RectangleGrid<'a> {
             let text_style = Style::default();
             let text_start_position = ((area.width - text_length as u16) as f64 / 2.0).ceil() as u16 + area.x;
             buf.set_string(text_start_position, (area.height / 2) + area.y - 1, empty_folder_line, text_style);
+            draw_rect_on_grid(buf, &Tile { // TODO: better
+                x: area.x,
+                y: area.y,
+                width: area.width,
+                height: area.height,
+                name: OsString::new(),
+                size: 0,
+                descendants: None,
+                percentage: 0.0,
+                file_type: FileType::Folder,
+            });
         } else {
             for (index, tile) in self.rectangles.into_iter().enumerate() {
-
                 let selected = if let Some(selected_rect_index) = self.selected_rect_index {
                     index == selected_rect_index
                 } else {
                     false
                 };
-                if tile.height < MINIMUM_HEIGHT || tile.width < MINIMUM_WIDTH {
-                    small_files.add_rect(&tile);
-                } else if tile.height < MINIMUM_HEIGHT || tile.width < MINIMUM_WIDTH {
-                    // ignore it, this is a rounding error
-                    //
-                    // TODO: fix this properly, probably by refactoring Board to do the rounding
-                    // itself
-                } else {
-                    draw_rect_text_on_grid(buf, &tile, selected);
-                    draw_rect_on_grid(buf, &tile);
-                }
+                draw_rect_text_on_grid(buf, &tile, selected);
+                draw_rect_on_grid(buf, &tile);
             }
-            small_files.draw(&area, buf);
         }
-        draw_rect_on_grid(buf, &Tile { // TODO: either do not do this and draw a fame around SmallFiles (best!) or make it accept a Rectangle trait
-            x: area.x,
-            y: area.y,
-            width: area.width,
-            height: area.height,
-            name: OsString::new(),
-            size: 0,
-            descendants: None,
-            percentage: 0.0,
-            file_type: FileType::Folder,
-        }); // draw a frame around the whole area (to properly support the small files and empty folder cases)
+        if let Some(coords) = self.small_files_coordinates {
+            let (x, y) = coords;
+            let small_files_rect = Rect {
+                x,
+                y,
+                width: (area.x + area.width) - x,
+                height: (area.y + area.height) - y,
+            };
+            draw_small_files_rect_on_grid(buf, small_files_rect);
+        }
     }
 }

@@ -3,7 +3,7 @@ source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[2]"
 ---
              , freed: 0 | /tmp/cosmonaut_te ts/en er_fold r_medium_width/subfolder1 (8.0K)
-                                                           ─                              
+                                                                                          
                                                                                           
                                                                                           
                                                                                           
@@ -26,7 +26,7 @@ expression: "&terminal_draw_events_mirror[2]"
                                                                                           
                                                                                           
                                           file1                                           
-                                                                                          
+│                                                                                        │
                                        8.0K (100%)                                        
                                                                                           
                                                                                           

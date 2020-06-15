@@ -620,103 +620,6 @@ fn small_files () {
 }
 
 #[test]
-fn small_files_non_square() {
-
-    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
-    let keyboard_events = sleep_and_quit_events(1);
-    let temp_dir_path = create_root_temp_dir("small_files_non_square").expect("failed to create temp dir");
-
-    let mut file_1_path = PathBuf::from(&temp_dir_path);
-    file_1_path.push("file1");
-    create_temp_file(file_1_path, 500000).expect("failed to create temp file");
-
-    let mut file_2_path = PathBuf::from(&temp_dir_path);
-    file_2_path.push("file2");
-    create_temp_file(file_2_path, 5000000).expect("failed to create temp file");
-
-    let mut file_3_path = PathBuf::from(&temp_dir_path);
-    file_3_path.push("file3");
-    create_temp_file(file_3_path, 1000000).expect("failed to create temp file");
-
-    let mut file_4_path = PathBuf::from(&temp_dir_path);
-    file_4_path.push("file4");
-    create_temp_file(file_4_path, 4000).expect("failed to create temp file");
-
-    let mut file_5_path = PathBuf::from(&temp_dir_path);
-    file_5_path.push("file5");
-    create_temp_file(file_5_path, 29000).expect("failed to create temp file");
-
-    let mut file_6_path = PathBuf::from(&temp_dir_path);
-    file_6_path.push("file6");
-    create_temp_file(file_6_path, 20000).expect("failed to create temp file");
-
-    let mut file_7_path = PathBuf::from(&temp_dir_path);
-    file_7_path.push("file7");
-    create_temp_file(file_7_path, 8000).expect("failed to create temp file");
-
-    let mut file_8_path = PathBuf::from(&temp_dir_path);
-    file_8_path.push("file8");
-    create_temp_file(file_8_path, 8000).expect("failed to create temp file");
-
-    let mut file_9_path = PathBuf::from(&temp_dir_path);
-    file_9_path.push("file9");
-    create_temp_file(file_9_path, 8000).expect("failed to create temp file");
-
-    let mut file_10_path = PathBuf::from(&temp_dir_path);
-    file_10_path.push("file10");
-    create_temp_file(file_10_path, 8000).expect("failed to create temp file");
-
-    let mut file_11_path = PathBuf::from(&temp_dir_path);
-    file_11_path.push("file11");
-    create_temp_file(file_11_path, 8000).expect("failed to create temp file");
-
-    let mut file_12_path = PathBuf::from(&temp_dir_path);
-    file_12_path.push("file12");
-    create_temp_file(file_12_path, 8000).expect("failed to create temp file");
-
-    let mut file_13_path = PathBuf::from(&temp_dir_path);
-    file_13_path.push("file13");
-    create_temp_file(file_13_path, 8000).expect("failed to create temp file");
-
-    let mut file_14_path = PathBuf::from(&temp_dir_path);
-    file_14_path.push("file14");
-    create_temp_file(file_14_path, 8000).expect("failed to create temp file");
-
-    let mut file_15_path = PathBuf::from(&temp_dir_path);
-    file_15_path.push("file15");
-    create_temp_file(file_15_path, 8000).expect("failed to create temp file");
-
-    let mut file_16_path = PathBuf::from(&temp_dir_path);
-    file_16_path.push("file16");
-    create_temp_file(file_16_path, 8000).expect("failed to create temp file");
-
-    let mut file_17_path = PathBuf::from(&temp_dir_path);
-    file_17_path.push("file17");
-    create_temp_file(file_17_path, 8000).expect("failed to create temp file");
-
-    let mut file_18_path = PathBuf::from(&temp_dir_path);
-    file_18_path.push("file18");
-    create_temp_file(file_18_path, 8000).expect("failed to create temp file");
-
-    let mut file_19_path = PathBuf::from(&temp_dir_path);
-    file_19_path.push("file19");
-    create_temp_file(file_19_path, 8000).expect("failed to create temp file");
-
-    start(backend, keyboard_events, temp_dir_path.clone());
-    std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
-    let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-
-    let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
-    assert_eq!(
-        &terminal_events.lock().unwrap()[..],
-        &expected_terminal_events[..]
-    );
-
-    assert_eq!(terminal_draw_events_mirror.len(), 1);
-    assert_snapshot!(&terminal_draw_events_mirror[0]);
-}
-
-#[test]
 fn cannot_move_into_small_files () {
 
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
@@ -1493,6 +1396,8 @@ fn delete_folder_small_window () {
    events.push(None);
    events.push(Some(Event::Key(Key::Char('j'))));
    events.push(None);
+   events.push(Some(Event::Key(Key::Char('j'))));
+   events.push(None);
    events.push(Some(Event::Key(Key::Ctrl('d'))));
    events.push(None);
    events.push(Some(Event::Key(Key::Char('y'))));
@@ -1527,7 +1432,7 @@ fn delete_folder_small_window () {
    start(backend, keyboard_events, temp_dir_path.clone());
    let terminal_draw_events_mirror = terminal_draw_events.lock().expect("could not acquire lock on terminal events");
 
-   let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor];
+   let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor];
    assert_eq!(
        &terminal_events.lock().expect("could not acquire lock on terminal_events")[..],
        &expected_terminal_events[..]
@@ -1538,7 +1443,7 @@ fn delete_folder_small_window () {
    assert_eq!(std::fs::metadata(&file_3_path).is_ok(), true, "second different file was untouched");
    std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
 
-   assert_eq!(terminal_draw_events_mirror.len(), 8);
+   assert_eq!(terminal_draw_events_mirror.len(), 9);
    assert_snapshot!(&terminal_draw_events_mirror[0]);
    assert_snapshot!(&terminal_draw_events_mirror[1]);
    assert_snapshot!(&terminal_draw_events_mirror[2]);
@@ -1547,6 +1452,7 @@ fn delete_folder_small_window () {
    assert_snapshot!(&terminal_draw_events_mirror[5]);
    assert_snapshot!(&terminal_draw_events_mirror[6]);
    assert_snapshot!(&terminal_draw_events_mirror[7]);
+   assert_snapshot!(&terminal_draw_events_mirror[8]);
 }
 
 #[test]
@@ -1874,7 +1780,7 @@ fn small_files_with_y_as_zero() {
     }
 
     start(backend, keyboard_events, temp_dir_path.clone());
-    std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
+    // std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!("terminal_draw_events_mirror[0] {:?}", terminal_draw_events_mirror[0]);
 

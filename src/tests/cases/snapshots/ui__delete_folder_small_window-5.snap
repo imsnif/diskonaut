@@ -22,17 +22,17 @@ expression: "&terminal_draw_events_mirror[4]"
                                                             
                                                             
                                                             
-                                                            
-                                                            
-                                                            
-                                                            
-                          Deleting                          
-                                                            
-                         subfolder1                         
-                                                            
-                                                            
-                                                            
-                                                            
+               ┌─────────────────────────────┐              
+               │                             │              
+               │       Delete folder?        │              
+               │                             │              
+               │                             │              
+               │         subfolder1          │              
+               │                             │              
+               │                             │              
+               │            (y/n)            │              
+               │                             │              
+               └─────────────────────────────┘              
                                                             
                                                             
                                                             
