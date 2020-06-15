@@ -1,5 +1,6 @@
-use tui::buffer::Buffer;
-use tui::style::{Style, Color, Modifier};
+use ::tui::buffer::Buffer;
+use ::tui::style::{Style, Color, Modifier};
+use ::tui::layout::Rect;
 
 use crate::state::FileType;
 use crate::ui::{draw_symbol, boundaries};
@@ -119,6 +120,37 @@ pub fn draw_rect_on_grid (buf: &mut Buffer, coords: (u16, u16), dimensions: (u16
     for y in (coords_y + 1)..(coords_y + height) {
         draw_symbol(buf, coords_x, y, &boundaries::VERTICAL);
         draw_symbol(buf, coords_x + width, y, &boundaries::VERTICAL);
+    }
+}
+
+pub fn draw_filled_rect(buf: &mut Buffer, fill_style: Style, rect: &Rect) {
+    // fill
+    for x in rect.x + 1..(rect.x + rect.width) {
+        for y in rect.y + 1..(rect.y + rect.height) {
+            let cell = buf.get_mut(x, y);
+            cell.set_symbol(" ");
+            cell.set_style(fill_style);
+        }
+    }
+
+    // top and bottom
+    for x in rect.x..(rect.x + rect.width + 1) {
+        if x == rect.x {
+            buf.get_mut(x, rect.y).set_symbol(&boundaries::TOP_LEFT).set_style(fill_style);
+            buf.get_mut(x, rect.y + rect.height).set_symbol(&boundaries::BOTTOM_LEFT).set_style(fill_style);
+        } else if x == rect.x + rect.width {
+            buf.get_mut(x, rect.y).set_symbol(&boundaries::TOP_RIGHT).set_style(fill_style);
+            buf.get_mut(x, rect.y + rect.height).set_symbol(&boundaries::BOTTOM_RIGHT).set_style(fill_style);
+        } else {
+            buf.get_mut(x, rect.y).set_symbol(&boundaries::HORIZONTAL).set_style(fill_style);
+            buf.get_mut(x, rect.y + rect.height).set_symbol(&boundaries::HORIZONTAL).set_style(fill_style);
+        }
+    }
+
+    // left and right
+    for y in (rect.y + 1)..(rect.y + rect.height) {
+        buf.get_mut(rect.x, y).set_symbol(&boundaries::VERTICAL).set_style(fill_style);
+        buf.get_mut(rect.x + rect.width, y).set_symbol(&boundaries::VERTICAL).set_style(fill_style);
     }
 }
 
