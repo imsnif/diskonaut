@@ -57,7 +57,9 @@ where B: Backend
                 )
                 .split(full_screen);
 
-            // TODO: find out how to get rid of these
+            // TODO: we have to do this because otherwise we get "Trying to access area outside the
+            // buffer" errors from tui
+            // we need to investigate if it's a bug in TUI or with us
             chunks[1].width -= 1;
             chunks[1].height -= 1;
             board.change_area(&chunks[1]);
