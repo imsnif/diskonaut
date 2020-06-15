@@ -68,7 +68,12 @@ impl FileTree {
         let path_to_delete = &file_to_delete.path_to_file;
         self.base_folder.delete_path(&path_to_delete);
     }
-    pub fn add_entry(&mut self, entry_metadata: &Metadata, entry_full_path: &Path, base_path_length: &usize) {
-        self.base_folder.add_entry(entry_metadata, entry_full_path, base_path_length);
+    pub fn add_entry(&mut self, entry_metadata: &Metadata, entry_full_path: &Path) {
+        let base_path_length = self.path_in_filesystem.components().count();
+        let mut relative_path = PathBuf::new();
+        for dir in entry_full_path.components().skip(base_path_length) {
+            relative_path.push(dir);
+        }
+        self.base_folder.add_entry(entry_metadata, relative_path);
     }
 }

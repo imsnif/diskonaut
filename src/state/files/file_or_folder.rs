@@ -51,11 +51,7 @@ impl Folder {
         }
     }
 
-    pub fn add_entry(&mut self, entry_metadata: &Metadata, entry_full_path: &Path, base_path_length: &usize) {
-        let mut relative_path = PathBuf::new();
-        for dir in entry_full_path.components().skip(*base_path_length) {
-            relative_path.push(dir);
-        }
+    pub fn add_entry(&mut self, entry_metadata: &Metadata, relative_path: PathBuf) {
         if entry_metadata.is_dir() {
             self.add_folder(relative_path);
         } else {
@@ -63,7 +59,6 @@ impl Folder {
             self.add_file(relative_path, size);
         }
     }
-
 
     pub fn add_folder (&mut self, path: PathBuf) {
         let path_length = path.components().count();

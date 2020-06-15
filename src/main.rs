@@ -123,14 +123,13 @@ where
                 let instruction_sender = instruction_sender.clone();
                 let loaded = loaded.clone();
                 move || {
-                    let path_length = path.components().count();
 
                     'scanning: for entry in WalkDir::new(&path).into_iter() {
                         let instruction_sent = match entry {
                             Ok(entry) => {
                                 match entry.metadata() {
                                     Ok(file_metadata) => {
-                                        instruction_sender.send(Instruction::AddEntryToBaseFolder((file_metadata, entry, path_length)))
+                                        instruction_sender.send(Instruction::AddEntryToBaseFolder((file_metadata, entry)))
                                     },
                                     Err(_) => {
                                         instruction_sender.send(Instruction::IncrementFailedToRead)

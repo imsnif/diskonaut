@@ -110,8 +110,8 @@ where B: Backend
         self.loaded = true;
         self.render_and_update_board();
     }
-    pub fn add_entry_to_base_folder(&mut self, file_metadata: &Metadata, entry_path: &Path, path_length: &usize) {
-        self.file_tree.add_entry(file_metadata, entry_path, path_length);
+    pub fn add_entry_to_base_folder(&mut self, file_metadata: &Metadata, entry_path: &Path) {
+        self.file_tree.add_entry(file_metadata, entry_path);
         self.ui_effects.last_read_path = Some(PathBuf::from(entry_path));
     }
     pub fn reset_ui_mode (&mut self) {

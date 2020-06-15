@@ -19,7 +19,7 @@ pub enum Instruction {
     ResetCurrentPathColor,
     FlashSpaceFreed,
     UnflashSpaceFreed,
-    AddEntryToBaseFolder((Metadata, DirEntry, usize)),
+    AddEntryToBaseFolder((Metadata, DirEntry)),
     StartUi,
     ToggleScanningVisualIndicator,
     RenderAndUpdateBoard,
@@ -47,11 +47,9 @@ where B: Backend
             Instruction::UnflashSpaceFreed => {
                 app.unflash_space_freed();
             }
-            Instruction::AddEntryToBaseFolder((file_metadata, entry, path_length)) => {
-                // TODO: consider placing path_in_filesystem on app and using it instead of
-                // receiving path_length in the instruction
+            Instruction::AddEntryToBaseFolder((file_metadata, entry)) => {
                 let entry_path = entry.path();
-                app.add_entry_to_base_folder(&file_metadata, &entry_path, &path_length);
+                app.add_entry_to_base_folder(&file_metadata, &entry_path);
             }
             Instruction::StartUi => {
                 app.start_ui();
