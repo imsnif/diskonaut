@@ -3,7 +3,7 @@ use ::tui::style::{Style, Color, Modifier};
 use ::tui::layout::Rect;
 
 use crate::state::FileType;
-use crate::ui::{draw_symbol, boundaries};
+use crate::ui::{draw_next_symbol, boundaries};
 use crate::ui::format::{DisplaySize, DisplaySizeRounded, truncate_middle};
 use crate::state::Tile;
 
@@ -105,21 +105,21 @@ pub fn draw_rect_on_grid (buf: &mut Buffer, coords: (u16, u16), dimensions: (u16
     // top, bottom and corners
     for x in coords_x..(coords_x + width + 1) {
         if x == coords_x {
-            draw_symbol(buf, x, coords_y, &boundaries::TOP_LEFT);
-            draw_symbol(buf, x, coords_y + height, &boundaries::BOTTOM_LEFT);
+            draw_next_symbol(buf, x, coords_y, &boundaries::TOP_LEFT);
+            draw_next_symbol(buf, x, coords_y + height, &boundaries::BOTTOM_LEFT);
         } else if x == coords_x + width {
-            draw_symbol(buf, x, coords_y, &boundaries::TOP_RIGHT);
-            draw_symbol(buf, x, coords_y + height, &boundaries::BOTTOM_RIGHT);
+            draw_next_symbol(buf, x, coords_y, &boundaries::TOP_RIGHT);
+            draw_next_symbol(buf, x, coords_y + height, &boundaries::BOTTOM_RIGHT);
         } else {
-            draw_symbol(buf, x, coords_y, &boundaries::HORIZONTAL);
-            draw_symbol(buf, x, coords_y + height, &boundaries::HORIZONTAL);
+            draw_next_symbol(buf, x, coords_y, &boundaries::HORIZONTAL);
+            draw_next_symbol(buf, x, coords_y + height, &boundaries::HORIZONTAL);
         }
     }
 
     // left and right
     for y in (coords_y + 1)..(coords_y + height) {
-        draw_symbol(buf, coords_x, y, &boundaries::VERTICAL);
-        draw_symbol(buf, coords_x + width, y, &boundaries::VERTICAL);
+        draw_next_symbol(buf, coords_x, y, &boundaries::VERTICAL);
+        draw_next_symbol(buf, coords_x + width, y, &boundaries::VERTICAL);
     }
 }
 

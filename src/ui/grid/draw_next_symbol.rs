@@ -1,4 +1,3 @@
-use tui::style::Style;
 use tui::buffer::Buffer;
 
 pub mod boundaries {
@@ -106,13 +105,7 @@ fn find_next_symbol (first_symbol: &str, second_symbol: &str) -> Option<&'static
     }
 }
 
-pub fn draw_symbol_with_style(buf: &mut Buffer, x: u16, y: u16, symbol: &str, style: Style) {
-    let cell = buf.get_mut(x, y);
-    cell.set_symbol(symbol);
-    cell.set_style(style);
-}
-
-pub fn draw_symbol(buf: &mut Buffer, x: u16, y: u16, symbol: &str) {
+pub fn draw_next_symbol(buf: &mut Buffer, x: u16, y: u16, symbol: &str) {
     if let Some(next_symbol) = find_next_symbol(&buf.get(x, y).symbol, symbol) {
         buf.get_mut(x, y).set_symbol(next_symbol);
     } else {
