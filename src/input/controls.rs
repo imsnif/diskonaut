@@ -3,7 +3,7 @@ use ::termion::input::TermRead;
 use ::termion::event::Event;
 use termion::event::Key;
 use crate::App;
-use crate::app::FileToDelete;
+use crate::state::FileToDelete;
 
 use ::tui::backend::Backend;
 

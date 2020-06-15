@@ -2,7 +2,7 @@ use ::std::path::{Path, PathBuf};
 use ::std::ffi::{OsString, OsStr};
 use ::std::fs::Metadata;
 
-use crate::app::FileToDelete;
+use crate::state::FileToDelete;
 use crate::state::files::{FileOrFolder, Folder};
 
 pub struct FileTree {

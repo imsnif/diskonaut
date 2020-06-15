@@ -6,7 +6,7 @@ use tui::widgets::{Widget};
 use crate::ui::grid::draw_filled_rect;
 use crate::ui::format::truncate_middle;
 use crate::state::tiles::FileType;
-use crate::app::FileToDelete;
+use crate::state::FileToDelete;
 
 fn truncated_file_name_line (file_to_delete: &FileToDelete, max_len: u16) -> String {
     let full_path = file_to_delete.full_path()
