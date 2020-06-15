@@ -1,8 +1,7 @@
 use std::path::PathBuf;
 
 pub struct UiEffects {
-    pub frame_around_current_path: bool,
-    pub frame_around_space_freed: bool,
+    pub flash_space_freed: bool,
     pub current_path_is_red: bool,
     pub deletion_in_progress: bool,
     pub loading_progress_indicator: u64,
@@ -12,8 +11,7 @@ pub struct UiEffects {
 impl UiEffects {
     pub fn new () -> Self {
         Self {
-            frame_around_current_path: false,
-            frame_around_space_freed: false,
+            flash_space_freed: false,
             current_path_is_red: false,
             deletion_in_progress: false,
             loading_progress_indicator: 0,

@@ -93,17 +93,11 @@ where B: Backend
         }
         self.display.render(&mut self.file_tree, &mut self.board, &self.ui_mode, &self.ui_effects);
     }
-    pub fn set_frame_around_current_path(&mut self) {
-        self.ui_effects.frame_around_current_path = true;
+    pub fn flash_space_freed(&mut self) {
+        self.ui_effects.flash_space_freed = true;
     }
-    pub fn remove_frame_around_current_path(&mut self) {
-        self.ui_effects.frame_around_current_path = false;
-    }
-    pub fn set_frame_around_space_freed(&mut self) {
-        self.ui_effects.frame_around_space_freed = true;
-    }
-    pub fn remove_frame_around_space_freed(&mut self) {
-        self.ui_effects.frame_around_space_freed = false;
+    pub fn unflash_space_freed(&mut self) {
+        self.ui_effects.flash_space_freed = false;
     }
     pub fn set_path_to_red(&mut self) {
         self.ui_effects.current_path_is_red = true;
@@ -165,7 +159,6 @@ where B: Backend
                         self.file_tree.enter_folder(&selected_name);
                         self.board.reset_selected_index();
                         self.render_and_update_board();
-                        let _ = self.event_sender.try_send(Event::PathChange);
                     }
                     FileOrFolder::File(_) => {} // do not enter if currently_selected is a file
                 }
@@ -179,9 +172,7 @@ where B: Backend
         } else {
             let succeeded = self.file_tree.leave_folder();
             self.render_and_update_board();
-            if succeeded {
-                let _ = self.event_sender.try_send(Event::PathChange);
-            } else {
+            if !succeeded {
                 let _ = self.event_sender.try_send(Event::PathError);
             }
         }

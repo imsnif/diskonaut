@@ -80,7 +80,7 @@ where B: Backend
                 UiMode::Normal => {
                     TitleLine::new(base_path_info, current_path_info, file_tree.space_freed)
                         .path_error(ui_effects.current_path_is_red)
-                        .flash_space(ui_effects.frame_around_space_freed)
+                        .flash_space(ui_effects.flash_space_freed)
                         .render(&mut f, chunks[0]);
                     RectangleGrid::new(&board.tiles, board.unrenderable_tile_coordinates, board.selected_index).render(&mut f, chunks[1]);
                     BottomLine::new(file_tree.failed_to_read).currently_selected(board.currently_selected()).render(&mut f, chunks[2]);
@@ -99,7 +99,7 @@ where B: Backend
                 UiMode::ErrorMessage(message) => {
                     TitleLine::new(base_path_info, current_path_info, file_tree.space_freed)
                         .path_error(ui_effects.current_path_is_red)
-                        .flash_space(ui_effects.frame_around_space_freed)
+                        .flash_space(ui_effects.flash_space_freed)
                         .render(&mut f, chunks[0]);
                     RectangleGrid::new(&board.tiles, board.unrenderable_tile_coordinates, board.selected_index).render(&mut f, chunks[1]);
                     BottomLine::new(file_tree.failed_to_read).currently_selected(board.currently_selected()).render(&mut f, chunks[2]);

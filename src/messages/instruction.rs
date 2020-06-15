@@ -15,12 +15,10 @@ use crate::input::{
 };
 
 pub enum Instruction {
-    SetFrameAroundCurrentPath,
-    RemoveFrameAroundCurrentPath,
     SetPathToRed,
     ResetCurrentPathColor,
-    SetFrameAroundSpaceFreed,
-    RemoveFrameAroundSpaceFreed,
+    FlashSpaceFreed,
+    UnflashSpaceFreed,
     AddEntryToBaseFolder((Metadata, DirEntry, usize)),
     StartUi,
     ToggleScanningVisualIndicator,
@@ -37,23 +35,17 @@ where B: Backend
     loop {
         let instruction = receiver.recv().expect("failed to receive instruction on channel");
         match instruction {
-            Instruction::SetFrameAroundCurrentPath => {
-                app.set_frame_around_current_path();
-            }
-            Instruction::RemoveFrameAroundCurrentPath => {
-                app.remove_frame_around_current_path();
-            }
             Instruction::SetPathToRed => {
                 app.set_path_to_red();
             }
             Instruction::ResetCurrentPathColor => {
                 app.reset_current_path_color();
             }
-            Instruction::SetFrameAroundSpaceFreed => {
-                app.set_frame_around_space_freed();
+            Instruction::FlashSpaceFreed => {
+                app.flash_space_freed();
             }
-            Instruction::RemoveFrameAroundSpaceFreed => {
-                app.remove_frame_around_space_freed();
+            Instruction::UnflashSpaceFreed => {
+                app.unflash_space_freed();
             }
             Instruction::AddEntryToBaseFolder((file_metadata, entry, path_length)) => {
                 // TODO: consider placing path_in_filesystem on app and using it instead of
