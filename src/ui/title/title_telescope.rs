@@ -33,7 +33,7 @@ impl CellSizeOpt {
     }
 }
 
-pub struct TitleText {
+pub struct TitleTelescope {
     default_style: Style,
     left_side: Vec<CollapsingCell>,
     right_side: Vec<CollapsingCell>,
@@ -43,9 +43,9 @@ pub struct TitleText {
     size_flash: bool,
 }
 
-impl TitleText {
+impl TitleTelescope {
     pub fn new (default_style: Style) -> Self {
-        TitleText {
+        TitleTelescope {
             default_style,
             left_side: vec![],
             right_side: vec![],

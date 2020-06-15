@@ -2,12 +2,11 @@ use ::tui::layout::Rect;
 use ::tui::widgets::Widget;
 use ::tui::buffer::Buffer;
 use ::tui::style::{Style, Color, Modifier};
-
 use ::std::path::PathBuf;
 
 use crate::ui::FolderInfo;
 use crate::ui::format::DisplaySize;
-use crate::ui::title::{TitleText, CellSizeOpt};
+use crate::ui::title::{TitleTelescope, CellSizeOpt};
 
 pub struct TitleLine <'a> {
     base_path_info: FolderInfo<'a>,
@@ -79,33 +78,33 @@ impl <'a>Widget for TitleLine <'a>{
         if !self.is_loading {
             default_style = default_style.modifier(Modifier::BOLD);
         };
-        let mut title_text = TitleText::new(default_style);
+        let mut title_telescope = TitleTelescope::new(default_style);
         if self.is_loading {
-            title_text.append_to_left_side(vec![
+            title_telescope.append_to_left_side(vec![
                 CellSizeOpt::new(format!("Scanning: {} ({} files)", total_size, total_descendants)),
                 CellSizeOpt::new(format!("Scanning: {}", total_size)),
                 CellSizeOpt::new(format!("{}", total_size)),
             ]);
         } else {
-            title_text.append_to_left_side(vec![
+            title_telescope.append_to_left_side(vec![
                 CellSizeOpt::new(format!("Total: {} ({} files), freed: {}", total_size, total_descendants, space_freed)),
                 CellSizeOpt::new(format!("Total: {}, freed: {}", total_size, space_freed)),
                 CellSizeOpt::new(format!("Total: {}", total_size)),
                 CellSizeOpt::new(format!("{}", total_size)),
             ]);
         };
-        title_text.append_to_right_side(vec![
+        title_telescope.append_to_right_side(vec![
             CellSizeOpt::new(format!("{}", base_path)),
         ]);
         if current_path.len() > 0 {
-            title_text.append_to_right_side(vec![
+            title_telescope.append_to_right_side(vec![
                 CellSizeOpt::new(format!("{}{} ({}, {} files)", separator, current_path, current_folder_size, current_folder_descendants)).style(default_style.fg(Color::Green)),
                 CellSizeOpt::new(format!("{}{} ({})", separator, current_path, current_folder_size)).style(default_style.fg(Color::Green)),
                 CellSizeOpt::new(format!("{}{}", separator, current_path)).style(default_style.fg(Color::Green)),
             ]);
         }
 
-        title_text
+        title_telescope
             .loading(self.is_loading, self.progress_indicator)
             .path_error(self.path_error)
             .size_flash(self.flash_space)
