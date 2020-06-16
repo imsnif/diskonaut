@@ -2,6 +2,7 @@ use ::std::sync::mpsc::{SyncSender, Receiver};
 use ::std::path::{Path, PathBuf};
 use ::std::fs::{self, Metadata};
 use ::tui::backend::Backend;
+use ::std::mem::ManuallyDrop;
 
 use crate::Event;
 use crate::state::files::{Folder, FileOrFolder};
@@ -26,7 +27,7 @@ where B: Backend
     pub loaded: bool,
     pub ui_mode: UiMode,
     board: Board,
-    file_tree: FileTree,
+    file_tree: ManuallyDrop<FileTree>,
     display: Display<B>,
     event_sender: SyncSender<Event>,
     ui_effects: UiEffects,
@@ -38,8 +39,9 @@ where B: Backend
     pub fn new (terminal_backend: B, path_in_filesystem: PathBuf, event_sender: SyncSender<Event>) -> Self {
         let display = Display::new(terminal_backend);
         let board = Board::new(&Folder::new(&path_in_filesystem));
-        let base_folder = Folder::new(&path_in_filesystem); // TODO: better
-        let file_tree = FileTree::new(base_folder, path_in_filesystem);
+        let base_folder = Folder::new(&path_in_filesystem);
+        let file_tree = ManuallyDrop::new(FileTree::new(base_folder, path_in_filesystem));
+        // we use ManuallyDrop here because otherwise the app takes forever to exit
         let ui_effects = UiEffects::new();
         App {
             is_running: true,
@@ -58,7 +60,7 @@ where B: Backend
     }
     pub fn render_and_update_board (&mut self) {
         let current_folder = self.file_tree.get_current_folder();
-        self.board.change_files(&current_folder); // TODO: rename to change_tiles
+        self.board.change_files(&current_folder);
         self.render();
     }
     pub fn increment_loading_progress_indicator(&mut self) {

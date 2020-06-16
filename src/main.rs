@@ -209,7 +209,6 @@ where
 
     let mut app = App::new(terminal_backend, path.clone(), event_sender.clone());
     app.start(instruction_receiver);
-    std::mem::forget(app); // dropping app is a long process and at this point we really don't need it
     running.store(false, Ordering::Release);
     cleanup();
 
