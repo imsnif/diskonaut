@@ -28,7 +28,6 @@ impl Board {
     pub fn change_area(&mut self, area: &Rect) {
         if self.area != *area {
             self.area = area.clone();
-            self.selected_index = None;
             self.fill();
         }
     }
