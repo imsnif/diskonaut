@@ -1012,7 +1012,7 @@ fn move_left_and_enter_folder() {
 }
 
 #[test]
-fn noop_when_moving_off_screen_edges() {
+fn clear_selection_when_moving_off_screen_edges() {
    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
    let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();

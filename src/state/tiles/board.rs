@@ -74,8 +74,9 @@ impl Board {
                     // get the index of the tile with the most overlap with currently selected
                     candidates_to_the_right.iter().map(|(index, _)| *index).nth(0)
                 };
-                if let Some(i) = next_index {
-                    self.set_selected_index(&i);
+                match next_index {
+                    Some(i) => self.set_selected_index(&i),
+                    None => self.reset_selected_index(), // move off the edge of the screen resets selection
                 }
             }
             None => self.set_selected_index(&0)
@@ -100,8 +101,9 @@ impl Board {
                     // get the index of the tile with the most overlap with currently selected
                     candidates_to_the_left.iter().map(|(index, _)| *index).nth(0)
                 };
-                if let Some(i) = next_index {
-                    self.set_selected_index(&i);
+                match next_index {
+                    Some(i) => self.set_selected_index(&i),
+                    None => self.reset_selected_index(), // move off the edge of the screen resets selection
                 }
             }
             None => self.set_selected_index(&0)
@@ -126,8 +128,9 @@ impl Board {
                     // get the index of the tile with the most overlap with currently selected
                     candidates_below.iter().map(|(index, _)| *index).nth(0)
                 };
-                if let Some(i) = next_index {
-                    self.set_selected_index(&i);
+                match next_index {
+                    Some(i) => self.set_selected_index(&i),
+                    None => self.reset_selected_index(), // move off the edge of the screen resets selection
                 }
             }
             None => self.set_selected_index(&0)
@@ -152,8 +155,9 @@ impl Board {
                     // get the index of the tile with the most overlap with currently selected
                     candidates_below.iter().map(|(index, _)| *index).nth(0)
                 };
-                if let Some(i) = next_index {
-                    self.set_selected_index(&i);
+                match next_index {
+                    Some(i) => self.set_selected_index(&i),
+                    None => self.reset_selected_index(), // move off the edge of the screen resets selection
                 }
             }
             None => self.set_selected_index(&0)
