@@ -31,13 +31,10 @@ use messages::{handle_events, Event, Instruction};
 
 #[cfg(not(test))]
 const SHOULD_SHOW_LOADING_ANIMATION: bool = true;
-
 #[cfg(test)]
 const SHOULD_SHOW_LOADING_ANIMATION: bool = false;
-
 #[cfg(not(test))]
 const SHOULD_HANDLE_WIN_CHANGE: bool = true;
-
 #[cfg(test)]
 const SHOULD_HANDLE_WIN_CHANGE: bool = false;
 
