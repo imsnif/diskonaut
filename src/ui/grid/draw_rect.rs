@@ -28,8 +28,8 @@ fn tile_first_line (tile: &Tile, selected: bool) -> String {
         },
         FileType::Folder => {
             let descendant_count = descendant_count.expect("folder should have descendants");
-            let short_descendants_indication = format!("(+{})", descendant_count); // TODO: use DisplaySize in case there is a bazillion
-            let long_descendants_indication = format!("(+{} descendants)", descendant_count); // TODO: use DisplaySize in case there is a bazillion
+            let short_descendants_indication = format!("(+{})", descendant_count);
+            let long_descendants_indication = format!("(+{} descendants)", descendant_count);
             if &filename_text.len() + long_descendants_indication.len() <= max_text_length as usize {
                 format!("{} {}", filename_text, long_descendants_indication)
             } else if &filename_text.len() + short_descendants_indication.len() <= max_text_length as usize {
@@ -101,6 +101,9 @@ pub fn tile_style (tile: &Tile, selected: bool) -> (Option<Style>, Style, Style 
 pub fn draw_rect_on_grid (buf: &mut Buffer, coords: (u16, u16), dimensions: (u16, u16)) {
     let (coords_x, coords_y) = coords;
     let (width, height) = dimensions;
+    if width < 1 || height < 1 {
+        return;
+    }
 
     // top, bottom and corners
     for x in coords_x..(coords_x + width + 1) {
@@ -154,7 +157,7 @@ pub fn draw_filled_rect(buf: &mut Buffer, fill_style: Style, rect: &Rect) {
     }
 }
 
-pub fn draw_tile_text_on_grid(buf: &mut Buffer, tile: &Tile, selected: bool) { // TODO: better, combine args
+pub fn draw_tile_text_on_grid(buf: &mut Buffer, tile: &Tile, selected: bool) {
     let first_line = tile_first_line(&tile, selected);
     let first_line_length = first_line.chars().count() as u16;
     let first_line_start_position = ((tile.width - first_line_length) as f64 / 2.0).ceil() as u16 + tile.x;

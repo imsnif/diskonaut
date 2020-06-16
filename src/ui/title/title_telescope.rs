@@ -16,7 +16,7 @@ fn get_index_or_last <'a>(vec: &'a [CellSizeOpt], index: usize) -> &'a CellSizeO
 pub type CollapsingCell = Vec<CellSizeOpt>;
 
 pub struct CellSizeOpt {
-    pub content: String, // TODO: Cow?
+    pub content: String,
     pub style: Option<Style>,
 }
 
@@ -130,7 +130,7 @@ impl TitleTelescope {
         buf.set_string(x, y, " | ", self.default_style.fg(Color::White));
     }
     fn render_line_index(&self, i: usize, rect: Rect, buf: &mut Buffer) {
-        let left_side = self.left_side_candidate(i); // TODO: fix naming
+        let left_side = self.left_side_candidate(i);
         let right_side = self.right_side_candidate(i);
         let mut current_position = rect.x + 1;
         for cell_size_opt in &left_side {

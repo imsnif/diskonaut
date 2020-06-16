@@ -69,15 +69,13 @@ impl<'a> Widget for RectangleGrid<'a> {
             let (x, y) = coords;
             let width = (area.x + area.width) - x;
             let height = (area.y + area.height) - y;
-            if width > 1 && height > 1 { // TODO: move this decision to treemap.rs
-                let small_files_rect = Rect {
-                    x,
-                    y,
-                    width,
-                    height,
-                };
-                draw_small_files_rect_on_grid(buf, small_files_rect);
-            }
+            let small_files_rect = Rect {
+                x,
+                y,
+                width,
+                height,
+            };
+            draw_small_files_rect_on_grid(buf, small_files_rect);
         }
     }
 }
