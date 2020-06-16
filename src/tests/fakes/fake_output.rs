@@ -4,7 +4,6 @@ use ::std::sync::{Arc, Mutex};
 use ::tui::backend::Backend;
 use ::tui::buffer::Cell;
 use ::tui::layout::Rect;
-use ::tui::style::Color;
 
 #[derive(Hash, Debug, PartialEq)]
 pub enum TerminalEvent {
@@ -88,11 +87,7 @@ impl Backend for TestBackend {
                     Some(cell) => {
                         // this will contain no style information at all
                         // should be good enough for testing
-                        if &cell.symbol == " " && cell.style.bg == Color::Green {
-                            string.push_str("G"); // represent green background for tests
-                        } else {
-                            string.push_str(&cell.symbol);
-                        }
+                        string.push_str(&cell.symbol);
                     }
                     None => {
                         string.push_str(" ");
