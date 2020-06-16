@@ -12,6 +12,7 @@ termion = "1.5"
 failure = "0.1"
 walkdir = "2"
 signal-hook = "0.1.10"
+structopt = "0.3"
 
 [dev-dependencies]
 insta = "0.12.0"

@@ -23,6 +23,7 @@ use ::tui::backend::Backend;
 use ::std::sync::atomic::{AtomicBool, Ordering};
 use ::std::sync::Arc;
 use ::walkdir::WalkDir;
+use ::structopt::StructOpt;
 
 use input::{KeyboardEvents,sigwinch};
 use app::{App, UiMode};
@@ -40,6 +41,14 @@ const SHOULD_HANDLE_WIN_CHANGE: bool = true;
 #[cfg(test)]
 const SHOULD_HANDLE_WIN_CHANGE: bool = false;
 
+#[derive(StructOpt, Debug)]
+#[structopt(name = "cosmonaut")]
+pub struct Opt {
+    #[structopt(name = "folder", parse(from_os_str))]
+    /// The folder to scan
+    folder: Option<PathBuf>
+}
+
 fn main() {
     if let Err(err) = try_main() {
         println!("Error: {}", err);
@@ -48,11 +57,19 @@ fn main() {
 }
 
 fn try_main() -> Result<(), failure::Error> {
+    let opts = Opt::from_args();
     match io::stdout().into_raw_mode() {
         Ok(stdout) => {
             let terminal_backend = TermionBackend::new(stdout);
             let keyboard_events = KeyboardEvents {};
-            start(terminal_backend, Box::new(keyboard_events), env::current_dir()?);
+            let folder = match opts.folder {
+                Some(folder) => folder,
+                None => env::current_dir()?
+            };
+            if !folder.as_path().is_dir() {
+                failure::bail!("Folder '{}' does not exist", folder.to_string_lossy())
+            }
+            start(terminal_backend, Box::new(keyboard_events), folder);
         }
         Err(_) => failure::bail!(
             "Failed to get stdout: are you trying to pipe 'cosmonaut'?"
