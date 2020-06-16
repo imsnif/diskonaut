@@ -1,4 +1,4 @@
-use signal_hook::iterator::Signals;
+use ::signal_hook::iterator::Signals;
 
 pub type OnSigWinch = dyn Fn(Box<dyn Fn()>) + Send;
 pub type SigCleanup = dyn Fn() + Send;

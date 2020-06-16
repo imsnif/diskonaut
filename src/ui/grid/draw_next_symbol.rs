@@ -1,4 +1,4 @@
-use tui::buffer::Buffer;
+use ::tui::buffer::Buffer;
 
 pub mod boundaries {
     pub const TOP_RIGHT: &str = "┐";

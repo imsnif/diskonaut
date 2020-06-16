@@ -1,8 +1,8 @@
-use crate::tests::fakes::{KeyboardEvents, TerminalEvent, TestBackend};
-use std::iter;
-
+use ::std::iter;
+use ::std::sync::{Arc, Mutex};
 use ::termion::event::{Event, Key};
-use std::sync::{Arc, Mutex};
+
+use crate::tests::fakes::{KeyboardEvents, TerminalEvent, TestBackend};
 
 pub fn sleep_and_quit_events(sleep_num: usize) -> Box<KeyboardEvents> {
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(sleep_num).collect();

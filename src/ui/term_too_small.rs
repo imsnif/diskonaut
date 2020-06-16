@@ -1,8 +1,7 @@
-use tui::layout::Rect;
-use tui::style::{Modifier, Style};
-use tui::widgets::Widget;
-
-use tui::buffer::Buffer;
+use ::tui::layout::Rect;
+use ::tui::style::{Modifier, Style};
+use ::tui::widgets::Widget;
+use ::tui::buffer::Buffer;
 
 pub struct TermTooSmall {}
 

@@ -1,6 +1,7 @@
-use crate::messages::Instruction;
 use ::std::thread::park_timeout;
 use ::std::time;
+
+use crate::messages::Instruction;
 
 pub enum Event {
     PathError,

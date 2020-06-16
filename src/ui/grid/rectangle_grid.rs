@@ -1,7 +1,7 @@
-use tui::buffer::Buffer;
-use tui::layout::Rect;
-use tui::style::{Color, Style};
-use tui::widgets::Widget;
+use ::tui::buffer::Buffer;
+use ::tui::layout::Rect;
+use ::tui::style::{Color, Style};
+use ::tui::widgets::Widget;
 
 use crate::state::Tile;
 use crate::ui::{draw_rect_on_grid, draw_tile_text_on_grid};

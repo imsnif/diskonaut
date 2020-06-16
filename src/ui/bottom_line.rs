@@ -1,10 +1,8 @@
-use std::path::PathBuf;
-
-use tui::layout::Rect;
-use tui::style::{Color, Modifier, Style};
-use tui::widgets::Widget;
-
-use tui::buffer::Buffer;
+use ::std::path::PathBuf;
+use ::tui::layout::Rect;
+use ::tui::style::{Color, Modifier, Style};
+use ::tui::widgets::Widget;
+use ::tui::buffer::Buffer;
 
 use crate::state::{FileType, Tile};
 use crate::ui::format::{truncate_middle, DisplaySize};

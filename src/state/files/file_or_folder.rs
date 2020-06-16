@@ -1,8 +1,8 @@
-use std::collections::{HashMap, VecDeque};
-use std::ffi::OsString;
-use std::fs::Metadata;
-use std::os::unix::fs::MetadataExt; // TODO: support other OSs
-use std::path::PathBuf;
+use ::std::collections::{HashMap, VecDeque};
+use ::std::ffi::OsString;
+use ::std::fs::Metadata;
+use ::std::os::unix::fs::MetadataExt; // TODO: support other OSs
+use ::std::path::PathBuf;
 
 #[derive(Debug, Clone)]
 pub enum FileOrFolder {

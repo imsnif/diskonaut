@@ -1,18 +1,16 @@
-use crate::tests::fakes::TerminalEvent::*;
+use ::std::env;
+use ::std::fs::{create_dir, create_dir_all, remove_dir_all, File};
+use ::std::io::prelude::*;
+use ::std::iter;
+use ::std::path::{Path, PathBuf};
+
+use ::termion::event::{Event, Key};
 use ::insta::assert_snapshot;
 
-use crate::tests::cases::test_utils::{sleep_and_quit_events, test_backend_factory};
-use std::path::{Path, PathBuf};
-
 use crate::start;
-
-use std::env;
-use std::fs::{create_dir, create_dir_all, remove_dir_all, File};
-use std::io::prelude::*;
-
+use crate::tests::fakes::TerminalEvent::*;
+use crate::tests::cases::test_utils::{sleep_and_quit_events, test_backend_factory};
 use crate::tests::fakes::KeyboardEvents;
-use ::termion::event::{Event, Key};
-use std::iter;
 
 fn create_root_temp_dir(name: &str) -> Result<PathBuf, failure::Error> {
     let mut dir = env::temp_dir();

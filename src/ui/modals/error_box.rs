@@ -1,7 +1,7 @@
-use tui::buffer::Buffer;
-use tui::layout::Rect;
-use tui::style::{Color, Modifier, Style};
-use tui::widgets::Widget;
+use ::tui::buffer::Buffer;
+use ::tui::layout::Rect;
+use ::tui::style::{Color, Modifier, Style};
+use ::tui::widgets::Widget;
 
 use crate::ui::format::truncate_end;
 use crate::ui::grid::draw_filled_rect;

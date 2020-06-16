@@ -1,4 +1,4 @@
-use std::ffi::OsString;
+use ::std::ffi::OsString;
 
 use crate::state::tiles::{FileMetadata, FileType, RectFloat};
 
