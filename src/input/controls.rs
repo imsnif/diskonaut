@@ -1,9 +1,9 @@
-use ::std::io::stdin;
-use ::termion::input::TermRead;
-use ::termion::event::Event;
-use termion::event::Key;
-use crate::App;
 use crate::state::FileToDelete;
+use crate::App;
+use ::std::io::stdin;
+use ::termion::event::Event;
+use ::termion::input::TermRead;
+use termion::event::Key;
 
 use ::tui::backend::Backend;
 
@@ -19,7 +19,6 @@ impl Iterator for KeyboardEvents {
         }
     }
 }
-
 
 pub fn handle_keypress_loading_mode<B: Backend>(evt: Event, app: &mut App<B>) {
     match evt {
@@ -78,9 +77,17 @@ pub fn handle_keypress_normal_mode<B: Backend>(evt: Event, app: &mut App<B>) {
     };
 }
 
-pub fn handle_keypress_delete_file_mode<B: Backend>(evt: Event, app: &mut App<B>, file_to_delete: FileToDelete) {
+pub fn handle_keypress_delete_file_mode<B: Backend>(
+    evt: Event,
+    app: &mut App<B>,
+    file_to_delete: FileToDelete,
+) {
     match evt {
-        Event::Key(Key::Ctrl('c')) | Event::Key(Key::Char('q')) | Event::Key(Key::Esc) | Event::Key(Key::Backspace) | Event::Key(Key::Char('n')) => {
+        Event::Key(Key::Ctrl('c'))
+        | Event::Key(Key::Char('q'))
+        | Event::Key(Key::Esc)
+        | Event::Key(Key::Backspace)
+        | Event::Key(Key::Char('n')) => {
             app.normal_mode();
         }
         Event::Key(Key::Char('y')) => {
@@ -92,7 +99,10 @@ pub fn handle_keypress_delete_file_mode<B: Backend>(evt: Event, app: &mut App<B>
 
 pub fn handle_keypress_error_message<B: Backend>(evt: Event, app: &mut App<B>) {
     match evt {
-        Event::Key(Key::Ctrl('c')) | Event::Key(Key::Char('q')) | Event::Key(Key::Esc) | Event::Key(Key::Backspace) => {
+        Event::Key(Key::Ctrl('c'))
+        | Event::Key(Key::Char('q'))
+        | Event::Key(Key::Esc)
+        | Event::Key(Key::Backspace) => {
             app.normal_mode();
         }
         _ => (),

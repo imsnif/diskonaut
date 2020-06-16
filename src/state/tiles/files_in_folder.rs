@@ -48,7 +48,9 @@ pub fn files_in_folder(folder: &Folder) -> Vec<FileMetadata> {
         if a.percentage == b.percentage {
             a.name.partial_cmp(&b.name).expect("could not compare name")
         } else {
-            b.percentage.partial_cmp(&a.percentage).expect("could not compare percentage")
+            b.percentage
+                .partial_cmp(&a.percentage)
+                .expect("could not compare percentage")
         }
     });
     files

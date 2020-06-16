@@ -1,7 +1,4 @@
-use crate::tests::fakes::{
-    KeyboardEvents,
-    TerminalEvent, TestBackend,
-};
+use crate::tests::fakes::{KeyboardEvents, TerminalEvent, TestBackend};
 use std::iter;
 
 use ::termion::event::{Event, Key};

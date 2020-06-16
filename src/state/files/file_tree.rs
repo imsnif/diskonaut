@@ -1,9 +1,9 @@
-use ::std::path::{Path, PathBuf};
-use ::std::ffi::{OsString, OsStr};
+use ::std::ffi::{OsStr, OsString};
 use ::std::fs::Metadata;
+use ::std::path::{Path, PathBuf};
 
-use crate::state::FileToDelete;
 use crate::state::files::{FileOrFolder, Folder};
+use crate::state::FileToDelete;
 
 pub struct FileTree {
     base_folder: Folder,
@@ -22,18 +22,19 @@ impl FileTree {
             space_freed: 0,
             failed_to_read: 0,
         }
-
     }
-    pub fn get_total_size (&self) -> u64 {
+    pub fn get_total_size(&self) -> u64 {
         self.base_folder.size
     }
-    pub fn get_total_descendants (&self) -> u64 {
+    pub fn get_total_descendants(&self) -> u64 {
         self.base_folder.num_descendants
     }
-    pub fn get_current_folder (&self) -> &Folder {
+    pub fn get_current_folder(&self) -> &Folder {
         if self.current_folder_names.is_empty() {
             &self.base_folder
-        } else if let Some(FileOrFolder::Folder(current_folder)) = self.base_folder.path(self.current_folder_names.clone()) {
+        } else if let Some(FileOrFolder::Folder(current_folder)) =
+            self.base_folder.path(self.current_folder_names.clone())
+        {
             &current_folder
         } else {
             // here we have something in current_folder_names but the last
@@ -41,10 +42,10 @@ impl FileTree {
             unreachable!("couldn't find current folder size")
         }
     }
-    pub fn get_current_folder_size (&self) -> u64 {
+    pub fn get_current_folder_size(&self) -> u64 {
         self.get_current_folder().size
     }
-    pub fn get_current_path (&self) -> PathBuf {
+    pub fn get_current_path(&self) -> PathBuf {
         let mut full_path = PathBuf::from(&self.path_in_filesystem);
         for folder in &self.current_folder_names {
             full_path.push(&folder)
@@ -58,10 +59,11 @@ impl FileTree {
     pub fn enter_folder(&mut self, folder_name: &OsStr) {
         self.current_folder_names.push(folder_name.to_os_string());
     }
-    pub fn leave_folder(&mut self) -> bool { // true => succeeded, false => at base folder
+    pub fn leave_folder(&mut self) -> bool {
+        // true => succeeded, false => at base folder
         match self.current_folder_names.pop() {
             Some(_) => true,
-            None => false
+            None => false,
         }
     }
     pub fn delete_file(&mut self, file_to_delete: &FileToDelete) {

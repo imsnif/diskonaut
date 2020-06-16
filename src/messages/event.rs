@@ -1,6 +1,6 @@
-use ::std::time;
-use ::std::thread::park_timeout;
 use crate::messages::Instruction;
+use ::std::thread::park_timeout;
+use ::std::time;
 
 pub enum Event {
     PathError,
@@ -8,11 +8,13 @@ pub enum Event {
     AppExit,
 }
 
-use std::sync::mpsc::{SyncSender, Receiver};
+use std::sync::mpsc::{Receiver, SyncSender};
 
-pub fn handle_events (event_receiver: Receiver<Event>, instruction_sender: SyncSender<Instruction>) {
+pub fn handle_events(event_receiver: Receiver<Event>, instruction_sender: SyncSender<Instruction>) {
     loop {
-        let event = event_receiver.recv().expect("failed to receive event on channel");
+        let event = event_receiver
+            .recv()
+            .expect("failed to receive event on channel");
         match event {
             Event::PathError => {
                 let _ = instruction_sender.send(Instruction::SetPathToRed);

@@ -1,10 +1,10 @@
 use tui::buffer::Buffer;
 use tui::layout::Rect;
-use tui::style::{Style, Color};
+use tui::style::{Color, Style};
 use tui::widgets::Widget;
 
-use crate::ui::{draw_rect_on_grid, draw_tile_text_on_grid};
 use crate::state::Tile;
+use crate::ui::{draw_rect_on_grid, draw_tile_text_on_grid};
 
 fn draw_small_files_rect_on_grid(buf: &mut Buffer, rect: Rect) {
     for x in rect.x + 1..(rect.x + rect.width) {
@@ -17,7 +17,7 @@ fn draw_small_files_rect_on_grid(buf: &mut Buffer, rect: Rect) {
     draw_rect_on_grid(buf, (rect.x, rect.y), (rect.width, rect.height));
 }
 
-fn draw_empty_folder (buf: &mut Buffer, area: Rect) {
+fn draw_empty_folder(buf: &mut Buffer, area: Rect) {
     for x in area.x + 1..area.x + area.width {
         for y in area.y + 1..area.y + area.height {
             let buf = buf.get_mut(x, y);
@@ -28,8 +28,14 @@ fn draw_empty_folder (buf: &mut Buffer, area: Rect) {
     let empty_folder_line = "Folder is empty";
     let text_length = empty_folder_line.len();
     let text_style = Style::default();
-    let text_start_position = ((area.width - text_length as u16) as f64 / 2.0).ceil() as u16 + area.x;
-    buf.set_string(text_start_position, (area.height / 2) + area.y - 1, empty_folder_line, text_style);
+    let text_start_position =
+        ((area.width - text_length as u16) as f64 / 2.0).ceil() as u16 + area.x;
+    buf.set_string(
+        text_start_position,
+        (area.height / 2) + area.y - 1,
+        empty_folder_line,
+        text_style,
+    );
     draw_rect_on_grid(buf, (area.x, area.y), (area.width, area.height));
 }
 
@@ -41,12 +47,16 @@ pub struct RectangleGrid<'a> {
 }
 
 impl<'a> RectangleGrid<'a> {
-    pub fn new (
+    pub fn new(
         rectangles: &'a [Tile],
         small_files_coordinates: Option<(u16, u16)>,
-        selected_rect_index: Option<usize>
+        selected_rect_index: Option<usize>,
     ) -> Self {
-        RectangleGrid { rectangles, small_files_coordinates, selected_rect_index }
+        RectangleGrid {
+            rectangles,
+            small_files_coordinates,
+            selected_rect_index,
+        }
     }
 }
 

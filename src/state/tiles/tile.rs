@@ -16,7 +16,7 @@ pub struct Tile {
 }
 
 impl Tile {
-    pub fn new (rect: &RectFloat, file_metadata: &FileMetadata) -> Self {
+    pub fn new(rect: &RectFloat, file_metadata: &FileMetadata) -> Self {
         let rounded = rect.round();
         Tile {
             x: rounded.x,
@@ -39,25 +39,26 @@ impl Tile {
     }
 
     pub fn is_directly_below(&self, other: &Tile) -> bool {
-       self.y == other.y + other.height
+        self.y == other.y + other.height
     }
 
     pub fn is_directly_above(&self, other: &Tile) -> bool {
-       self.y + self.height == other.y
+        self.y + self.height == other.y
     }
 
     pub fn horizontally_overlaps_with(&self, other: &Tile) -> bool {
-        ( self.y >= other.y && self.y <= (other.y + other.height) ) ||
-        ( (self.y + self.height) <= (other.y + other.height) && (self.y + self.height) > other.y) ||
-        (self.y <= other.y && (self.y + self.height >= (other.y + other.height)) ) ||
-        ( other.y <= self.y && (other.y + other.height >= (self.y + self.height)) )
+        (self.y >= other.y && self.y <= (other.y + other.height))
+            || ((self.y + self.height) <= (other.y + other.height)
+                && (self.y + self.height) > other.y)
+            || (self.y <= other.y && (self.y + self.height >= (other.y + other.height)))
+            || (other.y <= self.y && (other.y + other.height >= (self.y + self.height)))
     }
 
     pub fn vertically_overlaps_with(&self, other: &Tile) -> bool {
-        ( self.x >= other.x && self.x <= (other.x + other.width) ) ||
-        ( (self.x + self.width) <= (other.x + other.width) && (self.x + self.width) > other.x) ||
-        ( self.x <= other.x && (self.x + self.width >= (other.x + other.width)) ) ||
-        ( other.x <= self.x && (other.x + other.width >= (self.x + self.width)) )
+        (self.x >= other.x && self.x <= (other.x + other.width))
+            || ((self.x + self.width) <= (other.x + other.width) && (self.x + self.width) > other.x)
+            || (self.x <= other.x && (self.x + self.width >= (other.x + other.width)))
+            || (other.x <= self.x && (other.x + other.width >= (self.x + self.width)))
     }
 
     pub fn get_vertical_overlap_with(&self, other: &Tile) -> u16 {

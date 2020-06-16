@@ -79,12 +79,16 @@ fn combine_symbols(current_symbol: &str, next_symbol: &str) -> Option<&'static s
         (boundaries::VERTICAL_LEFT, boundaries::HORIZONTAL_UP) => Some(boundaries::HORIZONTAL_UP), // (┤, ┴) => Some(┼)
         (boundaries::VERTICAL_LEFT, boundaries::CROSS) => Some(boundaries::CROSS), // (┤, ┼) => Some(┼)
 
-        (boundaries::VERTICAL_RIGHT, boundaries::VERTICAL_RIGHT) => Some(boundaries::VERTICAL_RIGHT), // (├, ├) => Some(├)
+        (boundaries::VERTICAL_RIGHT, boundaries::VERTICAL_RIGHT) => {
+            Some(boundaries::VERTICAL_RIGHT)
+        } // (├, ├) => Some(├)
         (boundaries::VERTICAL_RIGHT, boundaries::HORIZONTAL_DOWN) => Some(boundaries::CROSS), // (├, ┬) => Some(┼)
         (boundaries::VERTICAL_RIGHT, boundaries::HORIZONTAL_UP) => Some(boundaries::CROSS), // (├, ┴) => Some(┼)
         (boundaries::VERTICAL_RIGHT, boundaries::CROSS) => Some(boundaries::CROSS), // (├, ┼) => Some(┼)
 
-        (boundaries::HORIZONTAL_DOWN, boundaries::HORIZONTAL_DOWN) => Some(boundaries::HORIZONTAL_DOWN), // (┬, ┬) => Some(┬)
+        (boundaries::HORIZONTAL_DOWN, boundaries::HORIZONTAL_DOWN) => {
+            Some(boundaries::HORIZONTAL_DOWN)
+        } // (┬, ┬) => Some(┬)
         (boundaries::HORIZONTAL_DOWN, boundaries::HORIZONTAL_UP) => Some(boundaries::CROSS), // (┬, ┴) => Some(┼)
         (boundaries::HORIZONTAL_DOWN, boundaries::CROSS) => Some(boundaries::CROSS), // (┬, ┼) => Some(┼)
 
@@ -93,11 +97,11 @@ fn combine_symbols(current_symbol: &str, next_symbol: &str) -> Option<&'static s
 
         (boundaries::CROSS, boundaries::CROSS) => Some(boundaries::CROSS), // (┼, ┼) => Some(┼)
 
-        (_, _) => None
+        (_, _) => None,
     }
 }
 
-fn find_next_symbol (first_symbol: &str, second_symbol: &str) -> Option<&'static str> {
+fn find_next_symbol(first_symbol: &str, second_symbol: &str) -> Option<&'static str> {
     if let Some(symbol) = combine_symbols(first_symbol, second_symbol) {
         Some(symbol)
     } else {

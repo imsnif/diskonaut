@@ -14,8 +14,7 @@ pub struct TreeMap {
     total_size: f64,
 }
 impl TreeMap {
-
-    pub fn new (empty_space: &Rect) -> Self {
+    pub fn new(empty_space: &Rect) -> Self {
         let empty_space = RectFloat::new(empty_space);
         TreeMap {
             tiles: vec![],
@@ -38,8 +37,13 @@ impl TreeMap {
             let size = file_metadata.percentage * self.total_size;
             acc + size
         });
-        let should_render_horizontally = self.empty_space.width <= self.empty_space.height * HEIGHT_WIDTH_RATIO;
-        let mut progress_in_row = if should_render_horizontally { self.empty_space.x } else { self.empty_space.y };
+        let should_render_horizontally =
+            self.empty_space.width <= self.empty_space.height * HEIGHT_WIDTH_RATIO;
+        let mut progress_in_row = if should_render_horizontally {
+            self.empty_space.x
+        } else {
+            self.empty_space.y
+        };
         let mut length_of_row_second_side = 0.0;
         for file_metadata in row {
             let size = file_metadata.percentage * self.total_size;
@@ -59,9 +63,19 @@ impl TreeMap {
             };
 
             let rect = if should_render_horizontally {
-                RectFloat {x: progress_in_row, y: self.empty_space.y, width: tile_length_first_side, height: tile_length_second_side }
+                RectFloat {
+                    x: progress_in_row,
+                    y: self.empty_space.y,
+                    width: tile_length_first_side,
+                    height: tile_length_second_side,
+                }
             } else {
-                RectFloat {x: self.empty_space.x, y: progress_in_row, width: tile_length_second_side, height: tile_length_first_side }
+                RectFloat {
+                    x: self.empty_space.x,
+                    y: progress_in_row,
+                    width: tile_length_second_side,
+                    height: tile_length_first_side,
+                }
             };
             progress_in_row += tile_length_first_side;
 
@@ -91,14 +105,20 @@ impl TreeMap {
                 let x = if tile.x < x { tile.x } else { x };
                 let y = if tile.y < y { tile.y } else { y };
                 self.unrenderable_tile_coordinates = Some((x, y));
-            },
+            }
             None => {
                 self.unrenderable_tile_coordinates = Some((tile.x, tile.y));
             }
         }
     }
 
-    fn worst_in_renderable_row (&self, row: &[&FileMetadata], length_of_row: f64, min_first_side: f64, min_second_side: f64) -> Option<f64> {
+    fn worst_in_renderable_row(
+        &self,
+        row: &[&FileMetadata],
+        length_of_row: f64,
+        min_first_side: f64,
+        min_second_side: f64,
+    ) -> Option<f64> {
         // None means that at least one item in the row is not renderable, so it should not be
         // considered
         let sum = row.iter().fold(0.0, |accum, file_metadata| {
@@ -121,34 +141,52 @@ impl TreeMap {
                         if val_aspect_ratio < current_worst {
                             worst_aspect_ratio = Some(val_aspect_ratio);
                         }
-                    },
+                    }
                     None => {
                         worst_aspect_ratio = Some(val_aspect_ratio);
                     }
                 }
             } else {
-                return None
+                return None;
             }
         }
         worst_aspect_ratio
     }
 
-    fn has_renderable_items (&self, row: &Vec<&FileMetadata>, min_first_side: f64, min_second_side: f64) -> bool {
+    fn has_renderable_items(
+        &self,
+        row: &Vec<&FileMetadata>,
+        min_first_side: f64,
+        min_second_side: f64,
+    ) -> bool {
         for val in row.iter() {
             let size = val.percentage * self.total_size;
             if min_first_side * min_second_side <= size {
-                return true
+                return true;
             }
         }
         return false;
     }
 
-    fn squarify <'a>(&'a mut self, mut children: Vec<&'a FileMetadata>, mut row: Vec<&'a FileMetadata>) {
-        let (length_of_row, min_first_side, min_second_side) = if self.empty_space.height * HEIGHT_WIDTH_RATIO < self.empty_space.width {
-            (self.empty_space.height * HEIGHT_WIDTH_RATIO, MINIMUM_HEIGHT as f64 * HEIGHT_WIDTH_RATIO, MINIMUM_WIDTH as f64 / HEIGHT_WIDTH_RATIO)
-        } else {
-            (self.empty_space.width / HEIGHT_WIDTH_RATIO, MINIMUM_WIDTH as f64 / HEIGHT_WIDTH_RATIO, MINIMUM_HEIGHT as f64 * HEIGHT_WIDTH_RATIO)
-        };
+    fn squarify<'a>(
+        &'a mut self,
+        mut children: Vec<&'a FileMetadata>,
+        mut row: Vec<&'a FileMetadata>,
+    ) {
+        let (length_of_row, min_first_side, min_second_side) =
+            if self.empty_space.height * HEIGHT_WIDTH_RATIO < self.empty_space.width {
+                (
+                    self.empty_space.height * HEIGHT_WIDTH_RATIO,
+                    MINIMUM_HEIGHT as f64 * HEIGHT_WIDTH_RATIO,
+                    MINIMUM_WIDTH as f64 / HEIGHT_WIDTH_RATIO,
+                )
+            } else {
+                (
+                    self.empty_space.width / HEIGHT_WIDTH_RATIO,
+                    MINIMUM_WIDTH as f64 / HEIGHT_WIDTH_RATIO,
+                    MINIMUM_HEIGHT as f64 * HEIGHT_WIDTH_RATIO,
+                )
+            };
 
         if children.len() == 0 {
             self.layoutrow(row);
@@ -156,14 +194,20 @@ impl TreeMap {
             self.layoutrow(row);
             self.layoutrow(children);
         } else {
-
-            let current_row_worst_ratio = self.worst_in_renderable_row(&row, length_of_row, min_first_side, min_second_side);
-            let row_with_first_child: Vec<&FileMetadata> = row.iter()
+            let current_row_worst_ratio =
+                self.worst_in_renderable_row(&row, length_of_row, min_first_side, min_second_side);
+            let row_with_first_child: Vec<&FileMetadata> = row
+                .iter()
                 .chain(children.iter().take(1))
                 .map(|f| *f)
                 .collect();
 
-            let row_with_child_worst_ratio = self.worst_in_renderable_row(&row_with_first_child, length_of_row, min_first_side, min_second_side);
+            let row_with_child_worst_ratio = self.worst_in_renderable_row(
+                &row_with_first_child,
+                length_of_row,
+                min_first_side,
+                min_second_side,
+            );
 
             match (current_row_worst_ratio, row_with_child_worst_ratio) {
                 (None, None) => {
@@ -206,7 +250,6 @@ impl TreeMap {
                         self.layoutrow(row);
                         self.squarify(children, vec![]);
                     }
-
                 }
             };
         }

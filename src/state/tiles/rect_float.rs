@@ -9,12 +9,12 @@ pub struct RectFloat {
 }
 
 impl RectFloat {
-    pub fn new (rect: &Rect) -> Self {
+    pub fn new(rect: &Rect) -> Self {
         RectFloat {
             x: rect.x as f64,
             y: rect.y as f64,
             height: rect.height as f64,
-            width: rect.width as f64
+            width: rect.width as f64,
         }
     }
     pub fn round(&self) -> Rect {
@@ -22,7 +22,7 @@ impl RectFloat {
         let rounded_y = self.y.round();
         let mut rect = Rect {
             x: rounded_x as u16,
-            y: rounded_y  as u16,
+            y: rounded_y as u16,
             width: ((self.x - rounded_x) + self.width).round() as u16,
             height: ((self.y - rounded_y) + self.height).round() as u16,
         };

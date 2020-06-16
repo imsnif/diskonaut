@@ -1,14 +1,14 @@
-use ::tui::layout::Rect;
-use ::tui::widgets::Widget;
-use ::tui::buffer::Buffer;
-use ::tui::style::{Style, Color, Modifier};
 use ::std::path::PathBuf;
+use ::tui::buffer::Buffer;
+use ::tui::layout::Rect;
+use ::tui::style::{Color, Modifier, Style};
+use ::tui::widgets::Widget;
 
-use crate::ui::FolderInfo;
 use crate::ui::format::DisplaySize;
-use crate::ui::title::{TitleTelescope, CellSizeOpt};
+use crate::ui::title::{CellSizeOpt, TitleTelescope};
+use crate::ui::FolderInfo;
 
-pub struct TitleLine <'a> {
+pub struct TitleLine<'a> {
     base_path_info: FolderInfo<'a>,
     current_path_info: FolderInfo<'a>,
     space_freed: u64,
@@ -19,8 +19,12 @@ pub struct TitleLine <'a> {
     path_error: bool,
 }
 
-impl <'a>TitleLine<'a> {
-    pub fn new(base_path_info: FolderInfo<'a>, current_path_info: FolderInfo<'a>, space_freed: u64) -> Self {
+impl<'a> TitleLine<'a> {
+    pub fn new(
+        base_path_info: FolderInfo<'a>,
+        current_path_info: FolderInfo<'a>,
+        space_freed: u64,
+    ) -> Self {
         Self {
             base_path_info,
             current_path_info,
@@ -56,9 +60,15 @@ impl <'a>TitleLine<'a> {
     }
 }
 
-impl <'a>Widget for TitleLine <'a>{
+impl<'a> Widget for TitleLine<'a> {
     fn draw(&mut self, rect: Rect, buf: &mut Buffer) {
-        let base_path = &self.base_path_info.path.clone().into_os_string().into_string().expect("could not convert os string to string");
+        let base_path = &self
+            .base_path_info
+            .path
+            .clone()
+            .into_os_string()
+            .into_string()
+            .expect("could not convert os string to string");
         let current_path = {
             let mut current_path_relative_to_base = PathBuf::new();
             let base_path_len = self.base_path_info.path.iter().count();
@@ -89,13 +99,19 @@ impl <'a>Widget for TitleLine <'a>{
         let mut title_telescope = TitleTelescope::new(default_style);
         if self.is_loading {
             title_telescope.append_to_left_side(vec![
-                CellSizeOpt::new(format!("Scanning: {} ({} files)", total_size, total_descendants)),
+                CellSizeOpt::new(format!(
+                    "Scanning: {} ({} files)",
+                    total_size, total_descendants
+                )),
                 CellSizeOpt::new(format!("Scanning: {}", total_size)),
                 CellSizeOpt::new(format!("{}", total_size)),
             ]);
         } else {
             title_telescope.append_to_left_side(vec![
-                CellSizeOpt::new(format!("Total: {} ({} files), freed: {}", total_size, total_descendants, space_freed)),
+                CellSizeOpt::new(format!(
+                    "Total: {} ({} files), freed: {}",
+                    total_size, total_descendants, space_freed
+                )),
                 CellSizeOpt::new(format!("Total: {}, freed: {}", total_size, space_freed)),
                 CellSizeOpt::new(format!("Total: {}", total_size)),
                 CellSizeOpt::new(format!("{}", total_size)),
@@ -103,19 +119,28 @@ impl <'a>Widget for TitleLine <'a>{
         };
         if let Some(read_errors) = self.read_errors {
             title_telescope.append_to_left_side(vec![
-                CellSizeOpt::new(format!(" (failed to read {} files)", read_errors)).style(default_style.fg(Color::Red)),
-                CellSizeOpt::new(format!(" ({} errors)", read_errors)).style(default_style.fg(Color::Red)),
+                CellSizeOpt::new(format!(" (failed to read {} files)", read_errors))
+                    .style(default_style.fg(Color::Red)),
+                CellSizeOpt::new(format!(" ({} errors)", read_errors))
+                    .style(default_style.fg(Color::Red)),
                 CellSizeOpt::new(format!(" (errors)")).style(default_style.fg(Color::Red)),
             ]);
         }
-        title_telescope.append_to_right_side(vec![
-            CellSizeOpt::new(format!("{}", base_path)),
-        ]);
+        title_telescope.append_to_right_side(vec![CellSizeOpt::new(format!("{}", base_path))]);
         if current_path.len() > 0 {
             title_telescope.append_to_right_side(vec![
-                CellSizeOpt::new(format!("{}{} ({}, {} files)", separator, current_path, current_folder_size, current_folder_descendants)).style(default_style.fg(Color::Green)),
-                CellSizeOpt::new(format!("{}{} ({})", separator, current_path, current_folder_size)).style(default_style.fg(Color::Green)),
-                CellSizeOpt::new(format!("{}{}", separator, current_path)).style(default_style.fg(Color::Green)),
+                CellSizeOpt::new(format!(
+                    "{}{} ({}, {} files)",
+                    separator, current_path, current_folder_size, current_folder_descendants
+                ))
+                .style(default_style.fg(Color::Green)),
+                CellSizeOpt::new(format!(
+                    "{}{} ({})",
+                    separator, current_path, current_folder_size
+                ))
+                .style(default_style.fg(Color::Green)),
+                CellSizeOpt::new(format!("{}{}", separator, current_path))
+                    .style(default_style.fg(Color::Green)),
             ]);
         }
 

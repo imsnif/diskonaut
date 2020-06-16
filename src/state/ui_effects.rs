@@ -9,7 +9,7 @@ pub struct UiEffects {
 }
 
 impl UiEffects {
-    pub fn new () -> Self {
+    pub fn new() -> Self {
         Self {
             flash_space_freed: false,
             current_path_is_red: false,

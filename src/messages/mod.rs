@@ -1,5 +1,5 @@
-mod instruction;
 mod event;
+mod instruction;
 
-pub use instruction::*;
 pub use event::*;
+pub use instruction::*;

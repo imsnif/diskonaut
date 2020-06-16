@@ -2,7 +2,7 @@ use ::std::fmt;
 
 pub struct DisplaySize(pub f64);
 
-impl fmt::Display for DisplaySize{
+impl fmt::Display for DisplaySize {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         if self.0 > 999_999_999.0 {
             write!(f, "{:.1}G", self.0 / 1073741824.0) // 1024 * 1024 * 1024

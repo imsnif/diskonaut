@@ -1,17 +1,14 @@
-use ::std::sync::mpsc::Receiver;
 use ::std::fs::Metadata;
+use ::std::sync::mpsc::Receiver;
+use ::termion::event::Event as TermionEvent;
 use ::tui::backend::Backend;
-use ::termion::event::{Event as TermionEvent};
 use ::walkdir::DirEntry;
 
 use crate::{App, UiMode};
 
 use crate::input::{
-    handle_keypress_loading_mode,
-    handle_keypress_normal_mode,
-    handle_keypress_screen_too_small,
-    handle_keypress_delete_file_mode,
-    handle_keypress_error_message,
+    handle_keypress_delete_file_mode, handle_keypress_error_message, handle_keypress_loading_mode,
+    handle_keypress_normal_mode, handle_keypress_screen_too_small,
 };
 
 pub enum Instruction {
@@ -29,11 +26,14 @@ pub enum Instruction {
     IncrementFailedToRead,
 }
 
-pub fn handle_instructions<B> (app: &mut App<B>, receiver: Receiver<Instruction>)
-where B: Backend
+pub fn handle_instructions<B>(app: &mut App<B>, receiver: Receiver<Instruction>)
+where
+    B: Backend,
 {
     loop {
-        let instruction = receiver.recv().expect("failed to receive instruction on channel");
+        let instruction = receiver
+            .recv()
+            .expect("failed to receive instruction on channel");
         match instruction {
             Instruction::SetPathToRed => {
                 app.set_path_to_red();
@@ -70,18 +70,17 @@ where B: Backend
                 match &app.ui_mode {
                     UiMode::Loading => {
                         handle_keypress_loading_mode(evt, app);
-                    },
+                    }
                     UiMode::Normal => {
                         handle_keypress_normal_mode(evt, app);
-                    },
+                    }
                     UiMode::ScreenTooSmall => {
                         handle_keypress_screen_too_small(evt, app);
-
-                    },
+                    }
                     UiMode::DeleteFile(file_to_delete) => {
                         let file_to_delete = file_to_delete.clone();
                         handle_keypress_delete_file_mode(evt, app, file_to_delete);
-                    },
+                    }
                     UiMode::ErrorMessage(_) => {
                         handle_keypress_error_message(evt, app);
                     }

@@ -1,15 +1,15 @@
-mod grid;
-mod format;
-mod title;
-mod modals;
 mod bottom_line;
-mod term_too_small;
 mod display;
+mod format;
+mod grid;
+mod modals;
+mod term_too_small;
+mod title;
 
-pub use grid::*;
-pub use format::*;
-pub use title::*;
 pub use bottom_line::*;
+pub use display::*;
+pub use format::*;
+pub use grid::*;
 pub use modals::*;
 pub use term_too_small::*;
-pub use display::*;
+pub use title::*;

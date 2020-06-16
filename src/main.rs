@@ -2,32 +2,32 @@
 mod tests;
 
 mod app;
-mod state;
-mod ui;
 mod input;
 mod messages;
+mod state;
+mod ui;
 
+use ::failure;
 use ::std::env;
 use ::std::io;
-use ::std::{thread, time};
-use ::std::thread::park_timeout;
-use ::std::sync::mpsc::{SyncSender, Receiver};
-use ::std::sync::mpsc;
-use ::termion::event::{Event as TermionEvent, Key};
-use ::failure;
-use ::termion::raw::IntoRawMode;
-use ::tui::backend::TermionBackend;
-use ::std::process;
 use ::std::path::PathBuf;
-use ::tui::backend::Backend;
+use ::std::process;
 use ::std::sync::atomic::{AtomicBool, Ordering};
+use ::std::sync::mpsc;
+use ::std::sync::mpsc::{Receiver, SyncSender};
 use ::std::sync::Arc;
-use ::walkdir::WalkDir;
+use ::std::thread::park_timeout;
+use ::std::{thread, time};
 use ::structopt::StructOpt;
+use ::termion::event::{Event as TermionEvent, Key};
+use ::termion::raw::IntoRawMode;
+use ::tui::backend::Backend;
+use ::tui::backend::TermionBackend;
+use ::walkdir::WalkDir;
 
-use input::{KeyboardEvents,sigwinch};
 use app::{App, UiMode};
-use messages::{Event, Instruction, handle_events};
+use input::{sigwinch, KeyboardEvents};
+use messages::{handle_events, Event, Instruction};
 
 #[cfg(not(test))]
 const SHOULD_SHOW_LOADING_ANIMATION: bool = true;
@@ -46,7 +46,7 @@ const SHOULD_HANDLE_WIN_CHANGE: bool = false;
 pub struct Opt {
     #[structopt(name = "folder", parse(from_os_str))]
     /// The folder to scan
-    folder: Option<PathBuf>
+    folder: Option<PathBuf>,
 }
 
 fn main() {
@@ -64,29 +64,34 @@ fn try_main() -> Result<(), failure::Error> {
             let keyboard_events = KeyboardEvents {};
             let folder = match opts.folder {
                 Some(folder) => folder,
-                None => env::current_dir()?
+                None => env::current_dir()?,
             };
             if !folder.as_path().is_dir() {
                 failure::bail!("Folder '{}' does not exist", folder.to_string_lossy())
             }
             start(terminal_backend, Box::new(keyboard_events), folder);
         }
-        Err(_) => failure::bail!(
-            "Failed to get stdout: are you trying to pipe 'cosmonaut'?"
-        ),
+        Err(_) => failure::bail!("Failed to get stdout: are you trying to pipe 'cosmonaut'?"),
     }
     Ok(())
 }
 
-pub fn start<B>(terminal_backend: B, keyboard_events: Box<dyn Iterator<Item = TermionEvent> + Send>, path: PathBuf)
-where
+pub fn start<B>(
+    terminal_backend: B,
+    keyboard_events: Box<dyn Iterator<Item = TermionEvent> + Send>,
+    path: PathBuf,
+) where
     B: Backend + Send + 'static,
 {
     let mut active_threads = vec![];
     let (on_sigwinch, cleanup) = sigwinch();
 
-    let (event_sender, event_receiver): (SyncSender<Event>, Receiver<Event>) = mpsc::sync_channel(1);
-    let (instruction_sender, instruction_receiver): (SyncSender<Instruction>, Receiver<Instruction>) = mpsc::sync_channel(100);
+    let (event_sender, event_receiver): (SyncSender<Event>, Receiver<Event>) =
+        mpsc::sync_channel(1);
+    let (instruction_sender, instruction_receiver): (
+        SyncSender<Instruction>,
+        Receiver<Instruction>,
+    ) = mpsc::sync_channel(100);
 
     let running = Arc::new(AtomicBool::new(true));
     let loaded = Arc::new(AtomicBool::new(false));
@@ -97,7 +102,8 @@ where
             .spawn({
                 let instruction_sender = instruction_sender.clone();
                 || handle_events(event_receiver, instruction_sender)
-            }).unwrap(),
+            })
+            .unwrap(),
     );
 
     active_threads.push(
@@ -108,7 +114,9 @@ where
                 let running = running.clone();
                 move || {
                     for evt in keyboard_events {
-                        if let TermionEvent::Key(Key::Ctrl('c')) | TermionEvent::Key(Key::Char('q')) = evt {
+                        if let TermionEvent::Key(Key::Ctrl('c'))
+                        | TermionEvent::Key(Key::Char('q')) = evt
+                        {
                             // not ideal, but works in a pinch
                             let _ = instruction_sender.send(Instruction::Keypress(evt));
                             park_timeout(time::Duration::from_millis(100));
@@ -140,22 +148,17 @@ where
                 let instruction_sender = instruction_sender.clone();
                 let loaded = loaded.clone();
                 move || {
-
                     'scanning: for entry in WalkDir::new(&path).into_iter() {
                         let instruction_sent = match entry {
-                            Ok(entry) => {
-                                match entry.metadata() {
-                                    Ok(file_metadata) => {
-                                        instruction_sender.send(Instruction::AddEntryToBaseFolder((file_metadata, entry)))
-                                    },
-                                    Err(_) => {
-                                        instruction_sender.send(Instruction::IncrementFailedToRead)
-                                    }
+                            Ok(entry) => match entry.metadata() {
+                                Ok(file_metadata) => instruction_sender.send(
+                                    Instruction::AddEntryToBaseFolder((file_metadata, entry)),
+                                ),
+                                Err(_) => {
+                                    instruction_sender.send(Instruction::IncrementFailedToRead)
                                 }
                             },
-                            Err(_) => {
-                                instruction_sender.send(Instruction::IncrementFailedToRead)
-                            }
+                            Err(_) => instruction_sender.send(Instruction::IncrementFailedToRead),
                         };
                         if let Err(_) = instruction_sent {
                             // if we fail to send an instruction here, this likely means the program has
@@ -167,7 +170,7 @@ where
                     loaded.store(true, Ordering::Release);
                 }
             })
-            .unwrap()
+            .unwrap(),
     );
 
     if SHOULD_SHOW_LOADING_ANIMATION {
@@ -180,13 +183,14 @@ where
                     let running = running.clone();
                     move || {
                         while running.load(Ordering::Acquire) && !loaded.load(Ordering::Acquire) {
-                            let _ = instruction_sender.send(Instruction::ToggleScanningVisualIndicator);
+                            let _ =
+                                instruction_sender.send(Instruction::ToggleScanningVisualIndicator);
                             let _ = instruction_sender.send(Instruction::RenderAndUpdateBoard);
                             park_timeout(time::Duration::from_millis(100));
                         }
                     }
                 })
-                .unwrap()
+                .unwrap(),
         );
     }
 

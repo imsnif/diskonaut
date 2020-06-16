@@ -1,15 +1,15 @@
-use ::std::sync::mpsc::{SyncSender, Receiver};
-use ::std::path::{Path, PathBuf};
 use ::std::fs::{self, Metadata};
-use ::tui::backend::Backend;
 use ::std::mem::ManuallyDrop;
+use ::std::path::{Path, PathBuf};
+use ::std::sync::mpsc::{Receiver, SyncSender};
+use ::tui::backend::Backend;
 
-use crate::Event;
-use crate::state::files::{Folder, FileOrFolder};
-use crate::ui::Display;
-use crate::state::{Board, UiEffects, FileToDelete};
+use crate::messages::{handle_instructions, Instruction};
 use crate::state::files::FileTree;
-use crate::messages::{Instruction, handle_instructions};
+use crate::state::files::{FileOrFolder, Folder};
+use crate::state::{Board, FileToDelete, UiEffects};
+use crate::ui::Display;
+use crate::Event;
 
 #[derive(Clone)]
 pub enum UiMode {
@@ -20,8 +20,9 @@ pub enum UiMode {
     ErrorMessage(String),
 }
 
-pub struct App <B>
-where B: Backend
+pub struct App<B>
+where
+    B: Backend,
 {
     pub is_running: bool,
     pub loaded: bool,
@@ -33,10 +34,15 @@ where B: Backend
     ui_effects: UiEffects,
 }
 
-impl <B>App <B>
-where B: Backend
+impl<B> App<B>
+where
+    B: Backend,
 {
-    pub fn new (terminal_backend: B, path_in_filesystem: PathBuf, event_sender: SyncSender<Event>) -> Self {
+    pub fn new(
+        terminal_backend: B,
+        path_in_filesystem: PathBuf,
+        event_sender: SyncSender<Event>,
+    ) -> Self {
         let display = Display::new(terminal_backend);
         let board = Board::new(&Folder::new(&path_in_filesystem));
         let base_folder = Folder::new(&path_in_filesystem);
@@ -54,11 +60,11 @@ where B: Backend
             ui_effects,
         }
     }
-    pub fn start (&mut self, receiver: Receiver<Instruction>) {
+    pub fn start(&mut self, receiver: Receiver<Instruction>) {
         handle_instructions(self, receiver);
         self.display.clear();
     }
-    pub fn render_and_update_board (&mut self) {
+    pub fn render_and_update_board(&mut self) {
         let current_folder = self.file_tree.get_current_folder();
         self.board.change_files(&current_folder);
         self.render();
@@ -66,12 +72,17 @@ where B: Backend
     pub fn increment_loading_progress_indicator(&mut self) {
         self.ui_effects.increment_loading_progress_indicator();
     }
-    pub fn render (&mut self) {
+    pub fn render(&mut self) {
         let full_screen_size = self.display.size();
         if full_screen_size.width < 50 || full_screen_size.height < 15 {
             self.ui_mode = UiMode::ScreenTooSmall;
         }
-        self.display.render(&mut self.file_tree, &mut self.board, &self.ui_mode, &self.ui_effects);
+        self.display.render(
+            &mut self.file_tree,
+            &mut self.board,
+            &self.ui_mode,
+            &self.ui_effects,
+        );
     }
     pub fn flash_space_freed(&mut self) {
         self.ui_effects.flash_space_freed = true;
@@ -94,19 +105,21 @@ where B: Backend
         self.file_tree.add_entry(file_metadata, entry_path);
         self.ui_effects.last_read_path = Some(PathBuf::from(entry_path));
     }
-    pub fn reset_ui_mode (&mut self) {
+    pub fn reset_ui_mode(&mut self) {
         match self.ui_mode {
-            UiMode::Loading | UiMode::Normal => {},
-            _ => self.ui_mode = {
-                if self.loaded {
-                    UiMode::Normal
-                } else {
-                    UiMode::Loading
+            UiMode::Loading | UiMode::Normal => {}
+            _ => {
+                self.ui_mode = {
+                    if self.loaded {
+                        UiMode::Normal
+                    } else {
+                        UiMode::Loading
+                    }
                 }
             }
         };
     }
-    pub fn exit (&mut self) {
+    pub fn exit(&mut self) {
         self.is_running = false;
         // here we do a blocking send rather than a try_send
         // because we want to make sure that if the receiver
@@ -114,23 +127,23 @@ where B: Backend
         // would exit cleanly
         let _ = self.event_sender.send(Event::AppExit);
     }
-    pub fn move_selected_right (&mut self) {
+    pub fn move_selected_right(&mut self) {
         self.board.move_selected_right();
         self.render();
     }
-    pub fn move_selected_left (&mut self) {
+    pub fn move_selected_left(&mut self) {
         self.board.move_selected_left();
         self.render();
     }
-    pub fn move_selected_down (&mut self) {
+    pub fn move_selected_down(&mut self) {
         self.board.move_selected_down();
         self.render();
     }
-    pub fn move_selected_up (&mut self) {
+    pub fn move_selected_up(&mut self) {
         self.board.move_selected_up();
         self.render();
     }
-    pub fn enter_selected (&mut self) {
+    pub fn enter_selected(&mut self) {
         if let Some(tile) = &self.board.currently_selected() {
             let selected_name = &tile.name;
             if let Some(file_or_folder) = self.file_tree.item_in_current_folder(&selected_name) {
@@ -145,7 +158,7 @@ where B: Backend
             };
         }
     }
-    pub fn go_up (&mut self) {
+    pub fn go_up(&mut self) {
         if self.board.has_selected_index() {
             self.board.reset_selected_index();
             self.render_and_update_board();
@@ -200,13 +213,13 @@ where B: Backend
                         self.ui_mode = UiMode::Normal;
                         self.render_and_update_board();
                         let _ = self.event_sender.try_send(Event::FileDeleted);
-                    },
+                    }
                     Err(msg) => {
                         self.ui_mode = UiMode::ErrorMessage(format!("{}", msg));
                         self.render();
                     }
                 };
-            },
+            }
             Err(msg) => {
                 self.ui_mode = UiMode::ErrorMessage(format!("{}", msg));
                 self.render();
@@ -216,7 +229,7 @@ where B: Backend
     pub fn increment_failed_to_read(&mut self) {
         self.file_tree.failed_to_read += 1;
     }
-    fn remove_file_from_ui (&mut self, file_to_delete: &FileToDelete) {
+    fn remove_file_from_ui(&mut self, file_to_delete: &FileToDelete) {
         self.file_tree.space_freed += file_to_delete.size;
         self.file_tree.delete_file(file_to_delete);
         self.board.reset_selected_index();
