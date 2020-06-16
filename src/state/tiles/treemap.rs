@@ -1,7 +1,6 @@
 use ::tui::layout::Rect;
 
-use crate::state::FileMetadata;
-use crate::state::{RectFloat, Tile};
+use crate::state::tiles::{FileMetadata, RectFloat, Tile};
 
 const HEIGHT_WIDTH_RATIO: f64 = 2.5;
 const MINIMUM_HEIGHT: u16 = 3;

@@ -5,9 +5,9 @@ use ::std::sync::mpsc::{Receiver, SyncSender};
 use ::tui::backend::Backend;
 
 use crate::messages::{handle_instructions, Instruction};
-use crate::state::files::FileTree;
-use crate::state::files::{FileOrFolder, Folder};
-use crate::state::{Board, FileToDelete, UiEffects};
+use crate::state::{UiEffects, FileToDelete};
+use crate::state::files::{FileTree, FileOrFolder, Folder};
+use crate::state::tiles::Board;
 use crate::ui::Display;
 use crate::Event;
 

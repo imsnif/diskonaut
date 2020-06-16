@@ -2,10 +2,9 @@ use ::tui::buffer::Buffer;
 use ::tui::layout::Rect;
 use ::tui::style::{Color, Modifier, Style};
 
-use crate::state::FileType;
-use crate::state::Tile;
+use crate::state::tiles::{FileType, Tile};
 use crate::ui::format::{truncate_middle, DisplaySize, DisplaySizeRounded};
-use crate::ui::{boundaries, draw_next_symbol};
+use crate::ui::grid::{boundaries, draw_next_symbol};
 
 fn tile_first_line(tile: &Tile, selected: bool) -> String {
     let max_text_length = if tile.width > 2 { tile.width - 2 } else { 0 };

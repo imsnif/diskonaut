@@ -4,7 +4,7 @@ use ::tui::style::{Color, Modifier, Style};
 use ::tui::widgets::Widget;
 use ::tui::buffer::Buffer;
 
-use crate::state::{FileType, Tile};
+use crate::state::tiles::{FileType, Tile};
 use crate::ui::format::{truncate_middle, DisplaySize};
 
 fn render_currently_selected(buf: &mut Buffer, currently_selected: &Tile, max_len: u16, y: u16) {

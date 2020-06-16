@@ -1,7 +1,7 @@
 use ::std::ffi::OsString;
 use ::std::path::PathBuf;
 
-use crate::state::FileType;
+use crate::state::tiles::FileType;
 
 #[derive(Clone)]
 pub struct FileToDelete {

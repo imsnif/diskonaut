@@ -4,10 +4,13 @@ use ::tui::layout::{Constraint, Direction, Layout, Rect};
 use ::tui::widgets::Widget;
 use ::tui::Terminal;
 
+use crate::state::UiEffects;
 use crate::state::files::FileTree;
-use crate::state::{Board, UiEffects};
-use crate::ui::RectangleGrid;
-use crate::ui::{BottomLine, ErrorBox, MessageBox, TermTooSmall, TitleLine};
+use crate::state::tiles::Board;
+use crate::ui::grid::RectangleGrid;
+use crate::ui::modals::{ErrorBox, MessageBox};
+use crate::ui::title::TitleLine;
+use crate::ui::{BottomLine, TermTooSmall};
 use crate::UiMode;
 
 pub struct FolderInfo<'a> {

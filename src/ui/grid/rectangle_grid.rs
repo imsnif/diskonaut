@@ -3,8 +3,8 @@ use ::tui::layout::Rect;
 use ::tui::style::{Color, Style};
 use ::tui::widgets::Widget;
 
-use crate::state::Tile;
-use crate::ui::{draw_rect_on_grid, draw_tile_text_on_grid};
+use crate::state::tiles::Tile;
+use crate::ui::grid::{draw_rect_on_grid, draw_tile_text_on_grid};
 
 fn draw_small_files_rect_on_grid(buf: &mut Buffer, rect: Rect) {
     for x in rect.x + 1..(rect.x + rect.width) {
