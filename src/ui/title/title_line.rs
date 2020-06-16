@@ -14,6 +14,7 @@ pub struct TitleLine <'a> {
     space_freed: u64,
     is_loading: bool,
     progress_indicator: u64,
+    read_errors: Option<u64>,
     flash_space: bool,
     path_error: bool,
 }
@@ -25,6 +26,7 @@ impl <'a>TitleLine<'a> {
             current_path_info,
             space_freed,
             progress_indicator: 0,
+            read_errors: None,
             is_loading: false,
             flash_space: false,
             path_error: false,
@@ -44,6 +46,12 @@ impl <'a>TitleLine<'a> {
     }
     pub fn progress_indicator(mut self, progress_indicator: u64) -> Self {
         self.progress_indicator = progress_indicator;
+        self
+    }
+    pub fn read_errors(mut self, read_errors: u64) -> Self {
+        if read_errors > 0 {
+            self.read_errors = Some(read_errors);
+        }
         self
     }
 }
@@ -93,6 +101,13 @@ impl <'a>Widget for TitleLine <'a>{
                 CellSizeOpt::new(format!("{}", total_size)),
             ]);
         };
+        if let Some(read_errors) = self.read_errors {
+            title_telescope.append_to_left_side(vec![
+                CellSizeOpt::new(format!(" (failed to read {} files)", read_errors)).style(default_style.fg(Color::Red)),
+                CellSizeOpt::new(format!(" ({} errors)", read_errors)).style(default_style.fg(Color::Red)),
+                CellSizeOpt::new(format!(" (errors)")).style(default_style.fg(Color::Red)),
+            ]);
+        }
         title_telescope.append_to_right_side(vec![
             CellSizeOpt::new(format!("{}", base_path)),
         ]);

@@ -13,12 +13,11 @@ pub struct BottomLine <'a>{
     hide_delete: bool,
     currently_selected: Option<&'a Tile>,
     last_read_path: Option<&'a PathBuf>,
-    failed_to_read: u64,
 }
 
 impl <'a>BottomLine <'a>{
-    pub fn new(failed_to_read: u64) -> Self {
-        Self { hide_delete: false, failed_to_read, currently_selected: None, last_read_path: None }
+    pub fn new() -> Self {
+        Self { hide_delete: false, currently_selected: None, last_read_path: None }
     }
     pub fn hide_delete(mut self) -> Self {
         self.hide_delete = true;
@@ -75,9 +74,6 @@ impl<'a> Widget for BottomLine <'a>{
             } else {
                 buf.set_string(1, area.y + area.height - 2, truncate_middle(&last_read_path, max_len), Style::default());
             }
-        } else if self.failed_to_read > 0 {
-            // this line is (most likely!) less than 50 characters, so no need to telescope it
-            buf.set_string(1, area.y + area.height - 2, format!("Failed to read {} files", self.failed_to_read), Style::default().fg(Color::Red));
         }
 
         let small_files_len = small_files_legend.chars().count() as u16;
