@@ -1,5 +1,6 @@
 [package]
 name = "diskonaut"
+description = "Terminal disk space visual navigator"
 version = "0.1.0"
 authors = ["Aram Drevekenin <aram@poor.dev>"]
 homepage = "https://github.com/imsnif/diskonaut"
