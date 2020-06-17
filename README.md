@@ -15,6 +15,15 @@ If you're using linux, you can check out the "releases" of this repository to do
 ### With cargo
 `cargo install diskonaut`
 
+### Packaging status
+
+#### Fedora/CentOS
+
+Available in [COPR](https://copr.fedorainfracloud.org/coprs/atim/diskonaut/):
+```
+sudo dnf copr enable atim/diskonaut -y
+sudo dnf copr install diskonaut
+```
 ## Supported platforms
 Right now `diskonaut` supports linux and macos. If you're on a different operating system and would like to help port it, that would be amazing!
 
