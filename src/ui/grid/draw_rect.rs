@@ -63,9 +63,9 @@ pub fn tile_style(tile: &Tile, selected: bool) -> (Option<Style>, Style, Style) 
     let (background_style, first_line_style, second_line_style) = match (selected, &tile.file_type)
     {
         (true, FileType::File) => (
-            Some(Style::default().fg(Color::DarkGray).bg(Color::DarkGray)),
-            Style::default().fg(Color::Black).bg(Color::DarkGray),
-            Style::default().fg(Color::Black).bg(Color::DarkGray),
+            Some(Style::default().fg(Color::Gray).bg(Color::Gray)),
+            Style::default().fg(Color::Magenta).bg(Color::Gray).modifier(Modifier::BOLD),
+            Style::default().fg(Color::Magenta).bg(Color::Gray).modifier(Modifier::BOLD),
         ),
         (false, FileType::File) => (None, Style::default(), Style::default()),
         (true, FileType::Folder) => (
