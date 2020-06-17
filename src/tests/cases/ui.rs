@@ -13,8 +13,8 @@ use crate::tests::fakes::KeyboardEvents;
 use crate::tests::fakes::TerminalEvent::*;
 
 fn create_root_temp_dir(name: &str) -> Result<PathBuf, failure::Error> {
-    let mut dir = env::temp_dir();
-    dir.push(String::from("diskonaut_tests"));
+    let mut dir = PathBuf::new();
+    dir.push(String::from("/tmp/diskonaut_tests")); // TODO: fix this for other platforms
     dir.push(name.to_string());
 
     remove_dir_all(&dir).ok(); // atomic remove
