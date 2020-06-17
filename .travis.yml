@@ -5,6 +5,8 @@ language: rust
 rust:
   - stable
   - beta
+before_script:
+  - rustup component add rustfmt
 script:
   - set -e # Abort on failure, see https://github.com/travis-ci/travis-ci/issues/1066
   - cargo fmt -- --check
