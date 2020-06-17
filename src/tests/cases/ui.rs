@@ -4,13 +4,13 @@ use ::std::io::prelude::*;
 use ::std::iter;
 use ::std::path::{Path, PathBuf};
 
-use ::termion::event::{Event, Key};
 use ::insta::assert_snapshot;
+use ::termion::event::{Event, Key};
 
 use crate::start;
-use crate::tests::fakes::TerminalEvent::*;
 use crate::tests::cases::test_utils::{sleep_and_quit_events, test_backend_factory};
 use crate::tests::fakes::KeyboardEvents;
+use crate::tests::fakes::TerminalEvent::*;
 
 fn create_root_temp_dir(name: &str) -> Result<PathBuf, failure::Error> {
     let mut dir = env::temp_dir();

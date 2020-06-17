@@ -195,11 +195,8 @@ impl TreeMap {
         } else {
             let current_row_worst_ratio =
                 self.worst_in_renderable_row(&row, length_of_row, min_first_side, min_second_side);
-            let row_with_first_child: Vec<&FileMetadata> = row
-                .iter()
-                .chain(children.iter().take(1))
-                .copied()
-                .collect();
+            let row_with_first_child: Vec<&FileMetadata> =
+                row.iter().chain(children.iter().take(1)).copied().collect();
 
             let row_with_child_worst_ratio = self.worst_in_renderable_row(
                 &row_with_first_child,

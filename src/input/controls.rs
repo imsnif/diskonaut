@@ -1,7 +1,7 @@
 use ::std::io::stdin;
 use ::termion::event::Event;
-use ::termion::input::TermRead;
 use ::termion::event::Key;
+use ::termion::input::TermRead;
 use ::tui::backend::Backend;
 
 use crate::state::FileToDelete;

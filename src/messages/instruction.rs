@@ -4,11 +4,11 @@ use ::termion::event::Event as TermionEvent;
 use ::tui::backend::Backend;
 use ::walkdir::DirEntry;
 
-use crate::{App, UiMode};
 use crate::input::{
     handle_keypress_delete_file_mode, handle_keypress_error_message, handle_keypress_loading_mode,
     handle_keypress_normal_mode, handle_keypress_screen_too_small,
 };
+use crate::{App, UiMode};
 
 pub enum Instruction {
     SetPathToRed,

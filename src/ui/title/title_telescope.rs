@@ -179,7 +179,7 @@ impl TitleTelescope {
             } else {
                 truncate_middle(
                     &cell_size_opt.content,
-                    (rect.width - 1 - current_position) / number_of_parts_to_truncate
+                    (rect.width - 1 - current_position) / number_of_parts_to_truncate,
                 )
             };
             buf.set_string(current_position, rect.y, &truncated_cell, style);

@@ -4,9 +4,9 @@ use ::tui::layout::{Constraint, Direction, Layout, Rect};
 use ::tui::widgets::Widget;
 use ::tui::Terminal;
 
-use crate::state::UiEffects;
 use crate::state::files::FileTree;
 use crate::state::tiles::Board;
+use crate::state::UiEffects;
 use crate::ui::grid::RectangleGrid;
 use crate::ui::modals::{ErrorBox, MessageBox};
 use crate::ui::title::TitleLine;

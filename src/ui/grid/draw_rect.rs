@@ -20,8 +20,7 @@ fn tile_first_line(tile: &Tile) -> String {
             let descendant_count = descendant_count.expect("folder should have descendants");
             let short_descendants_indication = format!("(+{})", descendant_count);
             let long_descendants_indication = format!("(+{} descendants)", descendant_count);
-            if filename_text.len() + long_descendants_indication.len() <= max_text_length as usize
-            {
+            if filename_text.len() + long_descendants_indication.len() <= max_text_length as usize {
                 format!("{} {}", filename_text, long_descendants_indication)
             } else if filename_text.len() + short_descendants_indication.len()
                 <= max_text_length as usize
@@ -64,8 +63,14 @@ pub fn tile_style(tile: &Tile, selected: bool) -> (Option<Style>, Style, Style) 
     {
         (true, FileType::File) => (
             Some(Style::default().fg(Color::Gray).bg(Color::Gray)),
-            Style::default().fg(Color::Magenta).bg(Color::Gray).modifier(Modifier::BOLD),
-            Style::default().fg(Color::Magenta).bg(Color::Gray).modifier(Modifier::BOLD),
+            Style::default()
+                .fg(Color::Magenta)
+                .bg(Color::Gray)
+                .modifier(Modifier::BOLD),
+            Style::default()
+                .fg(Color::Magenta)
+                .bg(Color::Gray)
+                .modifier(Modifier::BOLD),
         ),
         (false, FileType::File) => (None, Style::default(), Style::default()),
         (true, FileType::Folder) => (
