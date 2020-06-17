@@ -27,7 +27,7 @@ impl Tile {
             size: file_metadata.size,
             descendants: file_metadata.descendants,
             percentage: file_metadata.percentage,
-            file_type: file_metadata.file_type.clone(),
+            file_type: file_metadata.file_type,
         }
     }
     pub fn is_directly_right_of(&self, other: &Tile) -> bool {
@@ -68,12 +68,10 @@ impl Tile {
             } else {
                 self.x + self.width - other.x
             }
+        } else if other.x + other.width >= self.x + self.width {
+            self.width
         } else {
-            if other.x + other.width >= self.x + self.width {
-                self.width
-            } else {
-                other.x + other.width - self.x
-            }
+            other.x + other.width - self.x
         }
     }
 
@@ -84,12 +82,10 @@ impl Tile {
             } else {
                 self.y + self.height - other.y
             }
+        } else if other.y + other.height >= self.y + self.height {
+            self.height
         } else {
-            if other.y + other.height >= self.y + self.height {
-                self.height
-            } else {
-                other.y + other.height - self.y
-            }
+            other.y + other.height - self.y
         }
     }
 }

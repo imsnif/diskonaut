@@ -154,7 +154,7 @@ impl TreeMap {
 
     fn has_renderable_items(
         &self,
-        row: &Vec<&FileMetadata>,
+        row: &[&FileMetadata],
         min_first_side: f64,
         min_second_side: f64,
     ) -> bool {
@@ -164,7 +164,7 @@ impl TreeMap {
                 return true;
             }
         }
-        return false;
+        false
     }
 
     fn squarify<'a>(
@@ -187,7 +187,7 @@ impl TreeMap {
                 )
             };
 
-        if children.len() == 0 {
+        if children.is_empty() {
             self.layoutrow(row);
         } else if !self.has_renderable_items(&children, min_first_side, min_second_side) {
             self.layoutrow(row);
@@ -198,7 +198,7 @@ impl TreeMap {
             let row_with_first_child: Vec<&FileMetadata> = row
                 .iter()
                 .chain(children.iter().take(1))
-                .map(|f| *f)
+                .copied()
                 .collect();
 
             let row_with_child_worst_ratio = self.worst_in_renderable_row(

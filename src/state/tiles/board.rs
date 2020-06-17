@@ -32,7 +32,7 @@ impl Board {
     }
     pub fn change_area(&mut self, area: &Rect) {
         if self.area != *area {
-            self.area = area.clone();
+            self.area = *area;
             self.fill();
         }
     }
@@ -46,10 +46,7 @@ impl Board {
         self.selected_index = Some(*next_index);
     }
     pub fn has_selected_index(&self) -> bool {
-        match self.selected_index {
-            Some(_) => true,
-            None => false,
-        }
+        self.selected_index.is_some()
     }
     pub fn reset_selected_index(&mut self) {
         self.selected_index = None;
@@ -82,7 +79,7 @@ impl Board {
                     candidates_to_the_right
                         .iter()
                         .map(|(index, _)| *index)
-                        .nth(0)
+                        .next()
                 };
                 match next_index {
                     Some(i) => self.set_selected_index(&i),
@@ -114,7 +111,7 @@ impl Board {
                     candidates_to_the_left
                         .iter()
                         .map(|(index, _)| *index)
-                        .nth(0)
+                        .next()
                 };
                 match next_index {
                     Some(i) => self.set_selected_index(&i),
@@ -143,7 +140,7 @@ impl Board {
                         b_overlap.cmp(&a_overlap)
                     });
                     // get the index of the tile with the most overlap with currently selected
-                    candidates_below.iter().map(|(index, _)| *index).nth(0)
+                    candidates_below.iter().map(|(index, _)| *index).next()
                 };
                 match next_index {
                     Some(i) => self.set_selected_index(&i),
@@ -172,7 +169,7 @@ impl Board {
                         b_overlap.cmp(&a_overlap)
                     });
                     // get the index of the tile with the most overlap with currently selected
-                    candidates_below.iter().map(|(index, _)| *index).nth(0)
+                    candidates_below.iter().map(|(index, _)| *index).next()
                 };
                 match next_index {
                     Some(i) => self.set_selected_index(&i),

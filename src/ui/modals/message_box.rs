@@ -19,13 +19,11 @@ fn truncated_file_name_line(file_to_delete: &FileToDelete, max_len: u16) -> Stri
         .last()
         .expect("could not find file to delete")
         .to_string_lossy();
-    let full_path_display = String::from(full_path);
-    let file_name_line = if max_len > full_path_display.len() as u16 {
-        full_path_display
+    if max_len > full_path.len() as u16 {
+        full_path
     } else {
         truncate_middle(&file_name, max_len)
-    };
-    file_name_line
+    }
 }
 
 fn render_deletion_prompt(buf: &mut Buffer, message_rect: &Rect, file_to_delete: &FileToDelete) {
@@ -38,9 +36,9 @@ fn render_deletion_prompt(buf: &mut Buffer, message_rect: &Rect, file_to_delete:
     let question_line = match file_to_delete.file_type {
         FileType::File => {
             if max_text_len >= 17 {
-                format!("Delete this file?")
+                "Delete this file?".to_string()
             } else if max_text_len >= 3 {
-                format!("Delete?")
+                "Delete?".to_string()
             } else {
                 unreachable!("should not render if terminal is so small");
             }
@@ -50,7 +48,7 @@ fn render_deletion_prompt(buf: &mut Buffer, message_rect: &Rect, file_to_delete:
                 .num_descendants
                 .expect("folder should have descendants");
             let full_line = format!("Delete folder with {} children?", children);
-            let short_line = format!("Delete folder?");
+            let short_line = "Delete folder?".to_string();
             if max_text_len >= full_line.len() as u16 {
                 full_line
             } else if max_text_len >= short_line.len() as u16 {

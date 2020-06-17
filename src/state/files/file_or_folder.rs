@@ -132,7 +132,7 @@ impl Folder {
     pub fn path(&self, mut folder_names: Vec<OsString>) -> Option<&FileOrFolder> {
         let next_folder_name = folder_names.remove(0);
         let next_in_path = &self.contents.get(&next_folder_name)?;
-        if folder_names.len() == 0 {
+        if folder_names.is_empty() {
             Some(next_in_path)
         } else if let FileOrFolder::Folder(next_folder) = next_in_path {
             next_folder.path(folder_names)
@@ -140,7 +140,7 @@ impl Folder {
             Some(next_in_path)
         }
     }
-    pub fn delete_path(&mut self, folder_names: &Vec<OsString>) {
+    pub fn delete_path(&mut self, folder_names: &[OsString]) {
         // TODO: there are some needless allocations here, this is not terrible since
         // the deletion itself takes an order of magnitude longer, but it can be nice
         // to reduce them
@@ -161,7 +161,7 @@ impl Folder {
             };
             self.size -= removed_size;
             self.num_descendants -= removed_descendents;
-            &self.contents.remove(name);
+            self.contents.remove(name);
         } else {
             let (removed_size, removed_descendents) = {
                 let item_to_remove = self

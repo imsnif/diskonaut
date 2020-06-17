@@ -12,7 +12,7 @@ pub struct TitleLine<'a> {
     base_path_info: FolderInfo<'a>,
     current_path_info: FolderInfo<'a>,
     space_freed: u64,
-    is_loading: bool,
+    show_loading: bool,
     progress_indicator: u64,
     read_errors: Option<u64>,
     flash_space: bool,
@@ -31,13 +31,13 @@ impl<'a> TitleLine<'a> {
             space_freed,
             progress_indicator: 0,
             read_errors: None,
-            is_loading: false,
+            show_loading: false,
             flash_space: false,
             path_error: false,
         }
     }
-    pub fn is_loading(mut self) -> Self {
-        self.is_loading = true;
+    pub fn show_loading(mut self) -> Self {
+        self.show_loading = true;
         self
     }
     pub fn flash_space(mut self, flash_space: bool) -> Self {
@@ -78,7 +78,7 @@ impl<'a> Widget for TitleLine<'a> {
             current_path_relative_to_base.to_string_lossy().into_owned()
         };
 
-        let separator = if base_path.ends_with("/") {
+        let separator = if base_path.ends_with('/') {
             // eg. if base_path is "/", we don't want current path to
             // also start with "/" otherwise we'll have "//path_to_my/location"
             // instead of "/path_to_my/location"
@@ -93,11 +93,11 @@ impl<'a> Widget for TitleLine<'a> {
         let space_freed = DisplaySize(self.space_freed as f64);
 
         let mut default_style = Style::default().fg(Color::Yellow);
-        if !self.is_loading {
+        if !self.show_loading {
             default_style = default_style.modifier(Modifier::BOLD);
         };
         let mut title_telescope = TitleTelescope::new(default_style);
-        if self.is_loading {
+        if self.show_loading {
             title_telescope.append_to_left_side(vec![
                 CellSizeOpt::new(format!(
                     "Scanning: {} ({} files)",
@@ -123,11 +123,11 @@ impl<'a> Widget for TitleLine<'a> {
                     .style(default_style.fg(Color::Red)),
                 CellSizeOpt::new(format!(" ({} errors)", read_errors))
                     .style(default_style.fg(Color::Red)),
-                CellSizeOpt::new(format!(" (errors)")).style(default_style.fg(Color::Red)),
+                CellSizeOpt::new(" (errors)".to_string()).style(default_style.fg(Color::Red)),
             ]);
         }
-        title_telescope.append_to_right_side(vec![CellSizeOpt::new(format!("{}", base_path))]);
-        if current_path.len() > 0 {
+        title_telescope.append_to_right_side(vec![CellSizeOpt::new(base_path.to_string())]);
+        if !current_path.is_empty() {
             title_telescope.append_to_right_side(vec![
                 CellSizeOpt::new(format!(
                     "{}{} ({}, {} files)",
@@ -145,7 +145,7 @@ impl<'a> Widget for TitleLine<'a> {
         }
 
         title_telescope
-            .loading(self.is_loading, self.progress_indicator)
+            .loading(self.show_loading, self.progress_indicator)
             .path_error(self.path_error)
             .size_flash(self.flash_space)
             .render(rect, buf);

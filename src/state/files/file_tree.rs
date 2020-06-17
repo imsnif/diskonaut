@@ -50,7 +50,7 @@ impl FileTree {
         for folder in &self.current_folder_names {
             full_path.push(&folder)
         }
-        return full_path;
+        full_path
     }
     pub fn item_in_current_folder(&self, item_name: &OsStr) -> Option<&FileOrFolder> {
         let current_folder = &self.get_current_folder();
@@ -61,10 +61,7 @@ impl FileTree {
     }
     pub fn leave_folder(&mut self) -> bool {
         // true => succeeded, false => at base folder
-        match self.current_folder_names.pop() {
-            Some(_) => true,
-            None => false,
-        }
+        self.current_folder_names.pop().is_some()
     }
     pub fn delete_file(&mut self, file_to_delete: &FileToDelete) {
         let path_to_delete = &file_to_delete.path_to_file;

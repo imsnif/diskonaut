@@ -62,10 +62,10 @@ impl<'a> RectangleGrid<'a> {
 
 impl<'a> Widget for RectangleGrid<'a> {
     fn draw(&mut self, area: Rect, buf: &mut Buffer) {
-        if self.rectangles.len() == 0 {
+        if self.rectangles.is_empty() {
             draw_empty_folder(buf, area);
         } else {
-            for (index, tile) in self.rectangles.into_iter().enumerate() {
+            for (index, tile) in self.rectangles.iter().enumerate() {
                 let selected = if let Some(selected_rect_index) = self.selected_rect_index {
                     index == selected_rect_index
                 } else {

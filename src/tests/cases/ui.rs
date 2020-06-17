@@ -2049,7 +2049,7 @@ fn small_files_with_y_as_zero() {
         create_temp_file(small_file_path, 1).expect("failed to create temp file");
     }
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path);
     // std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(

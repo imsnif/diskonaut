@@ -22,6 +22,6 @@ pub fn truncate_end(row: &str, max_len: u16) -> String {
         truncated.truncate(max_len as usize - 3);
         format!("{}...", truncated)
     } else {
-        format!("{}", row)
+        row.to_string()
     }
 }

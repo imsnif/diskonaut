@@ -6,7 +6,7 @@ use ::std::cmp::max;
 
 use crate::ui::format::truncate_middle;
 
-fn get_index_or_last<'a>(vec: &'a [CellSizeOpt], index: usize) -> &'a CellSizeOpt {
+fn get_index_or_last(vec: &[CellSizeOpt], index: usize) -> &CellSizeOpt {
     match vec.get(index) {
         Some(item) => item,
         None => vec.last().expect("could not get last element of vec"),
@@ -175,17 +175,11 @@ impl TitleTelescope {
         for (index, cell_size_opt) in right_side.into_iter().enumerate() {
             let style = self.style_of_right_side(cell_size_opt.style);
             let truncated_cell = if index as u16 + 1 == number_of_parts_to_truncate {
-                format!(
-                    "{}",
-                    truncate_middle(&cell_size_opt.content, rect.width - 1 - current_position)
-                )
+                truncate_middle(&cell_size_opt.content, rect.width - 1 - current_position)
             } else {
-                format!(
-                    "{}",
-                    truncate_middle(
-                        &cell_size_opt.content,
-                        (rect.width - 1 - current_position) / number_of_parts_to_truncate
-                    )
+                truncate_middle(
+                    &cell_size_opt.content,
+                    (rect.width - 1 - current_position) / number_of_parts_to_truncate
                 )
             };
             buf.set_string(current_position, rect.y, &truncated_cell, style);

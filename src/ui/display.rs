@@ -90,7 +90,7 @@ where
                             .progress_indicator(ui_effects.loading_progress_indicator)
                             .path_error(ui_effects.current_path_is_red)
                             .read_errors(file_tree.failed_to_read)
-                            .is_loading()
+                            .show_loading()
                             .render(&mut f, chunks[0]);
                         RectangleGrid::new(
                             &board.tiles,

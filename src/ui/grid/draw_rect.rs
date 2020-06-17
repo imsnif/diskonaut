@@ -6,31 +6,24 @@ use crate::state::tiles::{FileType, Tile};
 use crate::ui::format::{truncate_middle, DisplaySize, DisplaySizeRounded};
 use crate::ui::grid::{boundaries, draw_next_symbol};
 
-fn tile_first_line(tile: &Tile, selected: bool) -> String {
+fn tile_first_line(tile: &Tile) -> String {
     let max_text_length = if tile.width > 2 { tile.width - 2 } else { 0 };
     let name = &tile.name.to_string_lossy();
     let descendant_count = &tile.descendants;
-    let filename_text = if selected {
-        match tile.file_type {
-            FileType::File => format!("{}", name),
-            FileType::Folder => format!("{}/", name),
-        }
-    } else {
-        match tile.file_type {
-            FileType::File => format!("{}", name),
-            FileType::Folder => format!("{}/", name),
-        }
+    let filename_text = match tile.file_type {
+        FileType::File => format!("{}", name),
+        FileType::Folder => format!("{}/", name),
     };
-    let first_line = match tile.file_type {
+    match tile.file_type {
         FileType::File => truncate_middle(&filename_text, max_text_length),
         FileType::Folder => {
             let descendant_count = descendant_count.expect("folder should have descendants");
             let short_descendants_indication = format!("(+{})", descendant_count);
             let long_descendants_indication = format!("(+{} descendants)", descendant_count);
-            if &filename_text.len() + long_descendants_indication.len() <= max_text_length as usize
+            if filename_text.len() + long_descendants_indication.len() <= max_text_length as usize
             {
                 format!("{} {}", filename_text, long_descendants_indication)
-            } else if &filename_text.len() + short_descendants_indication.len()
+            } else if filename_text.len() + short_descendants_indication.len()
                 <= max_text_length as usize
             {
                 format!("{} {}", filename_text, short_descendants_indication)
@@ -38,8 +31,7 @@ fn tile_first_line(tile: &Tile, selected: bool) -> String {
                 truncate_middle(&filename_text, max_text_length)
             }
         }
-    };
-    first_line
+    }
 }
 
 fn tile_second_line(tile: &Tile) -> String {
@@ -169,7 +161,7 @@ pub fn draw_filled_rect(buf: &mut Buffer, fill_style: Style, rect: &Rect) {
 }
 
 pub fn draw_tile_text_on_grid(buf: &mut Buffer, tile: &Tile, selected: bool) {
-    let first_line = tile_first_line(&tile, selected);
+    let first_line = tile_first_line(&tile);
     let first_line_length = first_line.chars().count() as u16;
     let first_line_start_position =
         ((tile.width - first_line_length) as f64 / 2.0).ceil() as u16 + tile.x;

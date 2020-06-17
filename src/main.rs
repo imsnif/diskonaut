@@ -125,11 +125,8 @@ pub fn start<B>(
                                 // we check "running"
                                 break;
                             }
-                        } else {
-                            match instruction_sender.send(Instruction::Keypress(evt)) {
-                                Err(_) => break,
-                                _ => {}
-                            };
+                        } else if instruction_sender.send(Instruction::Keypress(evt)).is_err() {
+                            break;
                         }
                     }
                 }
@@ -157,7 +154,7 @@ pub fn start<B>(
                             },
                             Err(_) => instruction_sender.send(Instruction::IncrementFailedToRead),
                         };
-                        if let Err(_) = instruction_sent {
+                        if instruction_sent.is_err() {
                             // if we fail to send an instruction here, this likely means the program has
                             // ended and we need to break this loop as well in order not to hang
                             break 'scanning;
@@ -176,7 +173,6 @@ pub fn start<B>(
                 .name("loading_loop".to_string())
                 .spawn({
                     let instruction_sender = instruction_sender.clone();
-                    let loaded = loaded.clone();
                     let running = running.clone();
                     move || {
                         while running.load(Ordering::Acquire) && !loaded.load(Ordering::Acquire) {
@@ -196,7 +192,6 @@ pub fn start<B>(
             thread::Builder::new()
                 .name("resize_handler".to_string())
                 .spawn({
-                    let instruction_sender = instruction_sender.clone();
                     move || {
                         on_sigwinch(Box::new(move || {
                             let _ = instruction_sender.send(Instruction::ResetUiMode);
@@ -208,7 +203,7 @@ pub fn start<B>(
         );
     }
 
-    let mut app = App::new(terminal_backend, path.clone(), event_sender.clone());
+    let mut app = App::new(terminal_backend, path, event_sender);
     app.start(instruction_receiver);
     running.store(false, Ordering::Release);
     cleanup();
