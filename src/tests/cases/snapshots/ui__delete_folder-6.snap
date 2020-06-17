@@ -2,7 +2,7 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[5]"
 ---
-        8.0K (3 files), fre d: 4.0K | /tmp/cosmonau _te ts/d l te_folder                                                                                                                      
+        8.0K (3 files), fre d: 4.0K | /tmp/diskonau _te ts/d l te_folder                                                                                                                      
                                                                                                                               ─                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               

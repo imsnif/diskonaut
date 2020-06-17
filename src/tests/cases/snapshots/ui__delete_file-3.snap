@@ -27,7 +27,7 @@ expression: "&terminal_draw_events_mirror[2]"
                     │                                                                  Delete this file?                                                                  │                   
                     │                                                                                                                                                     │                   
                     │                                                                                                                                                     │                   
-                    │                                                       /tmp/cosmonaut_tests/delete_file/file2                                                        │                   
+                    │                                                       /tmp/diskonaut_tests/delete_file/file2                                                        │                   
                     │                                                                                                                                                     │                   
                     │                                                                                                                                                     │                   
                     │                                                                        (y/n)                                                                        │                   

@@ -39,7 +39,7 @@ const SHOULD_HANDLE_WIN_CHANGE: bool = true;
 const SHOULD_HANDLE_WIN_CHANGE: bool = false;
 
 #[derive(StructOpt, Debug)]
-#[structopt(name = "cosmonaut")]
+#[structopt(name = "diskonaut")]
 pub struct Opt {
     #[structopt(name = "folder", parse(from_os_str))]
     /// The folder to scan
@@ -68,7 +68,7 @@ fn try_main() -> Result<(), failure::Error> {
             }
             start(terminal_backend, Box::new(keyboard_events), folder);
         }
-        Err(_) => failure::bail!("Failed to get stdout: are you trying to pipe 'cosmonaut'?"),
+        Err(_) => failure::bail!("Failed to get stdout: are you trying to pipe 'diskonaut'?"),
     }
     Ok(())
 }

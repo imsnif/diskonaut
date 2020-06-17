@@ -2,7 +2,7 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[0]"
 ---
- Total: 16.0K (4 files), freed: 0 | /tmp/cosmonaut_tests/enter_folder                                                                                                                         
+ Total: 16.0K (4 files), freed: 0 | /tmp/diskonaut_tests/enter_folder                                                                                                                         
 ┌─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┬──────────────────────────────────────────────┐
 │                                                                                                                                             │                                              │
 │                                                                                                                                             │                                              │

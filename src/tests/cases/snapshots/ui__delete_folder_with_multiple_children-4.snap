@@ -27,7 +27,7 @@ expression: "&terminal_draw_events_mirror[3]"
                     │                                                           Delete folder with 4 children?                                                            │                   
                     │                                                                                                                                                     │                   
                     │                                                                                                                                                     │                   
-                    │                                        /tmp/cosmonaut_tests/delete_folder_with_multiple_children/subfolder1                                         │                   
+                    │                                        /tmp/diskonaut_tests/delete_folder_with_multiple_children/subfolder1                                         │                   
                     │                                                                                                                                                     │                   
                     │                                                                                                                                                     │                   
                     │                                                                        (y/n)                                                                        │                   

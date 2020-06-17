@@ -27,7 +27,7 @@ expression: "&terminal_draw_events_mirror[3]"
                     │                                                           Delete folder with 1 children?                                                            │                   
                     │                                                                                                                                                     │                   
                     │                                                                                                                                                     │                   
-                    │                                                    /tmp/cosmonaut_tests/delete_folder/subfolder1                                                    │                   
+                    │                                                    /tmp/diskonaut_tests/delete_folder/subfolder1                                                    │                   
                     │                                                                                                                                                     │                   
                     │                                                                                                                                                     │                   
                     │                                                                        (y/n)                                                                        │                   

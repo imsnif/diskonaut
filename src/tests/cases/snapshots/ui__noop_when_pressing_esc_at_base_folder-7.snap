@@ -2,7 +2,7 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[6]"
 ---
-                                    /tmp/cosmonaut_tests/noop_when_pressing_esc_at_base_folder                                                                                                
+                                    /tmp/diskonaut_tests/noop_when_pressing_esc_at_base_folder                                                                                                
                                                                                                                                                                                               
                                                                                                                                                                                               
                                                                                                                                                                                               
