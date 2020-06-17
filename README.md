@@ -1,2 +1,2 @@
 # diskonaut
-wip
+![demo](demo.gif)
