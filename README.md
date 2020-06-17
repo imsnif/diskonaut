@@ -3,7 +3,7 @@
 
 ## How does it work?
 
-Given a path on your hard-drive (which could also be the root path, eg. "/"). `diskonaut` scans it and maps it to memory so that you could explore its contents (even while still scanning!).
+Given a path on your hard-drive (which could also be the root path, eg. `/`). `diskonaut` scans it and maps it to memory so that you could explore its contents (even while still scanning!).
 
 Once completed, you can navigate through subfolders, getting a visual treemap representation of what's taking up your disk space. You can even delete files or folders and `diskonaut` will track how much space you've freed up in this session.
 
