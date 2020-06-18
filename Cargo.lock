@@ -167,7 +167,7 @@ dependencies = [
 
 [[package]]
 name = "diskonaut"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "cargo-insta 0.16.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "failure 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)",
