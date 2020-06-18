@@ -1,8 +1,9 @@
 use ::std::collections::{HashMap, VecDeque};
 use ::std::ffi::OsString;
 use ::std::fs::Metadata;
-use ::std::os::unix::fs::MetadataExt; // TODO: support other OSs
 use ::std::path::PathBuf;
+
+use ::filesize::PathExt;
 
 #[derive(Debug, Clone)]
 pub enum FileOrFolder {
@@ -58,7 +59,9 @@ impl Folder {
         if entry_metadata.is_dir() {
             self.add_folder(relative_path);
         } else {
-            let size = entry_metadata.blocks() * 512; // TODO: support other OSs that do not have blocks
+            let size = relative_path
+                .size_on_disk_fast(&entry_metadata)
+                .unwrap_or(entry_metadata.len());
             self.add_file(relative_path, size);
         }
     }
