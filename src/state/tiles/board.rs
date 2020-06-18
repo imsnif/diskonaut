@@ -60,27 +60,17 @@ impl Board {
     pub fn move_selected_right(&mut self) {
         match self.currently_selected() {
             Some(currently_selected) => {
-                let next_index = {
-                    let mut candidates_to_the_right: Vec<(usize, &Tile)> = self
-                        .tiles
-                        .iter()
-                        .enumerate()
-                        .filter(|(_, c)| {
-                            c.is_directly_right_of(&currently_selected)
-                                && c.horizontally_overlaps_with(&currently_selected)
-                        })
-                        .collect();
-                    candidates_to_the_right.sort_by(|(_, a), (_, b)| {
-                        let a_overlap = a.get_horizontal_overlap_with(&currently_selected);
-                        let b_overlap = b.get_horizontal_overlap_with(&currently_selected);
-                        b_overlap.cmp(&a_overlap)
-                    });
+                let next_index = self
+                    .tiles
+                    .iter()
+                    .enumerate()
+                    .filter(|(_, c)| {
+                        c.is_directly_right_of(&currently_selected)
+                            && c.horizontally_overlaps_with(&currently_selected)
+                    })
                     // get the index of the tile with the most overlap with currently selected
-                    candidates_to_the_right
-                        .iter()
-                        .map(|(index, _)| *index)
-                        .next()
-                };
+                    .max_by_key(|(_, c)| c.get_horizontal_overlap_with(&currently_selected))
+                    .map(|(index, _)| index);
                 match next_index {
                     Some(i) => self.set_selected_index(&i),
                     None => self.reset_selected_index(), // move off the edge of the screen resets selection
@@ -92,27 +82,17 @@ impl Board {
     pub fn move_selected_left(&mut self) {
         match self.currently_selected() {
             Some(currently_selected) => {
-                let next_index = {
-                    let mut candidates_to_the_left: Vec<(usize, &Tile)> = self
-                        .tiles
-                        .iter()
-                        .enumerate()
-                        .filter(|(_, c)| {
-                            c.is_directly_left_of(&currently_selected)
-                                && c.horizontally_overlaps_with(&currently_selected)
-                        })
-                        .collect();
-                    candidates_to_the_left.sort_by(|(_, a), (_, b)| {
-                        let a_overlap = a.get_horizontal_overlap_with(&currently_selected);
-                        let b_overlap = b.get_horizontal_overlap_with(&currently_selected);
-                        b_overlap.cmp(&a_overlap)
-                    });
+                let next_index = self
+                    .tiles
+                    .iter()
+                    .enumerate()
+                    .filter(|(_, c)| {
+                        c.is_directly_left_of(&currently_selected)
+                            && c.horizontally_overlaps_with(&currently_selected)
+                    })
                     // get the index of the tile with the most overlap with currently selected
-                    candidates_to_the_left
-                        .iter()
-                        .map(|(index, _)| *index)
-                        .next()
-                };
+                    .max_by_key(|(_, c)| c.get_horizontal_overlap_with(&currently_selected))
+                    .map(|(index, _)| index);
                 match next_index {
                     Some(i) => self.set_selected_index(&i),
                     None => self.reset_selected_index(), // move off the edge of the screen resets selection
@@ -124,24 +104,17 @@ impl Board {
     pub fn move_selected_down(&mut self) {
         match self.currently_selected() {
             Some(currently_selected) => {
-                let next_index = {
-                    let mut candidates_below: Vec<(usize, &Tile)> = self
-                        .tiles
-                        .iter()
-                        .enumerate()
-                        .filter(|(_, c)| {
-                            c.is_directly_below(&currently_selected)
-                                && c.vertically_overlaps_with(&currently_selected)
-                        })
-                        .collect();
-                    candidates_below.sort_by(|(_, a), (_, b)| {
-                        let a_overlap = a.get_vertical_overlap_with(&currently_selected);
-                        let b_overlap = b.get_vertical_overlap_with(&currently_selected);
-                        b_overlap.cmp(&a_overlap)
-                    });
+                let next_index = self
+                    .tiles
+                    .iter()
+                    .enumerate()
+                    .filter(|(_, c)| {
+                        c.is_directly_below(&currently_selected)
+                            && c.vertically_overlaps_with(&currently_selected)
+                    })
                     // get the index of the tile with the most overlap with currently selected
-                    candidates_below.iter().map(|(index, _)| *index).next()
-                };
+                    .max_by_key(|(_, c)| c.get_vertical_overlap_with(&currently_selected))
+                    .map(|(index, _)| index);
                 match next_index {
                     Some(i) => self.set_selected_index(&i),
                     None => self.reset_selected_index(), // move off the edge of the screen resets selection
@@ -153,24 +126,17 @@ impl Board {
     pub fn move_selected_up(&mut self) {
         match self.currently_selected() {
             Some(currently_selected) => {
-                let next_index = {
-                    let mut candidates_below: Vec<(usize, &Tile)> = self
-                        .tiles
-                        .iter()
-                        .enumerate()
-                        .filter(|(_, c)| {
-                            c.is_directly_above(&currently_selected)
-                                && c.vertically_overlaps_with(&currently_selected)
-                        })
-                        .collect();
-                    candidates_below.sort_by(|(_, a), (_, b)| {
-                        let a_overlap = a.get_vertical_overlap_with(&currently_selected);
-                        let b_overlap = b.get_vertical_overlap_with(&currently_selected);
-                        b_overlap.cmp(&a_overlap)
-                    });
+                let next_index = self
+                    .tiles
+                    .iter()
+                    .enumerate()
+                    .filter(|(_, c)| {
+                        c.is_directly_above(&currently_selected)
+                            && c.vertically_overlaps_with(&currently_selected)
+                    })
                     // get the index of the tile with the most overlap with currently selected
-                    candidates_below.iter().map(|(index, _)| *index).next()
-                };
+                    .max_by_key(|(_, c)| c.get_vertical_overlap_with(&currently_selected))
+                    .map(|(index, _)| index);
                 match next_index {
                     Some(i) => self.set_selected_index(&i),
                     None => self.reset_selected_index(), // move off the edge of the screen resets selection
