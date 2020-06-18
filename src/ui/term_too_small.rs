@@ -12,7 +12,7 @@ impl TermTooSmall {
 }
 
 impl<'a> Widget for TermTooSmall {
-    fn draw(&mut self, area: Rect, buf: &mut Buffer) {
+    fn render(self, area: Rect, buf: &mut Buffer) {
         let text = [
             "Terminal window is too small ¯\\_(ツ)_/¯",
             "Window too small ¯\\_(ツ)_/¯",

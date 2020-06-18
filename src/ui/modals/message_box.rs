@@ -134,7 +134,7 @@ impl<'a> MessageBox<'a> {
 }
 
 impl<'a> Widget for MessageBox<'a> {
-    fn draw(&mut self, area: Rect, buf: &mut Buffer) {
+    fn render(self, area: Rect, buf: &mut Buffer) {
         let (width, height) = if area.width > 150 {
             (150, 10)
         } else if area.width > 50 {

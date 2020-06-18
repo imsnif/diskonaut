@@ -1,7 +1,6 @@
 use ::std::path::PathBuf;
 use ::tui::backend::Backend;
 use ::tui::layout::{Constraint, Direction, Layout, Rect};
-use ::tui::widgets::Widget;
 use ::tui::Terminal;
 
 use crate::state::files::FileTree;
@@ -86,76 +85,115 @@ where
                 board.change_area(&chunks[1]);
                 match ui_mode {
                     UiMode::Loading => {
-                        TitleLine::new(base_path_info, current_path_info, file_tree.space_freed)
+                        f.render_widget(
+                            TitleLine::new(
+                                base_path_info,
+                                current_path_info,
+                                file_tree.space_freed,
+                            )
                             .progress_indicator(ui_effects.loading_progress_indicator)
                             .path_error(ui_effects.current_path_is_red)
                             .read_errors(file_tree.failed_to_read)
-                            .show_loading()
-                            .render(&mut f, chunks[0]);
-                        RectangleGrid::new(
-                            &board.tiles,
-                            board.unrenderable_tile_coordinates,
-                            board.selected_index,
-                        )
-                        .render(&mut f, chunks[1]);
-                        BottomLine::new()
-                            .currently_selected(board.currently_selected())
-                            .last_read_path(ui_effects.last_read_path.as_ref())
-                            .hide_delete()
-                            .render(&mut f, chunks[2]);
+                            .show_loading(),
+                            chunks[0],
+                        );
+                        f.render_widget(
+                            RectangleGrid::new(
+                                &board.tiles,
+                                board.unrenderable_tile_coordinates,
+                                board.selected_index,
+                            ),
+                            chunks[1],
+                        );
+                        f.render_widget(
+                            BottomLine::new()
+                                .currently_selected(board.currently_selected())
+                                .last_read_path(ui_effects.last_read_path.as_ref())
+                                .hide_delete(),
+                            chunks[2],
+                        );
                     }
                     UiMode::Normal => {
-                        TitleLine::new(base_path_info, current_path_info, file_tree.space_freed)
+                        f.render_widget(
+                            TitleLine::new(
+                                base_path_info,
+                                current_path_info,
+                                file_tree.space_freed,
+                            )
                             .path_error(ui_effects.current_path_is_red)
                             .flash_space(ui_effects.flash_space_freed)
-                            .read_errors(file_tree.failed_to_read)
-                            .render(&mut f, chunks[0]);
-                        RectangleGrid::new(
-                            &board.tiles,
-                            board.unrenderable_tile_coordinates,
-                            board.selected_index,
-                        )
-                        .render(&mut f, chunks[1]);
-                        BottomLine::new()
-                            .currently_selected(board.currently_selected())
-                            .render(&mut f, chunks[2]);
+                            .read_errors(file_tree.failed_to_read),
+                            chunks[0],
+                        );
+                        f.render_widget(
+                            RectangleGrid::new(
+                                &board.tiles,
+                                board.unrenderable_tile_coordinates,
+                                board.selected_index,
+                            ),
+                            chunks[1],
+                        );
+                        f.render_widget(
+                            BottomLine::new().currently_selected(board.currently_selected()),
+                            chunks[2],
+                        );
                     }
                     UiMode::ScreenTooSmall => {
-                        TermTooSmall::new().render(&mut f, full_screen);
+                        f.render_widget(TermTooSmall::new(), full_screen);
                     }
                     UiMode::DeleteFile(file_to_delete) => {
-                        TitleLine::new(base_path_info, current_path_info, file_tree.space_freed)
+                        f.render_widget(
+                            TitleLine::new(
+                                base_path_info,
+                                current_path_info,
+                                file_tree.space_freed,
+                            )
                             .path_error(ui_effects.current_path_is_red)
-                            .read_errors(file_tree.failed_to_read)
-                            .render(&mut f, chunks[0]);
-                        RectangleGrid::new(
-                            &board.tiles,
-                            board.unrenderable_tile_coordinates,
-                            board.selected_index,
-                        )
-                        .render(&mut f, chunks[1]);
-                        BottomLine::new()
-                            .currently_selected(board.currently_selected())
-                            .render(&mut f, chunks[2]);
-                        MessageBox::new(file_to_delete, ui_effects.deletion_in_progress)
-                            .render(&mut f, full_screen);
+                            .read_errors(file_tree.failed_to_read),
+                            chunks[0],
+                        );
+                        f.render_widget(
+                            RectangleGrid::new(
+                                &board.tiles,
+                                board.unrenderable_tile_coordinates,
+                                board.selected_index,
+                            ),
+                            chunks[1],
+                        );
+                        f.render_widget(
+                            BottomLine::new().currently_selected(board.currently_selected()),
+                            chunks[2],
+                        );
+                        f.render_widget(
+                            MessageBox::new(file_to_delete, ui_effects.deletion_in_progress),
+                            full_screen,
+                        );
                     }
                     UiMode::ErrorMessage(message) => {
-                        TitleLine::new(base_path_info, current_path_info, file_tree.space_freed)
+                        f.render_widget(
+                            TitleLine::new(
+                                base_path_info,
+                                current_path_info,
+                                file_tree.space_freed,
+                            )
                             .path_error(ui_effects.current_path_is_red)
                             .flash_space(ui_effects.flash_space_freed)
-                            .read_errors(file_tree.failed_to_read)
-                            .render(&mut f, chunks[0]);
-                        RectangleGrid::new(
-                            &board.tiles,
-                            board.unrenderable_tile_coordinates,
-                            board.selected_index,
-                        )
-                        .render(&mut f, chunks[1]);
-                        BottomLine::new()
-                            .currently_selected(board.currently_selected())
-                            .render(&mut f, chunks[2]);
-                        ErrorBox::new(message).render(&mut f, full_screen);
+                            .read_errors(file_tree.failed_to_read),
+                            chunks[0],
+                        );
+                        f.render_widget(
+                            RectangleGrid::new(
+                                &board.tiles,
+                                board.unrenderable_tile_coordinates,
+                                board.selected_index,
+                            ),
+                            chunks[1],
+                        );
+                        f.render_widget(
+                            BottomLine::new().currently_selected(board.currently_selected()),
+                            chunks[2],
+                        );
+                        f.render_widget(ErrorBox::new(message), full_screen);
                     }
                 };
             })

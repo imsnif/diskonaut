@@ -123,7 +123,7 @@ impl<'a> BottomLine<'a> {
 }
 
 impl<'a> Widget for BottomLine<'a> {
-    fn draw(&mut self, area: Rect, buf: &mut Buffer) {
+    fn render(self, area: Rect, buf: &mut Buffer) {
         let small_files_legend = "(x = Small files)";
         let small_files_len = small_files_legend.chars().count() as u16;
         let max_status_len = area.width - small_files_len;
