@@ -22,6 +22,22 @@ Available in [COPR](https://copr.fedorainfracloud.org/coprs/atim/diskonaut/):
 sudo dnf copr enable atim/diskonaut -y
 sudo dnf install diskonaut
 ```
+
+### Arch Linux
+
+Available in the [AUR](https://aur.archlinux.org/diskonaut):
+
+With `makepkg`:
+```
+git clone https://aur.archlinux.org/diskonaut.git
+cd diskonaut
+makepkg -si
+```
+With `yay`:
+```
+yay diskonaut
+```
+
 ## Supported platforms
 Right now `diskonaut` supports linux and macos. If you're on a different operating system and would like to help port it, that would be amazing!
 
