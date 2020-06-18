@@ -25,7 +25,7 @@ sudo dnf install diskonaut
 
 ### Arch Linux
 
-Available in the [AUR](https://aur.archlinux.org/diskonaut):
+Available in the [AUR](https://aur.archlinux.org/packages/diskonaut):
 
 With `makepkg`:
 ```
