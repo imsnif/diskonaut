@@ -61,7 +61,7 @@ impl<'a> RectangleGrid<'a> {
 }
 
 impl<'a> Widget for RectangleGrid<'a> {
-    fn draw(&mut self, area: Rect, buf: &mut Buffer) {
+    fn render(self, area: Rect, buf: &mut Buffer) {
         if self.rectangles.is_empty() {
             draw_empty_folder(buf, area);
         } else {

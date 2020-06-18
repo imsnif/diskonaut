@@ -61,7 +61,7 @@ impl<'a> TitleLine<'a> {
 }
 
 impl<'a> Widget for TitleLine<'a> {
-    fn draw(&mut self, rect: Rect, buf: &mut Buffer) {
+    fn render(self, rect: Rect, buf: &mut Buffer) {
         let base_path = &self
             .base_path_info
             .path

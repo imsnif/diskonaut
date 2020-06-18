@@ -9,7 +9,7 @@ license = "MIT"
 edition = "2018"
 
 [dependencies]
-tui = "0.8"
+tui = "0.9"
 termion = "1.5"
 failure = "0.1"
 walkdir = "2"
