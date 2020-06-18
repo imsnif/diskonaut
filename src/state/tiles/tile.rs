@@ -62,30 +62,10 @@ impl Tile {
     }
 
     pub fn get_vertical_overlap_with(&self, other: &Tile) -> u16 {
-        if self.x < other.x {
-            if self.x + self.width >= other.x + other.width {
-                other.width
-            } else {
-                self.x + self.width - other.x
-            }
-        } else if other.x + other.width >= self.x + self.width {
-            self.width
-        } else {
-            other.x + other.width - self.x
-        }
+        std::cmp::min(self.x + self.width, other.x + other.width) - std::cmp::max(self.x, other.x)
     }
 
     pub fn get_horizontal_overlap_with(&self, other: &Tile) -> u16 {
-        if self.y < other.y {
-            if self.y + self.height >= other.y + other.height {
-                other.height
-            } else {
-                self.y + self.height - other.y
-            }
-        } else if other.y + other.height >= self.y + self.height {
-            self.height
-        } else {
-            other.y + other.height - self.y
-        }
+        std::cmp::min(self.y + self.height, other.y + other.height) - std::cmp::max(self.y, other.y)
     }
 }
