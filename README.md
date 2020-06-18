@@ -15,9 +15,7 @@ If you're using linux, you can check out the "releases" of this repository to do
 ### With cargo
 `cargo install diskonaut`
 
-### Packaging status
-
-#### Fedora/CentOS
+### Fedora/CentOS
 
 Available in [COPR](https://copr.fedorainfracloud.org/coprs/atim/diskonaut/):
 ```
