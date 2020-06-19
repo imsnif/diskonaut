@@ -20,4 +20,3 @@ filesize = "0.2.0"
 
 [dev-dependencies]
 insta = "0.16.0"
-cargo-insta = "0.16.0"
