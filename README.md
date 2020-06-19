@@ -17,7 +17,10 @@ If you're using linux, you can check out the "releases" of this repository to do
 
 ### Fedora/CentOS
 
-Available in [COPR](https://copr.fedorainfracloud.org/coprs/atim/diskonaut/):
+```
+sudo dnf install diskonaut
+```
+For older Fedora releases and CentOS available in [COPR](https://copr.fedorainfracloud.org/coprs/atim/diskonaut/):
 ```
 sudo dnf copr enable atim/diskonaut -y
 sudo dnf install diskonaut
