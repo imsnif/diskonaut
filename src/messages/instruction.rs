@@ -1,8 +1,8 @@
 use ::std::fs::Metadata;
+use ::std::path::PathBuf;
 use ::std::sync::mpsc::Receiver;
 use ::termion::event::Event as TermionEvent;
 use ::tui::backend::Backend;
-use ::walkdir::DirEntry;
 
 use crate::input::{
     handle_keypress_delete_file_mode, handle_keypress_error_message, handle_keypress_loading_mode,
@@ -15,7 +15,7 @@ pub enum Instruction {
     ResetCurrentPathColor,
     FlashSpaceFreed,
     UnflashSpaceFreed,
-    AddEntryToBaseFolder((Metadata, DirEntry)),
+    AddEntryToBaseFolder((Metadata, PathBuf)),
     StartUi,
     ToggleScanningVisualIndicator,
     RenderAndUpdateBoard,
@@ -47,8 +47,7 @@ where
                 app.unflash_space_freed();
             }
             Instruction::AddEntryToBaseFolder((file_metadata, entry)) => {
-                let entry_path = entry.path();
-                app.add_entry_to_base_folder(&file_metadata, &entry_path);
+                app.add_entry_to_base_folder(&file_metadata, entry);
             }
             Instruction::StartUi => {
                 app.start_ui();
