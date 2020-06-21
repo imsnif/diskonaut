@@ -23,7 +23,7 @@ impl Iterator for KeyboardEvents {
 pub fn handle_keypress_loading_mode<B: Backend>(evt: Event, app: &mut App<B>) {
     match evt {
         Event::Key(Key::Ctrl('c')) | Event::Key(Key::Char('q')) => {
-            app.exit();
+            app.prompt_exit();
         }
         Event::Key(Key::Char('l')) | Event::Key(Key::Right) => {
             app.move_selected_right();
@@ -50,7 +50,7 @@ pub fn handle_keypress_loading_mode<B: Backend>(evt: Event, app: &mut App<B>) {
 pub fn handle_keypress_normal_mode<B: Backend>(evt: Event, app: &mut App<B>) {
     match evt {
         Event::Key(Key::Ctrl('c')) | Event::Key(Key::Char('q')) => {
-            app.exit();
+            app.prompt_exit();
         }
         Event::Key(Key::Ctrl('d')) => {
             app.prompt_file_deletion();
@@ -112,6 +112,29 @@ pub fn handle_keypress_error_message<B: Backend>(evt: Event, app: &mut App<B>) {
 pub fn handle_keypress_screen_too_small<B: Backend>(evt: Event, app: &mut App<B>) {
     match evt {
         Event::Key(Key::Ctrl('c')) | Event::Key(Key::Char('q')) => {
+            app.exit();
+        }
+        _ => (),
+    };
+}
+
+pub fn handle_keypress_exiting_mode<B: Backend>(
+    evt: Event,
+    app: &mut App<B>,
+) {
+    match evt {
+        Event::Key(Key::Ctrl('c'))
+        | Event::Key(Key::Char('q'))
+        | Event::Key(Key::Esc)
+        | Event::Key(Key::Backspace)
+        | Event::Key(Key::Char('n')) => {
+            if app.loaded {
+                app.normal_mode();
+            } else {
+                app.loading_mode();
+            }
+        }
+        Event::Key(Key::Char('y')) => {
             app.exit();
         }
         _ => (),

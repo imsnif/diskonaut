@@ -7,7 +7,7 @@ use crate::state::files::FileTree;
 use crate::state::tiles::Board;
 use crate::state::UiEffects;
 use crate::ui::grid::RectangleGrid;
-use crate::ui::modals::{ErrorBox, MessageBox};
+use crate::ui::modals::{ConfirmBox, ErrorBox, MessageBox};
 use crate::ui::title::TitleLine;
 use crate::ui::{BottomLine, TermTooSmall};
 use crate::UiMode;
@@ -194,6 +194,60 @@ where
                             chunks[2],
                         );
                         f.render_widget(ErrorBox::new(message), full_screen);
+                    }
+                    UiMode::Exiting {
+                        message,
+                        app_loaded,
+                    } => {
+                        if *app_loaded {
+                            // render normal ui mode
+                            f.render_widget(
+                                TitleLine::new(
+                                    base_path_info,
+                                    current_path_info,
+                                    file_tree.space_freed,
+                                )
+                                .path_error(ui_effects.current_path_is_red)
+                                .flash_space(ui_effects.flash_space_freed)
+                                .read_errors(file_tree.failed_to_read),
+                                chunks[0],
+                            );
+                            f.render_widget(
+                                BottomLine::new().currently_selected(board.currently_selected()),
+                                chunks[2],
+                            );
+                        } else {
+                            // render loading ui mode
+                            f.render_widget(
+                                TitleLine::new(
+                                    base_path_info,
+                                    current_path_info,
+                                    file_tree.space_freed,
+                                )
+                                .progress_indicator(ui_effects.loading_progress_indicator)
+                                .path_error(ui_effects.current_path_is_red)
+                                .read_errors(file_tree.failed_to_read)
+                                .show_loading(),
+                                chunks[0],
+                            );
+                            f.render_widget(
+                                BottomLine::new()
+                                    .currently_selected(board.currently_selected())
+                                    .last_read_path(ui_effects.last_read_path.as_ref())
+                                    .hide_delete(),
+                                chunks[2],
+                            );
+                        }
+                        // render common widgets
+                        f.render_widget(
+                            RectangleGrid::new(
+                                &board.tiles,
+                                board.unrenderable_tile_coordinates,
+                                board.selected_index,
+                            ),
+                            chunks[1],
+                        );
+                        f.render_widget(ConfirmBox::new(message), full_screen);
                     }
                 };
             })
