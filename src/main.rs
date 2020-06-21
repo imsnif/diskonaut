@@ -8,6 +8,8 @@ mod state;
 mod ui;
 
 use ::failure;
+use ::jwalk::Parallelism::RayonDefaultPool;
+use ::jwalk::WalkDir;
 use ::std::env;
 use ::std::io;
 use ::std::path::PathBuf;
@@ -23,7 +25,6 @@ use ::termion::event::{Event as TermionEvent, Key};
 use ::termion::raw::IntoRawMode;
 use ::tui::backend::Backend;
 use ::tui::backend::TermionBackend;
-use ::walkdir::WalkDir;
 
 use app::{App, UiMode};
 use input::{sigwinch, KeyboardEvents};
@@ -142,12 +143,21 @@ pub fn start<B>(
                 let instruction_sender = instruction_sender.clone();
                 let loaded = loaded.clone();
                 move || {
-                    'scanning: for entry in WalkDir::new(&path).into_iter() {
+                    'scanning: for entry in WalkDir::new(&path)
+                        .parallelism(RayonDefaultPool)
+                        .skip_hidden(false)
+                        .follow_links(false)
+                        .into_iter()
+                    {
                         let instruction_sent = match entry {
                             Ok(entry) => match entry.metadata() {
-                                Ok(file_metadata) => instruction_sender.send(
-                                    Instruction::AddEntryToBaseFolder((file_metadata, entry)),
-                                ),
+                                Ok(file_metadata) => {
+                                    let entry_path = entry.path();
+                                    instruction_sender.send(Instruction::AddEntryToBaseFolder((
+                                        file_metadata,
+                                        entry_path,
+                                    )))
+                                }
                                 Err(_) => {
                                     instruction_sender.send(Instruction::IncrementFailedToRead)
                                 }
