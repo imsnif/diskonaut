@@ -1,6 +1,6 @@
 use ::std::fs::{self, Metadata};
 use ::std::mem::ManuallyDrop;
-use ::std::path::{Path, PathBuf};
+use ::std::path::PathBuf;
 use ::std::sync::mpsc::{Receiver, SyncSender};
 use ::tui::backend::Backend;
 
