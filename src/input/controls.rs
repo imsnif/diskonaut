@@ -20,21 +20,33 @@ impl Iterator for KeyboardEvents {
     }
 }
 
+macro_rules! key {
+    (char $x:expr) => {
+        Event::Key(Key::Char($x))
+    };
+    (ctrl $x:expr) => {
+        Event::Key(Key::Ctrl($x))
+    };
+    ($x:ident) => {
+        Event::Key(Key::$x)
+    };
+}
+
 pub fn handle_keypress_loading_mode<B: Backend>(evt: Event, app: &mut App<B>) {
     match evt {
         Event::Key(Key::Ctrl('c')) | Event::Key(Key::Char('q')) => {
             app.exit();
         }
-        Event::Key(Key::Char('l')) | Event::Key(Key::Right) | Event::Key(Key::Ctrl('f')) => {
+        key!(char 'l') | key!(Right) | key!(ctrl 'f') => {
             app.move_selected_right();
         }
-        Event::Key(Key::Char('h')) | Event::Key(Key::Left) | Event::Key(Key::Ctrl('b')) => {
+        key!(char 'h') | key!(Left) | key!(ctrl 'b') => {
             app.move_selected_left();
         }
-        Event::Key(Key::Char('j')) | Event::Key(Key::Down) | Event::Key(Key::Ctrl('n')) => {
+        key!(char 'j') | key!(Down) | key!(ctrl 'n') => {
             app.move_selected_down();
         }
-        Event::Key(Key::Char('k')) | Event::Key(Key::Up) | Event::Key(Key::Ctrl('p')) => {
+        key!(char 'k') | key!(Up) | key!(ctrl 'p') => {
             app.move_selected_up();
         }
         Event::Key(Key::Char('\n')) => {
@@ -55,16 +67,16 @@ pub fn handle_keypress_normal_mode<B: Backend>(evt: Event, app: &mut App<B>) {
         Event::Key(Key::Ctrl('d')) => {
             app.prompt_file_deletion();
         }
-        Event::Key(Key::Char('l')) | Event::Key(Key::Right) | Event::Key(Key::Ctrl('f')) => {
+        key!(char 'l') | key!(Right) | key!(ctrl 'f') => {
             app.move_selected_right();
         }
-        Event::Key(Key::Char('h')) | Event::Key(Key::Left) | Event::Key(Key::Ctrl('b')) => {
+        key!(char 'h') | key!(Left) | key!(ctrl 'b') => {
             app.move_selected_left();
         }
-        Event::Key(Key::Char('j')) | Event::Key(Key::Down) | Event::Key(Key::Ctrl('n')) => {
+        key!(char 'j') | key!(Down) | key!(ctrl 'n') => {
             app.move_selected_down();
         }
-        Event::Key(Key::Char('k')) | Event::Key(Key::Up) | Event::Key(Key::Ctrl('p')) => {
+        key!(char 'k') | key!(Up) | key!(ctrl 'p') => {
             app.move_selected_up();
         }
         Event::Key(Key::Char('\n')) => {
