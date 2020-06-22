@@ -25,16 +25,16 @@ pub fn handle_keypress_loading_mode<B: Backend>(evt: Event, app: &mut App<B>) {
         Event::Key(Key::Ctrl('c')) | Event::Key(Key::Char('q')) => {
             app.exit();
         }
-        Event::Key(Key::Char('l')) | Event::Key(Key::Right) => {
+        Event::Key(Key::Char('l')) | Event::Key(Key::Right) | Event::Key(Key::Ctrl('f')) => {
             app.move_selected_right();
         }
-        Event::Key(Key::Char('h')) | Event::Key(Key::Left) => {
+        Event::Key(Key::Char('h')) | Event::Key(Key::Left) | Event::Key(Key::Ctrl('b')) => {
             app.move_selected_left();
         }
-        Event::Key(Key::Char('j')) | Event::Key(Key::Down) => {
+        Event::Key(Key::Char('j')) | Event::Key(Key::Down) | Event::Key(Key::Ctrl('n')) => {
             app.move_selected_down();
         }
-        Event::Key(Key::Char('k')) | Event::Key(Key::Up) => {
+        Event::Key(Key::Char('k')) | Event::Key(Key::Up) | Event::Key(Key::Ctrl('p')) => {
             app.move_selected_up();
         }
         Event::Key(Key::Char('\n')) => {
@@ -55,16 +55,16 @@ pub fn handle_keypress_normal_mode<B: Backend>(evt: Event, app: &mut App<B>) {
         Event::Key(Key::Ctrl('d')) => {
             app.prompt_file_deletion();
         }
-        Event::Key(Key::Char('l')) | Event::Key(Key::Right) => {
+        Event::Key(Key::Char('l')) | Event::Key(Key::Right) | Event::Key(Key::Ctrl('f')) => {
             app.move_selected_right();
         }
-        Event::Key(Key::Char('h')) | Event::Key(Key::Left) => {
+        Event::Key(Key::Char('h')) | Event::Key(Key::Left) | Event::Key(Key::Ctrl('b')) => {
             app.move_selected_left();
         }
-        Event::Key(Key::Char('j')) | Event::Key(Key::Down) => {
+        Event::Key(Key::Char('j')) | Event::Key(Key::Down) | Event::Key(Key::Ctrl('n')) => {
             app.move_selected_down();
         }
-        Event::Key(Key::Char('k')) | Event::Key(Key::Up) => {
+        Event::Key(Key::Char('k')) | Event::Key(Key::Up) | Event::Key(Key::Ctrl('p')) => {
             app.move_selected_up();
         }
         Event::Key(Key::Char('\n')) => {
