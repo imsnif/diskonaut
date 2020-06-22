@@ -61,13 +61,13 @@ fn render_controls_legend(buf: &mut Buffer, hide_delete: bool, max_len: u16, y: 
     let (long_controls_line, short_controls_line) = if hide_delete {
         (
             String::from(
-                "<hjkl> or < ← ↓ ↑ → > - move around, <ENTER> - enter folder, <ESC> - parent folder",
+                "< ← ↓ ↑ → > - move around, <ENTER> - enter folder, <ESC> - parent folder",
             ),
             String::from("←↓↑→/<ENTER>/<ESC>: navigate"),
         )
     } else {
         (
-            String::from("<hjkl> or < ← ↓ ↑ → > - move around, <ENTER> - enter folder, <ESC> - parent folder, <Ctrl-D> - delete"),
+            String::from("< ← ↓ ↑ → > - move around, <ENTER> - enter folder, <ESC> - parent folder, <Ctrl-D> - delete"),
             String::from("←↓↑→/<ENTER>/<ESC>: navigate, <Ctrl-D>: del")
         )
     };
