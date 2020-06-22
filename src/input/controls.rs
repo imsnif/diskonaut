@@ -34,7 +34,7 @@ macro_rules! key {
 
 pub fn handle_keypress_loading_mode<B: Backend>(evt: Event, app: &mut App<B>) {
     match evt {
-        Event::Key(Key::Ctrl('c')) | Event::Key(Key::Char('q')) => {
+        key!(ctrl 'c') | key!(char 'q') => {
             app.exit();
         }
         key!(char 'l') | key!(Right) | key!(ctrl 'f') => {
@@ -49,10 +49,10 @@ pub fn handle_keypress_loading_mode<B: Backend>(evt: Event, app: &mut App<B>) {
         key!(char 'k') | key!(Up) | key!(ctrl 'p') => {
             app.move_selected_up();
         }
-        Event::Key(Key::Char('\n')) => {
+        key!(char '\n') => {
             app.enter_selected();
         }
-        Event::Key(Key::Esc) | Event::Key(Key::Backspace) => {
+        key!(Esc) | key!(Backspace) => {
             app.go_up();
         }
         _ => (),
@@ -61,10 +61,10 @@ pub fn handle_keypress_loading_mode<B: Backend>(evt: Event, app: &mut App<B>) {
 
 pub fn handle_keypress_normal_mode<B: Backend>(evt: Event, app: &mut App<B>) {
     match evt {
-        Event::Key(Key::Ctrl('c')) | Event::Key(Key::Char('q')) => {
+        key!(ctrl 'c') | key!(char 'q') => {
             app.exit();
         }
-        Event::Key(Key::Ctrl('d')) => {
+        key!(ctrl 'd') => {
             app.prompt_file_deletion();
         }
         key!(char 'l') | key!(Right) | key!(ctrl 'f') => {
@@ -79,10 +79,10 @@ pub fn handle_keypress_normal_mode<B: Backend>(evt: Event, app: &mut App<B>) {
         key!(char 'k') | key!(Up) | key!(ctrl 'p') => {
             app.move_selected_up();
         }
-        Event::Key(Key::Char('\n')) => {
+        key!(char '\n') => {
             app.enter_selected();
         }
-        Event::Key(Key::Esc) | Event::Key(Key::Backspace) => {
+        key!(Esc) | key!(Backspace) => {
             app.go_up();
         }
         _ => (),
@@ -95,14 +95,10 @@ pub fn handle_keypress_delete_file_mode<B: Backend>(
     file_to_delete: FileToDelete,
 ) {
     match evt {
-        Event::Key(Key::Ctrl('c'))
-        | Event::Key(Key::Char('q'))
-        | Event::Key(Key::Esc)
-        | Event::Key(Key::Backspace)
-        | Event::Key(Key::Char('n')) => {
+        key!(ctrl 'c') | key!(char 'q') | key!(Esc) | key!(Backspace) | key!(char 'n') => {
             app.normal_mode();
         }
-        Event::Key(Key::Char('y')) => {
+        key!(char 'y') => {
             app.delete_file(&file_to_delete);
         }
         _ => (),
@@ -111,10 +107,7 @@ pub fn handle_keypress_delete_file_mode<B: Backend>(
 
 pub fn handle_keypress_error_message<B: Backend>(evt: Event, app: &mut App<B>) {
     match evt {
-        Event::Key(Key::Ctrl('c'))
-        | Event::Key(Key::Char('q'))
-        | Event::Key(Key::Esc)
-        | Event::Key(Key::Backspace) => {
+        key!(ctrl 'c') | key!(char 'q') | key!(Esc) | key!(Backspace) => {
             app.normal_mode();
         }
         _ => (),
@@ -123,7 +116,7 @@ pub fn handle_keypress_error_message<B: Backend>(evt: Event, app: &mut App<B>) {
 
 pub fn handle_keypress_screen_too_small<B: Backend>(evt: Event, app: &mut App<B>) {
     match evt {
-        Event::Key(Key::Ctrl('c')) | Event::Key(Key::Char('q')) => {
+        key!(ctrl 'c') | key!(char 'q') => {
             app.exit();
         }
         _ => (),
