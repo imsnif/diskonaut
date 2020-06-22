@@ -12,7 +12,7 @@ Once completed, you can navigate through subfolders, getting a visual treemap re
 ### Download a prebuilt binary
 If you're using linux, you can check out the "releases" of this repository to download the latest prebuilt binary.
 
-### With cargo
+### With cargo (linux/macOS)
 `cargo install diskonaut`
 
 ### Fedora/CentOS
