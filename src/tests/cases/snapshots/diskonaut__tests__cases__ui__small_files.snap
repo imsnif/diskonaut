@@ -51,5 +51,5 @@ expression: "&terminal_draw_events_mirror[0]"
 │                                                                                                                                                           │xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx│
 └───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┴────────────────────────────────┘
                                                                                                                                                                             (x = Small files) 
- <hjkl> or <arrow keys> - move around, <ENTER> - enter folder, <ESC> - parent folder, <Ctrl-D> - delete                                                                                       
+ <hjkl> or <arrow keys> - move around, <ENTER> - enter folder, <ESC> - parent folder, <Ctrl-D> - delete, <q> - to quit the app                                                                
 
