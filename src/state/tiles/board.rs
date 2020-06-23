@@ -57,11 +57,12 @@ impl Board {
             None => None,
         }
     }
-    pub fn move_to_largest_item(&mut self) {
+    pub fn move_to_largest_folder(&mut self) {
         let next_index = self
             .tiles
             .iter()
             .enumerate()
+            .filter(|(_, tile)| tile.file_type == files_in_folder::FileType::Folder)
             .max_by_key(|(_, tile)| tile.size)
             .map(|(index, _)| index);
 

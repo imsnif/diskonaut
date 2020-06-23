@@ -131,7 +131,7 @@ where
         if self.board.has_selected_index() {
             self.enter_selected();
         } else {
-            self.board.move_to_largest_item();
+            self.board.move_to_largest_folder();
         }
         self.render();
     }
