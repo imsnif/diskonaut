@@ -8,7 +8,7 @@ mod state;
 mod ui;
 
 use ::failure;
-use ::jwalk::Parallelism::RayonDefaultPool;
+use ::jwalk::Parallelism::{RayonDefaultPool, Serial};
 use ::jwalk::WalkDir;
 use ::std::env;
 use ::std::io;
@@ -38,6 +38,10 @@ const SHOULD_SHOW_LOADING_ANIMATION: bool = false;
 const SHOULD_HANDLE_WIN_CHANGE: bool = true;
 #[cfg(test)]
 const SHOULD_HANDLE_WIN_CHANGE: bool = false;
+#[cfg(not(test))]
+const SHOULD_SCAN_HD_FILES_IN_MULTIPLE_THREADS: bool = true;
+#[cfg(test)]
+const SHOULD_SCAN_HD_FILES_IN_MULTIPLE_THREADS: bool = false;
 
 #[derive(StructOpt, Debug)]
 #[structopt(name = "diskonaut")]
@@ -144,7 +148,11 @@ pub fn start<B>(
                 let loaded = loaded.clone();
                 move || {
                     'scanning: for entry in WalkDir::new(&path)
-                        .parallelism(RayonDefaultPool)
+                        .parallelism(if SHOULD_SCAN_HD_FILES_IN_MULTIPLE_THREADS {
+                            RayonDefaultPool
+                        } else {
+                            Serial
+                        })
                         .skip_hidden(false)
                         .follow_links(false)
                         .into_iter()
