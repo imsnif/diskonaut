@@ -196,7 +196,6 @@ where
                         f.render_widget(ErrorBox::new(message), full_screen);
                     }
                     UiMode::Exiting {
-                        message,
                         app_loaded,
                     } => {
                         if *app_loaded {
@@ -247,7 +246,7 @@ where
                             ),
                             chunks[1],
                         );
-                        f.render_widget(ConfirmBox::new(message), full_screen);
+                        f.render_widget(ConfirmBox::new(), full_screen);
                     }
                 };
             })

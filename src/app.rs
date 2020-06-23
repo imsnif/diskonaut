@@ -18,7 +18,7 @@ pub enum UiMode {
     ScreenTooSmall,
     DeleteFile(FileToDelete),
     ErrorMessage(String),
-    Exiting { message: String, app_loaded: bool },
+    Exiting { app_loaded: bool },
 }
 
 pub struct App<B>
@@ -122,7 +122,6 @@ where
     }
     pub fn prompt_exit(&mut self) {
         self.ui_mode = UiMode::Exiting {
-            message: String::from("Are you sure you want to quit?"),
             app_loaded: self.loaded,
         };
         self.render();
@@ -200,10 +199,6 @@ where
     pub fn normal_mode(&mut self) {
         self.ui_mode = UiMode::Normal;
         self.render_and_update_board();
-    }
-    pub fn loading_mode(&mut self) {
-        self.ui_mode = UiMode::Loading;
-        self.render();
     }
     pub fn delete_file(&mut self, file_to_delete: &FileToDelete) {
         self.ui_effects.deletion_in_progress = true;

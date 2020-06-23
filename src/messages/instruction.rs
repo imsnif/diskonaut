@@ -83,7 +83,6 @@ where
                         handle_keypress_error_message(evt, app);
                     }
                     UiMode::Exiting {
-                        message: _,
                         app_loaded: _,
                     } => {
                         handle_keypress_exiting_mode(evt, app);
