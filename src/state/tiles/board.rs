@@ -57,7 +57,7 @@ impl Board {
             None => None,
         }
     }
-    pub fn move_to_largest_folder(&mut self) {
+    pub fn move_to_largest_item(&mut self) {
         let next_index = self
             .tiles
             .iter()
