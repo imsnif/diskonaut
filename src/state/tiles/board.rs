@@ -57,6 +57,18 @@ impl Board {
             None => None,
         }
     }
+    pub fn move_to_largest_folder(&mut self) {
+        let next_index = self
+            .tiles
+            .iter()
+            .enumerate()
+            .max_by_key(|(_, tile)| tile.size)
+            .map(|(index, _)| index);
+
+        if let Some(index) = next_index {
+            self.set_selected_index(&index);
+        }
+    }
     pub fn move_selected_right(&mut self) {
         match self.currently_selected() {
             Some(currently_selected) => {

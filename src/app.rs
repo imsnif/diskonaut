@@ -127,6 +127,14 @@ where
         // would exit cleanly
         let _ = self.event_sender.send(Event::AppExit);
     }
+    pub fn handle_enter(&mut self) {
+        if self.board.has_selected_index() {
+            self.enter_selected();
+        } else {
+            self.board.move_to_largest_folder();
+        }
+        self.render();
+    }
     pub fn move_selected_right(&mut self) {
         self.board.move_selected_right();
         self.render();
