@@ -195,9 +195,7 @@ where
                         );
                         f.render_widget(ErrorBox::new(message), full_screen);
                     }
-                    UiMode::Exiting {
-                        app_loaded,
-                    } => {
+                    UiMode::Exiting { app_loaded } => {
                         if *app_loaded {
                             // render normal ui mode
                             f.render_widget(

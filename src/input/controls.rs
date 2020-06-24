@@ -117,7 +117,7 @@ pub fn handle_keypress_error_message<B: Backend>(evt: Event, app: &mut App<B>) {
 pub fn handle_keypress_screen_too_small<B: Backend>(evt: Event, app: &mut App<B>) {
     match evt {
         key!(ctrl 'c') | key!(char 'q') => {
-            app.prompt_exit();
+            app.exit();
         }
         _ => (),
     };
