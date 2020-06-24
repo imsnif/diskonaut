@@ -1143,6 +1143,11 @@ fn enter_largest_folder_with_no_selected_tile() {
     );
 
     assert_eq!(terminal_draw_events_mirror.len(), 2);
+    assert_snapshot!(&terminal_draw_events_mirror[0]);
+    assert_snapshot!(&terminal_draw_events_mirror[1]);
+    assert_snapshot!(&terminal_draw_events_mirror[2]);
+    assert_snapshot!(&terminal_draw_events_mirror[3]);
+    assert_snapshot!(&terminal_draw_events_mirror[4]);
 }
 
 #[test]
