@@ -1,6 +1,7 @@
 use ::tui::layout::Rect;
 
 use crate::state::files::Folder;
+use crate::state::tiles::files_in_folder::FileType;
 use crate::state::tiles::{files_in_folder, FileMetadata, Tile, TreeMap};
 
 pub struct Board {
@@ -62,9 +63,9 @@ impl Board {
             .tiles
             .iter()
             .enumerate()
-            .filter(|(_, tile)| tile.file_type == files_in_folder::FileType::Folder)
-            .max_by_key(|(_, tile)| tile.size)
-            .map(|(index, _)| index);
+            .filter(|(_, tile)| tile.file_type == FileType::Folder)
+            .map(|(index, _)| index)
+            .next();
 
         if let Some(index) = next_index {
             self.set_selected_index(&index);
