@@ -41,6 +41,12 @@ With `yay`:
 yay diskonaut
 ```
 
+### Gentoo
+
+Available through the following overlay as `sys-fs/diskonaut`:
+
+https://github.com/telans/EBUILDS
+
 ## Supported platforms
 Right now `diskonaut` supports linux and macos. If you're on a different operating system and would like to help port it, that would be amazing!
 
