@@ -50,7 +50,7 @@ pub fn handle_keypress_loading_mode<B: Backend>(evt: Event, app: &mut App<B>) {
             app.move_selected_up();
         }
         key!(char '\n') => {
-            app.enter_selected();
+            app.handle_enter();
         }
         key!(Esc) | key!(Backspace) => {
             app.go_up();
@@ -80,7 +80,7 @@ pub fn handle_keypress_normal_mode<B: Backend>(evt: Event, app: &mut App<B>) {
             app.move_selected_up();
         }
         key!(char '\n') => {
-            app.enter_selected();
+            app.handle_enter();
         }
         key!(Esc) | key!(Backspace) => {
             app.go_up();

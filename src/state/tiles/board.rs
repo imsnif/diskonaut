@@ -1,6 +1,7 @@
 use ::tui::layout::Rect;
 
 use crate::state::files::Folder;
+use crate::state::tiles::files_in_folder::FileType;
 use crate::state::tiles::{files_in_folder, FileMetadata, Tile, TreeMap};
 
 pub struct Board {
@@ -55,6 +56,19 @@ impl Board {
         match &self.selected_index {
             Some(selected_index) => self.tiles.get(*selected_index),
             None => None,
+        }
+    }
+    pub fn move_to_largest_folder(&mut self) {
+        let next_index = self
+            .tiles
+            .iter()
+            .enumerate()
+            .filter(|(_, tile)| tile.file_type == FileType::Folder)
+            .map(|(index, _)| index)
+            .next();
+
+        if let Some(index) = next_index {
+            self.set_selected_index(&index);
         }
     }
     pub fn move_selected_right(&mut self) {
