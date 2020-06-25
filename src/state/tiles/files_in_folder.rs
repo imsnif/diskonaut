@@ -2,7 +2,7 @@ use ::std::ffi::OsString;
 
 use crate::state::files::{FileOrFolder, Folder};
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub enum FileType {
     File,
     Folder,
