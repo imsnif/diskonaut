@@ -1,5 +1,5 @@
-use std::iter::FromIterator;
-use unicode_width::UnicodeWidthChar;
+use ::std::iter::FromIterator;
+use ::unicode_width::UnicodeWidthChar;
 
 fn truncate_iter_to_unicode_width<Input, Collect>(iter: Input, width: usize) -> Collect
 where
@@ -7,12 +7,11 @@ where
     Collect: FromIterator<char>,
 {
     let mut chunk_width = 0;
-    iter
-        .take_while(|ch| {
-            chunk_width += ch.width().unwrap_or(0);
-            chunk_width <= width
-        })
-        .collect()
+    iter.take_while(|ch| {
+        chunk_width += ch.width().unwrap_or(0);
+        chunk_width <= width
+    })
+    .collect()
 }
 
 pub fn truncate_middle(row: &str, max_length: u16) -> String {
