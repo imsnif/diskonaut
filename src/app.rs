@@ -157,6 +157,9 @@ where
         self.render();
     }
     pub fn enter_selected(&mut self) {
+        if let Some(index) = &self.board.get_selected_index() {
+            &self.board.push_previous_index(&index);
+        }
         if let Some(tile) = &self.board.currently_selected() {
             let selected_name = &tile.name;
             if let Some(file_or_folder) = self.file_tree.item_in_current_folder(&selected_name) {
@@ -172,15 +175,13 @@ where
         }
     }
     pub fn go_up(&mut self) {
-        if self.board.has_selected_index() {
-            self.board.reset_selected_index();
-            self.render_and_update_board();
-        } else {
-            let succeeded = self.file_tree.leave_folder();
-            self.render_and_update_board();
-            if !succeeded {
-                let _ = self.event_sender.try_send(Event::PathError);
-            }
+        if let Some(index) = self.board.pop_previous_index() {
+            self.board.set_selected_index(&index);
+        }
+        let succeeded = self.file_tree.leave_folder();
+        self.render_and_update_board();
+        if !succeeded {
+            let _ = self.event_sender.try_send(Event::PathError);
         }
     }
     pub fn get_file_to_delete(&self) -> Option<FileToDelete> {

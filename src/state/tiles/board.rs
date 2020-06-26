@@ -8,6 +8,7 @@ pub struct Board {
     pub tiles: Vec<Tile>,
     pub unrenderable_tile_coordinates: Option<(u16, u16)>,
     pub selected_index: Option<usize>, // None means nothing is selected
+    pub previous_indices: Vec<usize>,  // Stack of previously selected indices
     area: Rect,
     files: Vec<FileMetadata>,
 }
@@ -19,6 +20,7 @@ impl Board {
             unrenderable_tile_coordinates: None,
             files: files_in_folder(folder),
             selected_index: None,
+            previous_indices: vec![],
             area: Rect {
                 x: 0,
                 y: 0,
@@ -43,6 +45,9 @@ impl Board {
         self.tiles = tree_map.tiles;
         self.unrenderable_tile_coordinates = tree_map.unrenderable_tile_coordinates;
     }
+    pub fn get_selected_index(&self) -> Option<usize> {
+        self.selected_index
+    }
     pub fn set_selected_index(&mut self, next_index: &usize) {
         self.selected_index = Some(*next_index);
     }
@@ -57,6 +62,12 @@ impl Board {
             Some(selected_index) => self.tiles.get(*selected_index),
             None => None,
         }
+    }
+    pub fn push_previous_index(&mut self, index: &usize) {
+        self.previous_indices.push(*index);
+    }
+    pub fn pop_previous_index(&mut self) -> Option<usize> {
+        self.previous_indices.pop()
     }
     pub fn move_to_largest_folder(&mut self) {
         let next_index = self
