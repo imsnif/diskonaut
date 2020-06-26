@@ -1348,7 +1348,7 @@ fn delete_file() {
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
     events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('d'))));
+    events.push(Some(Event::Key(Key::Delete)));
     events.push(None);
     events.push(Some(Event::Key(Key::Char('y'))));
     events.push(None);
@@ -1431,7 +1431,7 @@ fn cant_delete_file_with_term_too_small() {
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
     events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('d'))));
+    events.push(Some(Event::Key(Key::Delete)));
     events.push(None);
     events.push(Some(Event::Key(Key::Char('y'))));
     events.push(None);
@@ -1508,7 +1508,7 @@ fn delete_folder() {
     events.push(None);
     events.push(Some(Event::Key(Key::Char('l'))));
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('d'))));
+    events.push(Some(Event::Key(Key::Delete)));
     events.push(None);
     events.push(Some(Event::Key(Key::Char('y'))));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
@@ -1599,7 +1599,7 @@ fn delete_folder_small_window() {
     events.push(None);
     events.push(Some(Event::Key(Key::Char('j'))));
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('d'))));
+    events.push(Some(Event::Key(Key::Delete)));
     events.push(None);
     events.push(Some(Event::Key(Key::Char('y'))));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
@@ -1689,7 +1689,7 @@ fn delete_folder_with_multiple_children() {
     events.push(None);
     events.push(Some(Event::Key(Key::Char('l'))));
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('d'))));
+    events.push(Some(Event::Key(Key::Delete)));
     events.push(None);
     events.push(Some(Event::Key(Key::Char('y'))));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
@@ -1806,7 +1806,7 @@ fn pressing_delete_with_no_selected_tile() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Ctrl('d'))));
+    events.push(Some(Event::Key(Key::Delete)));
     events.push(None);
     events.push(Some(Event::Key(Key::Ctrl('c'))));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
@@ -1876,7 +1876,7 @@ fn delete_file_press_n() {
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
     events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('d'))));
+    events.push(Some(Event::Key(Key::Delete)));
     events.push(None);
     events.push(Some(Event::Key(Key::Char('n'))));
     events.push(None);
@@ -2020,7 +2020,7 @@ fn permission_denied_when_deleting() {
     events.push(None);
     events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('d'))));
+    events.push(Some(Event::Key(Key::Delete)));
     events.push(None);
     events.push(Some(Event::Key(Key::Char('y'))));
     events.push(None);

@@ -65,8 +65,8 @@ fn render_controls_legend(buf: &mut Buffer, hide_delete: bool, max_len: u16, y: 
         )
     } else {
         (
-            String::from("<arrows> - move around, <ENTER> - enter folder, <ESC> - parent folder, <Ctrl-D> - delete"),
-            String::from("←↓↑→/<ENTER>/<ESC>: navigate, <Ctrl-D>: del")
+            String::from("<arrows> - move around, <ENTER> - enter folder, <ESC> - parent folder, <DELETE> - delete"),
+            String::from("←↓↑→/<ENTER>/<ESC>: navigate, <DELETE>: del")
         )
     };
     let too_small_line = "(...)";
