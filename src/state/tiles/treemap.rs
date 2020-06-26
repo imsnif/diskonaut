@@ -99,6 +99,10 @@ impl TreeMap {
         }
     }
     fn add_unrenderable_tile(&mut self, tile: &Tile) {
+        if tile.width == 0 || tile.height == 0 {
+            // this is a rounding error, do not add it
+            return;
+        }
         match self.unrenderable_tile_coordinates {
             Some((x, y)) => {
                 let x = if tile.x < x { tile.x } else { x };
