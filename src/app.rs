@@ -168,8 +168,8 @@ where
         }
     }
     pub fn go_up(&mut self) {
-        if let Some(tile) = self.board.pop_previous_index() {
-            self.board.set_selected_index(&tile);
+        if let Some(index) = self.board.pop_previous_index() {
+            self.board.set_selected_index(&index);
         }
         let succeeded = self.file_tree.leave_folder();
         self.render_and_update_board();
