@@ -1154,6 +1154,8 @@ fn enter_largest_folder_with_no_selected_tile() {
     events.push(None);
     events.push(None);
     events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(None);
+    events.push(Some(Event::Key(Key::Char('y'))));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("enter_largest_folder_with_no_selected_tile")
@@ -1183,7 +1185,7 @@ fn enter_largest_folder_with_no_selected_tile() {
         .expect("could not acquire lock on terminal events");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
     ];
 
     assert_eq!(
@@ -1193,9 +1195,10 @@ fn enter_largest_folder_with_no_selected_tile() {
         &expected_terminal_events[..]
     );
 
-    assert_eq!(terminal_draw_events_mirror.len(), 2);
+    assert_eq!(terminal_draw_events_mirror.len(), 3);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
     assert_snapshot!(&terminal_draw_events_mirror[1]);
+    assert_snapshot!(&terminal_draw_events_mirror[2]);
 }
 
 #[test]
