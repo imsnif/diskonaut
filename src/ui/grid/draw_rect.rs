@@ -1,6 +1,7 @@
 use ::tui::buffer::Buffer;
 use ::tui::layout::Rect;
 use ::tui::style::{Color, Modifier, Style};
+use ::unicode_width::UnicodeWidthStr;
 
 use crate::state::tiles::{FileType, Tile};
 use crate::ui::format::{truncate_middle, DisplaySize, DisplaySizeRounded};
@@ -167,11 +168,11 @@ pub fn draw_filled_rect(buf: &mut Buffer, fill_style: Style, rect: &Rect) {
 
 pub fn draw_tile_text_on_grid(buf: &mut Buffer, tile: &Tile, selected: bool) {
     let first_line = tile_first_line(&tile);
-    let first_line_length = first_line.chars().count() as u16;
+    let first_line_length = first_line.width() as u16;
     let first_line_start_position =
         ((tile.width - first_line_length) as f64 / 2.0).ceil() as u16 + tile.x;
     let second_line = tile_second_line(&tile);
-    let second_line_length = second_line.chars().count();
+    let second_line_length = second_line.width();
     let second_line_start_position =
         ((tile.width - second_line_length as u16) as f64 / 2.0).ceil() as u16 + tile.x;
     let (background_style, first_line_style, second_line_style) = tile_style(&tile, selected);

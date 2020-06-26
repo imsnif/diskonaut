@@ -17,6 +17,7 @@ jwalk = "0.5"
 signal-hook = "0.1.10"
 structopt = "0.3"
 filesize = "0.2.0"
+unicode-width = "0.1.7"
 
 [dev-dependencies]
 insta = "0.16.0"
