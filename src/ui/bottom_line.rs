@@ -60,8 +60,10 @@ fn render_last_read_path(buf: &mut Buffer, last_read_path: &PathBuf, max_len: u1
 fn render_controls_legend(buf: &mut Buffer, hide_delete: bool, max_len: u16, y: u16) {
     let (long_controls_line, short_controls_line) = if hide_delete {
         (
-            String::from("<arrows> - move around, <ENTER> - enter folder, <ESC> - parent folder, <q> - quit"),
-            String::from("←↓↑→/<ENTER>/<ESC>: navigate")
+            String::from(
+                "<arrows> - move around, <ENTER> - enter folder, <ESC> - parent folder, <q> - quit",
+            ),
+            String::from("←↓↑→/<ENTER>/<ESC>: navigate"),
         )
     } else {
         (
