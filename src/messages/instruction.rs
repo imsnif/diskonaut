@@ -5,8 +5,8 @@ use ::termion::event::Event as TermionEvent;
 use ::tui::backend::Backend;
 
 use crate::input::{
-    handle_keypress_delete_file_mode, handle_keypress_error_message, handle_keypress_loading_mode,
-    handle_keypress_normal_mode, handle_keypress_screen_too_small,
+    handle_keypress_delete_file_mode, handle_keypress_error_message, handle_keypress_exiting_mode,
+    handle_keypress_loading_mode, handle_keypress_normal_mode, handle_keypress_screen_too_small,
 };
 use crate::{App, UiMode};
 
@@ -81,6 +81,9 @@ where
                     }
                     UiMode::ErrorMessage(_) => {
                         handle_keypress_error_message(evt, app);
+                    }
+                    UiMode::Exiting { app_loaded: _ } => {
+                        handle_keypress_exiting_mode(evt, app);
                     }
                 }
                 if !app.is_running {

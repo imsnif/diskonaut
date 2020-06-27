@@ -116,8 +116,9 @@ pub fn start<B>(
                 let running = running.clone();
                 move || {
                     for evt in keyboard_events {
-                        if let TermionEvent::Key(Key::Ctrl('c'))
-                        | TermionEvent::Key(Key::Char('q')) = evt
+                        if let TermionEvent::Key(Key::Char('y'))
+                        | TermionEvent::Key(Key::Char('q'))
+                        | TermionEvent::Key(Key::Ctrl('c')) = evt
                         {
                             // not ideal, but works in a pinch
                             let _ = instruction_sender.send(Instruction::Keypress(evt));

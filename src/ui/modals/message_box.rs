@@ -137,7 +137,7 @@ impl<'a> Widget for MessageBox<'a> {
     fn render(self, area: Rect, buf: &mut Buffer) {
         let (width, height) = if area.width > 150 {
             (150, 10)
-        } else if area.width > 50 {
+        } else if area.width >= 50 {
             (area.width / 2, 10)
         } else {
             unreachable!("app should not be rendered if window is so small")

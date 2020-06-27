@@ -4,9 +4,13 @@ use ::termion::event::{Event, Key};
 
 use crate::tests::fakes::{KeyboardEvents, TerminalEvent, TestBackend};
 
-pub fn sleep_and_quit_events(sleep_num: usize) -> Box<KeyboardEvents> {
+pub fn sleep_and_quit_events(sleep_num: usize, quit_after_confirm: bool) -> Box<KeyboardEvents> {
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(sleep_num).collect();
     events.push(Some(Event::Key(Key::Ctrl('c'))));
+    if quit_after_confirm {
+        events.push(None);
+        events.push(Some(Event::Key(Key::Char('y'))));
+    }
     Box::new(KeyboardEvents::new(events))
 }
 
