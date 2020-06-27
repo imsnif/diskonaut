@@ -8,6 +8,8 @@ use crate::ui::format::DisplaySize;
 use crate::ui::title::{CellSizeOpt, TitleTelescope};
 use crate::ui::FolderInfo;
 
+use nix::unistd::geteuid;
+
 pub struct TitleLine<'a> {
     base_path_info: FolderInfo<'a>,
     current_path_info: FolderInfo<'a>,
@@ -124,6 +126,15 @@ impl<'a> Widget for TitleLine<'a> {
                 CellSizeOpt::new(format!(" ({} errors)", read_errors))
                     .style(default_style.fg(Color::Red)),
                 CellSizeOpt::new(" (errors)".to_string()).style(default_style.fg(Color::Red)),
+            ]);
+        }
+        if geteuid().is_root() {
+            title_telescope.append_to_left_side(vec![
+                CellSizeOpt::new(format!(" (CAUTION: running as root)"))
+                    .style(default_style.fg(Color::Red)),
+                CellSizeOpt::new(format!(" (running as root)"))
+                    .style(default_style.fg(Color::Red)),
+                CellSizeOpt::new(" (root)".to_string()).style(default_style.fg(Color::Red)),
             ]);
         }
         title_telescope.append_to_right_side(vec![CellSizeOpt::new(base_path.to_string())]);
