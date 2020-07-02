@@ -52,6 +52,9 @@ pub fn handle_keypress_loading_mode<B: Backend>(evt: Event, app: &mut App<B>) {
         key!(char '\n') => {
             app.handle_enter();
         }
+        key!(ctrl 'd') => {
+            app.show_warning_modal();
+        }
         key!(Esc) | key!(Backspace) => {
             app.go_up();
         }
@@ -136,4 +139,12 @@ pub fn handle_keypress_exiting_mode<B: Backend>(evt: Event, app: &mut App<B>) {
         }
         _ => (),
     };
+}
+
+pub fn handle_keypress_warning_message<B: Backend>(evt: Event, app: &mut App<B>) {
+    match evt {
+        _ => {
+            app.reset_ui_mode();
+        }
+    }
 }

@@ -7,7 +7,7 @@ use crate::state::files::FileTree;
 use crate::state::tiles::Board;
 use crate::state::UiEffects;
 use crate::ui::grid::RectangleGrid;
-use crate::ui::modals::{ConfirmBox, ErrorBox, MessageBox};
+use crate::ui::modals::{ConfirmBox, ErrorBox, MessageBox, WarningBox};
 use crate::ui::title::TitleLine;
 use crate::ui::{BottomLine, TermTooSmall};
 use crate::UiMode;
@@ -245,6 +245,36 @@ where
                             chunks[1],
                         );
                         f.render_widget(ConfirmBox::new(), full_screen);
+                    }
+                    UiMode::WarningMessage(_) => {
+                        f.render_widget(
+                            TitleLine::new(
+                                base_path_info,
+                                current_path_info,
+                                file_tree.space_freed,
+                            )
+                            .progress_indicator(ui_effects.loading_progress_indicator)
+                            .path_error(ui_effects.current_path_is_red)
+                            .read_errors(file_tree.failed_to_read)
+                            .show_loading(),
+                            chunks[0],
+                        );
+                        f.render_widget(
+                            RectangleGrid::new(
+                                &board.tiles,
+                                board.unrenderable_tile_coordinates,
+                                board.selected_index,
+                            ),
+                            chunks[1],
+                        );
+                        f.render_widget(
+                            BottomLine::new()
+                                .currently_selected(board.currently_selected())
+                                .last_read_path(ui_effects.last_read_path.as_ref())
+                                .hide_delete(),
+                            chunks[2],
+                        );
+                        f.render_widget(WarningBox::new(), full_screen);
                     }
                 };
             })
