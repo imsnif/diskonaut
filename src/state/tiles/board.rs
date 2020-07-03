@@ -8,7 +8,8 @@ pub struct Board {
     pub tiles: Vec<Tile>,
     pub unrenderable_tile_coordinates: Option<(u16, u16)>,
     pub selected_index: Option<usize>, // None means nothing is selected
-    pub previous_indices: Vec<usize>,  // Stack of previously selected indices
+    pub previous_indices_and_zoom_level: Vec<(Option<usize>, usize)>,  // Stack of previous stats
+    pub zoom_level: usize,
     area: Rect,
     files: Vec<FileMetadata>,
 }
@@ -18,9 +19,10 @@ impl Board {
         Board {
             tiles: vec![],
             unrenderable_tile_coordinates: None,
-            files: files_in_folder(folder),
+            files: files_in_folder(folder, 0),
             selected_index: None,
-            previous_indices: vec![],
+            previous_indices_and_zoom_level: vec![],
+            zoom_level: 0,
             area: Rect {
                 x: 0,
                 y: 0,
@@ -30,7 +32,7 @@ impl Board {
         }
     }
     pub fn change_files(&mut self, folder: &Folder) {
-        self.files = files_in_folder(folder);
+        self.files = files_in_folder(folder, self.zoom_level);
         self.fill();
     }
     pub fn change_area(&mut self, area: &Rect) {
@@ -63,11 +65,8 @@ impl Board {
             None => None,
         }
     }
-    pub fn push_previous_index(&mut self, index: &usize) {
-        self.previous_indices.push(*index);
-    }
-    pub fn pop_previous_index(&mut self) -> Option<usize> {
-        self.previous_indices.pop()
+    pub fn pop_previous_index_and_zoom_level(&mut self) -> Option<(Option<usize>, usize)> {
+        self.previous_indices_and_zoom_level.pop()
     }
     pub fn move_to_largest_folder(&mut self) {
         let next_index = self
@@ -169,5 +168,33 @@ impl Board {
             }
             None => self.set_selected_index(&0),
         }
+    }
+    pub fn zoom_in(&mut self, folder: &Folder) {
+        if self.zoom_level < self.files.len() {
+            self.zoom_level += 1;
+            self.files = files_in_folder(folder, self.zoom_level);
+            self.fill();
+        }
+    }
+    pub fn zoom_out(&mut self, folder: &Folder) {
+        if self.zoom_level > 0 {
+            self.zoom_level -= 1;
+            self.files = files_in_folder(folder, self.zoom_level);
+            self.fill();
+        }
+    }
+    pub fn reset_zoom(&mut self, folder: &Folder) {
+        self.zoom_level = 0;
+        self.files = files_in_folder(folder, self.zoom_level);
+        self.fill();
+    }
+    pub fn reset_zoom_index(&mut self) {
+        self.zoom_level = 0;
+    }
+    pub fn set_zoom_index(&mut self, index: usize) {
+        self.zoom_level = index;
+    }
+    pub fn record_current_index_and_zoom_level(&mut self) {
+        self.previous_indices_and_zoom_level.push((self.get_selected_index(), self.zoom_level));
     }
 }

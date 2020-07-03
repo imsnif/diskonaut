@@ -1,0 +1,55 @@
+---
+source: src/tests/cases/ui.rs
+expression: "&terminal_draw_events_mirror[2]"
+---
+                                                                                2                                                                                                             
+                                                                                                                                     ─                                                ┬       
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                         file1                                                                                        │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                     392.0K (96%)                                                                                     │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx 
+                                                                                                                                                                                      │xxxxxx│
+                                                                                                                                                                                      │       
+                                                                                                                                     ─                                                ┴       
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+
