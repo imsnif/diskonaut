@@ -125,8 +125,6 @@ where
         if let Some(file_to_delete) = self.get_file_to_delete() {
             self.ui_mode = UiMode::WarningMessage(file_to_delete);
             self.render();
-            // wait for 5 seconds then close the modal automatically
-            let _ = self.event_sender.send(Event::WarningTimeout);
         }
     }
     pub fn prompt_exit(&mut self) {

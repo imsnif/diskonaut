@@ -7,7 +7,6 @@ pub enum Event {
     PathError,
     FileDeleted,
     AppExit,
-    WarningTimeout,
 }
 
 use std::sync::mpsc::{Receiver, SyncSender};
@@ -30,11 +29,6 @@ pub fn handle_events(event_receiver: Receiver<Event>, instruction_sender: SyncSe
                 let _ = instruction_sender.send(Instruction::Render);
                 park_timeout(time::Duration::from_millis(250));
                 let _ = instruction_sender.send(Instruction::UnflashSpaceFreed);
-                let _ = instruction_sender.send(Instruction::Render);
-            }
-            Event::WarningTimeout => {
-                park_timeout(time::Duration::from_secs(5));
-                let _ = instruction_sender.send(Instruction::ResetUiMode);
                 let _ = instruction_sender.send(Instruction::Render);
             }
             Event::AppExit => {
