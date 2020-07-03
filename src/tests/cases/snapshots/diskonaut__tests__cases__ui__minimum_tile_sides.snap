@@ -51,5 +51,5 @@ expression: "&terminal_draw_events_mirror[0]"
 │                                                                                       │                                                      │  4.0K   │  4.0K  │  4.0K   │xxxxxxxxxxxxxxxx│
 └───────────────────────────────────────────────────────────────────────────────────────┴──────────────────────────────────────────────────────┴─────────┴────────┴─────────┴────────────────┘
                                                                                                                                                                             (x = Small files) 
- <arrows> - move around, <ENTER> - enter folder, <ESC> - parent folder, <Ctrl-D> - delete, <q> - quit                                                                                         
+ <arrows> - move around, <ENTER> - enter folder, <ESC> - parent folder, <DELETE> - delete, <q> - quit                                                                                         
 
