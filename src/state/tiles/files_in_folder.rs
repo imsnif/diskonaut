@@ -71,7 +71,10 @@ pub fn files_in_folder(folder: &Folder, offset: usize) -> Vec<FileMetadata> {
         let removed_size = removed_items.fold(0, |acc, file| acc + file.size);
         let size_without_removed_items = total_size - removed_size;
         for i in 0..files.len() {
-            files[i].calculate_percentage(size_without_removed_items, number_of_files_without_removed_contents);
+            files[i].calculate_percentage(
+                size_without_removed_items,
+                number_of_files_without_removed_contents,
+            );
         }
     }
     files

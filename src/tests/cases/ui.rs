@@ -697,7 +697,8 @@ fn zoom_into_small_files() {
     events.push(None);
     events.push(Some(Event::Key(Key::Char('y'))));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
-    let temp_dir_path = create_root_temp_dir("zoom_into_small_files").expect("failed to create temp dir");
+    let temp_dir_path =
+        create_root_temp_dir("zoom_into_small_files").expect("failed to create temp dir");
 
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("file1");
@@ -724,7 +725,8 @@ fn zoom_into_small_files() {
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor
+        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
+        Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
     ];
     assert_eq!(
         &terminal_events.lock().unwrap()[..],

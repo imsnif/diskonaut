@@ -168,11 +168,8 @@ impl<'a> Widget for TitleLine<'a> {
                     zoom_level
                 ))
                 .style(default_style.fg(Color::Green)),
-                CellSizeOpt::new(format!(
-                    " (+{} larger file(s))",
-                    zoom_level
-                ))
-                .style(default_style.fg(Color::Green)),
+                CellSizeOpt::new(format!(" (+{} larger file(s))", zoom_level))
+                    .style(default_style.fg(Color::Green)),
             ]);
         }
 

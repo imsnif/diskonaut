@@ -8,7 +8,7 @@ pub struct Board {
     pub tiles: Vec<Tile>,
     pub unrenderable_tile_coordinates: Option<(u16, u16)>,
     pub selected_index: Option<usize>, // None means nothing is selected
-    pub previous_indices_and_zoom_level: Vec<(Option<usize>, usize)>,  // Stack of previous stats
+    pub previous_indices_and_zoom_level: Vec<(Option<usize>, usize)>, // Stack of previous stats
     pub zoom_level: usize,
     area: Rect,
     files: Vec<FileMetadata>,
@@ -195,6 +195,7 @@ impl Board {
         self.zoom_level = index;
     }
     pub fn record_current_index_and_zoom_level(&mut self) {
-        self.previous_indices_and_zoom_level.push((self.get_selected_index(), self.zoom_level));
+        self.previous_indices_and_zoom_level
+            .push((self.get_selected_index(), self.zoom_level));
     }
 }
