@@ -94,6 +94,7 @@ where
                             .progress_indicator(ui_effects.loading_progress_indicator)
                             .path_error(ui_effects.current_path_is_red)
                             .read_errors(file_tree.failed_to_read)
+                            .zoom_level(board.zoom_level)
                             .show_loading(),
                             chunks[0],
                         );
@@ -122,6 +123,7 @@ where
                             )
                             .path_error(ui_effects.current_path_is_red)
                             .flash_space(ui_effects.flash_space_freed)
+                            .zoom_level(board.zoom_level)
                             .read_errors(file_tree.failed_to_read),
                             chunks[0],
                         );
@@ -149,6 +151,7 @@ where
                                 file_tree.space_freed,
                             )
                             .path_error(ui_effects.current_path_is_red)
+                            .zoom_level(board.zoom_level)
                             .read_errors(file_tree.failed_to_read),
                             chunks[0],
                         );
@@ -178,6 +181,7 @@ where
                             )
                             .path_error(ui_effects.current_path_is_red)
                             .flash_space(ui_effects.flash_space_freed)
+                            .zoom_level(board.zoom_level)
                             .read_errors(file_tree.failed_to_read),
                             chunks[0],
                         );
@@ -206,6 +210,7 @@ where
                                 )
                                 .path_error(ui_effects.current_path_is_red)
                                 .flash_space(ui_effects.flash_space_freed)
+                                .zoom_level(board.zoom_level)
                                 .read_errors(file_tree.failed_to_read),
                                 chunks[0],
                             );
@@ -223,6 +228,7 @@ where
                                 )
                                 .progress_indicator(ui_effects.loading_progress_indicator)
                                 .path_error(ui_effects.current_path_is_red)
+                                .zoom_level(board.zoom_level)
                                 .read_errors(file_tree.failed_to_read)
                                 .show_loading(),
                                 chunks[0],

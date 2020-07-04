@@ -19,6 +19,7 @@ pub struct TitleLine<'a> {
     read_errors: Option<u64>,
     flash_space: bool,
     path_error: bool,
+    zoom_level: Option<usize>,
 }
 
 impl<'a> TitleLine<'a> {
@@ -36,6 +37,7 @@ impl<'a> TitleLine<'a> {
             show_loading: false,
             flash_space: false,
             path_error: false,
+            zoom_level: None,
         }
     }
     pub fn show_loading(mut self) -> Self {
@@ -57,6 +59,12 @@ impl<'a> TitleLine<'a> {
     pub fn read_errors(mut self, read_errors: u64) -> Self {
         if read_errors > 0 {
             self.read_errors = Some(read_errors);
+        }
+        self
+    }
+    pub fn zoom_level(mut self, zoom_level: usize) -> Self {
+        if zoom_level > 0 {
+            self.zoom_level = Some(zoom_level);
         }
         self
     }
@@ -150,6 +158,17 @@ impl<'a> Widget for TitleLine<'a> {
                 ))
                 .style(default_style.fg(Color::Green)),
                 CellSizeOpt::new(format!("{}{}", separator, current_path))
+                    .style(default_style.fg(Color::Green)),
+            ]);
+        }
+        if let Some(zoom_level) = self.zoom_level {
+            title_telescope.append_to_right_side(vec![
+                CellSizeOpt::new(format!(
+                    " (+{} larger file(s), zoom out to show)",
+                    zoom_level
+                ))
+                .style(default_style.fg(Color::Green)),
+                CellSizeOpt::new(format!(" (+{} larger file(s))", zoom_level))
                     .style(default_style.fg(Color::Green)),
             ]);
         }
