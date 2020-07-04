@@ -17,15 +17,13 @@ pub struct FileMetadata {
     pub file_type: FileType,
 }
 
-impl FileMetadata {
-    pub fn calculate_percentage(&mut self, total_size: u64, total_files_in_parent: usize) {
-        self.percentage = if self.size == 0 && total_size == 0 {
-            // if all files in the folder are of size 0, we'll want to display them all as
-            // the same size
-            1.0 / total_files_in_parent as f64
-        } else {
-            self.size as f64 / total_size as f64
-        };
+fn calculate_percentage (size: u64, total_size: u64, total_files_in_parent: usize) -> f64 {
+    if size == 0 && total_size == 0 {
+        // if all files in the folder are of size 0, we'll want to display them all as
+        // the same size
+        1.0 / total_files_in_parent as f64
+    } else {
+        size as f64 / total_size as f64
     }
 }
 
@@ -40,13 +38,7 @@ pub fn files_in_folder(folder: &Folder, offset: usize) -> Vec<FileMetadata> {
                 FileOrFolder::Folder(folder) => (Some(folder.num_descendants), FileType::Folder),
                 FileOrFolder::File(_file) => (None, FileType::File),
             };
-            let percentage = if size == 0 && total_size == 0 {
-                // if all files in the folder are of size 0, we'll want to display them all as
-                // the same size
-                1.0 / folder.contents.len() as f64
-            } else {
-                size as f64 / total_size as f64
-            };
+            let percentage = calculate_percentage(size, total_size, folder.contents.len());
             FileMetadata {
                 size,
                 name,
@@ -71,10 +63,7 @@ pub fn files_in_folder(folder: &Folder, offset: usize) -> Vec<FileMetadata> {
         let removed_size = removed_items.fold(0, |acc, file| acc + file.size);
         let size_without_removed_items = total_size - removed_size;
         for i in 0..files.len() {
-            files[i].calculate_percentage(
-                size_without_removed_items,
-                number_of_files_without_removed_contents,
-            );
+            files[i].percentage = calculate_percentage(files[i].size, size_without_removed_items, number_of_files_without_removed_contents);
         }
     }
     files
