@@ -19,6 +19,7 @@ pub enum UiMode {
     DeleteFile(FileToDelete),
     ErrorMessage(String),
     Exiting { app_loaded: bool },
+    WarningMessage(FileToDelete),
 }
 
 pub struct App<B>
@@ -119,6 +120,12 @@ where
                 }
             }
         };
+    }
+    pub fn show_warning_modal(&mut self) {
+        if let Some(file_to_delete) = self.get_file_to_delete() {
+            self.ui_mode = UiMode::WarningMessage(file_to_delete);
+            self.render();
+        }
     }
     pub fn prompt_exit(&mut self) {
         self.ui_mode = UiMode::Exiting {

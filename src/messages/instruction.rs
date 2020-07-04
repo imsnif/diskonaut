@@ -7,6 +7,7 @@ use ::tui::backend::Backend;
 use crate::input::{
     handle_keypress_delete_file_mode, handle_keypress_error_message, handle_keypress_exiting_mode,
     handle_keypress_loading_mode, handle_keypress_normal_mode, handle_keypress_screen_too_small,
+    handle_keypress_warning_message,
 };
 use crate::{App, UiMode};
 
@@ -84,6 +85,9 @@ where
                     }
                     UiMode::Exiting { app_loaded: _ } => {
                         handle_keypress_exiting_mode(evt, app);
+                    }
+                    UiMode::WarningMessage(_) => {
+                        handle_keypress_warning_message(evt, app);
                     }
                 }
                 if !app.is_running {
