@@ -12,7 +12,7 @@ pub enum FileOrFolder {
 }
 
 impl FileOrFolder {
-    pub fn size(&self) -> u64 {
+    pub fn size(&self) -> u128 {
         match self {
             FileOrFolder::Folder(folder) => folder.size,
             FileOrFolder::File(file) => file.size,
@@ -23,14 +23,14 @@ impl FileOrFolder {
 #[derive(Debug, Clone)]
 pub struct File {
     pub name: OsString,
-    pub size: u64,
+    pub size: u128,
 }
 
 #[derive(Debug, Clone)]
 pub struct Folder {
     pub name: OsString,
     pub contents: HashMap<OsString, FileOrFolder>,
-    pub size: u64,
+    pub size: u128,
     pub num_descendants: u64,
 }
 
@@ -61,7 +61,7 @@ impl Folder {
         } else {
             let size = relative_path
                 .size_on_disk_fast(&entry_metadata)
-                .unwrap_or(entry_metadata.len());
+                .unwrap_or(entry_metadata.len()) as u128;
             self.add_file(relative_path, size);
         }
     }
@@ -97,7 +97,7 @@ impl Folder {
                 .insert(name.clone(), FileOrFolder::Folder(Folder::from(name)));
         }
     }
-    pub fn add_file(&mut self, path: PathBuf, size: u64) {
+    pub fn add_file(&mut self, path: PathBuf, size: u128) {
         let path_length = path.components().count();
         if path_length == 0 {
             return;

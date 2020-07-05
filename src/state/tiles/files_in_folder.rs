@@ -11,13 +11,13 @@ pub enum FileType {
 #[derive(Debug, Clone)]
 pub struct FileMetadata {
     pub name: OsString,
-    pub size: u64,
+    pub size: u128,
     pub descendants: Option<u64>,
     pub percentage: f64, // 1.0 is 100% (0.5 is 50%, etc.)
     pub file_type: FileType,
 }
 
-fn calculate_percentage(size: u64, total_size: u64, total_files_in_parent: usize) -> f64 {
+fn calculate_percentage(size: u128, total_size: u128, total_files_in_parent: usize) -> f64 {
     if size == 0 && total_size == 0 {
         // if all files in the folder are of size 0, we'll want to display them all as
         // the same size

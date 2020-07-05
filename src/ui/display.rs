@@ -14,7 +14,7 @@ use crate::UiMode;
 
 pub struct FolderInfo<'a> {
     pub path: &'a PathBuf,
-    pub size: u64,
+    pub size: u128,
     pub num_descendants: u64,
 }
 
