@@ -13,7 +13,7 @@ use nix::unistd::geteuid;
 pub struct TitleLine<'a> {
     base_path_info: FolderInfo<'a>,
     current_path_info: FolderInfo<'a>,
-    space_freed: u64,
+    space_freed: u128,
     show_loading: bool,
     progress_indicator: u64,
     read_errors: Option<u64>,
@@ -26,7 +26,7 @@ impl<'a> TitleLine<'a> {
     pub fn new(
         base_path_info: FolderInfo<'a>,
         current_path_info: FolderInfo<'a>,
-        space_freed: u64,
+        space_freed: u128,
     ) -> Self {
         Self {
             base_path_info,

@@ -9,7 +9,7 @@ pub struct Tile {
     pub width: u16,
     pub height: u16,
     pub name: OsString,
-    pub size: u64,
+    pub size: u128,
     pub descendants: Option<u64>,
     pub percentage: f64,
     pub file_type: FileType,
