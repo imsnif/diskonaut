@@ -1,0 +1,55 @@
+---
+source: src/tests/cases/ui.rs
+expression: "&terminal_draw_events_mirror[1]"
+---
+                                                                              (+1 larger file(s), zoom out to show)                                                                           
+                                                                                                                                     ┬                      ─                                 
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                         file1                          
+                                                                file3                                                                │                                                        
+│                                                                                                                                    │                     392.0K (28%)                       
+                                                              1.0M (71%)                                                             │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     │                                                        
+                                                                                                                                     ├───────────────────────                                 
+                                                                                                                                     │xxxxxxxxxxxxxxxxxxxxxxx                                 
+                                                                                                                                     ┴                      ─                                 
+                                                                                                                                                                                              
+                                                                                                                                                                                              
+

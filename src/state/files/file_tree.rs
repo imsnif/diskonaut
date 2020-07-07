@@ -8,7 +8,7 @@ use crate::state::FileToDelete;
 pub struct FileTree {
     base_folder: Folder,
     pub current_folder_names: Vec<OsString>,
-    pub space_freed: u64,
+    pub space_freed: u128,
     pub failed_to_read: u64,
     pub path_in_filesystem: PathBuf,
 }
@@ -23,7 +23,7 @@ impl FileTree {
             failed_to_read: 0,
         }
     }
-    pub fn get_total_size(&self) -> u64 {
+    pub fn get_total_size(&self) -> u128 {
         self.base_folder.size
     }
     pub fn get_total_descendants(&self) -> u64 {
@@ -42,7 +42,7 @@ impl FileTree {
             unreachable!("couldn't find current folder size")
         }
     }
-    pub fn get_current_folder_size(&self) -> u64 {
+    pub fn get_current_folder_size(&self) -> u128 {
         self.get_current_folder().size
     }
     pub fn get_current_path(&self) -> PathBuf {

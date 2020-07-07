@@ -19,6 +19,7 @@ pub enum UiMode {
     DeleteFile(FileToDelete),
     ErrorMessage(String),
     Exiting { app_loaded: bool },
+    WarningMessage(FileToDelete),
 }
 
 pub struct App<B>
@@ -120,6 +121,12 @@ where
             }
         };
     }
+    pub fn show_warning_modal(&mut self) {
+        if let Some(file_to_delete) = self.get_file_to_delete() {
+            self.ui_mode = UiMode::WarningMessage(file_to_delete);
+            self.render();
+        }
+    }
     pub fn prompt_exit(&mut self) {
         self.ui_mode = UiMode::Exiting {
             app_loaded: self.loaded,
@@ -157,15 +164,14 @@ where
         self.render();
     }
     pub fn enter_selected(&mut self) {
-        if let Some(index) = &self.board.get_selected_index() {
-            &self.board.push_previous_index(&index);
-        }
+        self.board.record_current_index_and_zoom_level();
         if let Some(tile) = &self.board.currently_selected() {
             let selected_name = &tile.name;
             if let Some(file_or_folder) = self.file_tree.item_in_current_folder(&selected_name) {
                 match file_or_folder {
                     FileOrFolder::Folder(_) => {
                         self.file_tree.enter_folder(&selected_name);
+                        self.board.reset_zoom_index();
                         self.board.reset_selected_index();
                         self.render_and_update_board();
                     }
@@ -175,10 +181,13 @@ where
         }
     }
     pub fn go_up(&mut self) {
-        if let Some(index) = self.board.pop_previous_index() {
-            self.board.set_selected_index(&index);
-        }
         let succeeded = self.file_tree.leave_folder();
+        if let Some((index, zoom_level)) = self.board.pop_previous_index_and_zoom_level() {
+            if let Some(index) = index {
+                self.board.set_selected_index(&index);
+            }
+            self.board.set_zoom_index(zoom_level);
+        }
         self.render_and_update_board();
         if !succeeded {
             let _ = self.event_sender.try_send(Event::PathError);
@@ -242,6 +251,21 @@ where
     }
     pub fn increment_failed_to_read(&mut self) {
         self.file_tree.failed_to_read += 1;
+    }
+    pub fn zoom_in(&mut self) {
+        let current_folder = self.file_tree.get_current_folder();
+        self.board.zoom_in(current_folder);
+        self.render();
+    }
+    pub fn zoom_out(&mut self) {
+        let current_folder = self.file_tree.get_current_folder();
+        self.board.zoom_out(current_folder);
+        self.render();
+    }
+    pub fn reset_zoom(&mut self) {
+        let current_folder = self.file_tree.get_current_folder();
+        self.board.reset_zoom(current_folder);
+        self.render();
     }
     fn remove_file_from_ui(&mut self, file_to_delete: &FileToDelete) {
         self.file_tree.space_freed += file_to_delete.size;

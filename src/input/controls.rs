@@ -49,6 +49,15 @@ pub fn handle_keypress_loading_mode<B: Backend>(evt: Event, app: &mut App<B>) {
         key!(char 'k') | key!(Up) | key!(ctrl 'p') => {
             app.move_selected_up();
         }
+        key!(char '+') => {
+            app.zoom_in();
+        }
+        key!(char '-') => {
+            app.zoom_out();
+        }
+        key!(char '0') => {
+            app.reset_zoom();
+        }
         key!(char '\n') => {
             app.handle_enter();
         }
@@ -78,6 +87,15 @@ pub fn handle_keypress_normal_mode<B: Backend>(evt: Event, app: &mut App<B>) {
         }
         key!(char 'k') | key!(Up) | key!(ctrl 'p') => {
             app.move_selected_up();
+        }
+        key!(char '+') => {
+            app.zoom_in();
+        }
+        key!(char '-') => {
+            app.zoom_out();
+        }
+        key!(char '0') => {
+            app.reset_zoom();
         }
         key!(char '\n') => {
             app.handle_enter();
@@ -136,4 +154,12 @@ pub fn handle_keypress_exiting_mode<B: Backend>(evt: Event, app: &mut App<B>) {
         }
         _ => (),
     };
+}
+
+pub fn handle_keypress_warning_message<B: Backend>(evt: Event, app: &mut App<B>) {
+    match evt {
+        _ => {
+            app.reset_ui_mode();
+        }
+    }
 }
