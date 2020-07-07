@@ -51,5 +51,5 @@ expression: "&terminal_draw_events_mirror[0]"
 │xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx│
 └────────────────────────────────────────────────┘
                                 (x = Small files) 
- ←↓↑→/<ENTER>/<ESC>: navigate, <Ctrl-D>: del      
+ ←↓↑→/<ENTER>/<ESC>: navigate, <BACKSPACE>: del      
 
