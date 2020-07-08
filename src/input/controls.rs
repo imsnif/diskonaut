@@ -61,6 +61,9 @@ pub fn handle_keypress_loading_mode<B: Backend>(evt: Event, app: &mut App<B>) {
         key!(char '\n') => {
             app.handle_enter();
         }
+        key!(Delete) => {
+            app.show_warning_modal();
+        }
         key!(Esc) => {
             app.go_up();
         }
