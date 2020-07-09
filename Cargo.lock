@@ -186,7 +186,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "diskonaut"
-version = "0.7.0"
+version = "0.8.0"
 dependencies = [
  "failure 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "filesize 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
