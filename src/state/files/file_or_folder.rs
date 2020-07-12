@@ -55,7 +55,12 @@ impl Folder {
         }
     }
 
-    pub fn add_entry(&mut self, entry_metadata: &Metadata, relative_path: PathBuf, show_apparent_size: bool) {
+    pub fn add_entry(
+        &mut self,
+        entry_metadata: &Metadata,
+        relative_path: PathBuf,
+        show_apparent_size: bool,
+    ) {
         // apparent_size (named after the flag of the same name in 'du')
         // means "show the file size, rather than the actual space it takes on disk"
         // these may differ (for example) in filesystems that use compression

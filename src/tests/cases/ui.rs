@@ -60,7 +60,12 @@ fn two_large_files_one_small_file() {
     file_3_path.push("file3");
     create_temp_file(file_3_path, 8192).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(
@@ -100,7 +105,12 @@ fn medium_width() {
     file_3_path.push("file3");
     create_temp_file(file_3_path, 8192).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(
@@ -140,7 +150,12 @@ fn small_width() {
     file_3_path.push("file3");
     create_temp_file(file_3_path, 8192).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(
@@ -181,7 +196,12 @@ fn small_width_long_folder_name() {
     file_3_path.push("file3");
     create_temp_file(file_3_path, 8192).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(
@@ -222,7 +242,12 @@ fn too_small_width_one() {
     file_3_path.push("file3");
     create_temp_file(file_3_path, 8192).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(
@@ -260,7 +285,12 @@ fn too_small_width_two() {
     file_3_path.push("file3");
     create_temp_file(file_3_path, 8192).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(
@@ -286,7 +316,12 @@ fn too_small_width_three() {
     let temp_dir_path =
         create_root_temp_dir("too_small_width_three").expect("failed to create temp dir");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(
@@ -312,7 +347,12 @@ fn too_small_width_four() {
     let temp_dir_path =
         create_root_temp_dir("too_small_width_four").expect("failed to create temp dir");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(
@@ -338,7 +378,12 @@ fn too_small_width_five() {
     let temp_dir_path =
         create_root_temp_dir("too_small_width_five").expect("failed to create temp dir");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(
@@ -364,7 +409,12 @@ fn too_small_height() {
     let temp_dir_path =
         create_root_temp_dir("too_small_height").expect("failed to create temp dir");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(
@@ -433,7 +483,12 @@ fn eleven_files() {
     file_11_path.push("file11");
     create_temp_file(file_11_path, 53248).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
 
@@ -488,7 +543,12 @@ fn enter_folder() {
     file_3_path.push("file3");
     create_temp_file(file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -551,7 +611,12 @@ fn enter_folder_medium_width() {
     file_3_path.push("file3");
     create_temp_file(file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -614,7 +679,12 @@ fn enter_folder_small_width() {
     file_3_path.push("file3");
     create_temp_file(file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -664,7 +734,12 @@ fn small_files() {
     file_5_path.push("file5");
     create_temp_file(file_5_path, 8192).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
 
@@ -726,7 +801,12 @@ fn zoom_into_small_files() {
     file_5_path.push("file5");
     create_temp_file(file_5_path, 8192).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
 
@@ -817,7 +897,12 @@ fn cannot_move_into_small_files() {
     file_12_path.push("file12");
     create_temp_file(file_12_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
 
@@ -870,7 +955,12 @@ fn minimum_tile_sides() {
         create_temp_file(file_path, 4096).expect("failed to create temp file");
     }
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
 
@@ -928,7 +1018,12 @@ fn move_down_and_enter_folder() {
     file_3_path.push("file3");
     create_temp_file(file_3_path, 8192).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -989,7 +1084,12 @@ fn noop_when_entering_file() {
     file_3_path.push("file3");
     create_temp_file(file_3_path, 8192).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -1055,7 +1155,12 @@ fn move_up_and_enter_folder() {
     file_3_path.push("file3");
     create_temp_file(file_3_path, 8192).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -1122,7 +1227,12 @@ fn move_right_and_enter_folder() {
     file_3_path.push("file3");
     create_temp_file(file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -1190,7 +1300,12 @@ fn move_left_and_enter_folder() {
     file_3_path.push("file3");
     create_temp_file(file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -1253,7 +1368,12 @@ fn enter_largest_folder_with_no_selected_tile() {
     file_3_path.push("file3");
     create_temp_file(file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -1307,7 +1427,12 @@ fn clear_selection_when_moving_off_screen_edges() {
     file_3_path.push("file3");
     create_temp_file(file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -1375,7 +1500,12 @@ fn esc_to_go_up() {
     file_3_path.push("file3");
     create_temp_file(file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -1450,7 +1580,12 @@ fn noop_when_pressing_esc_at_base_folder() {
     file_3_path.push("file3");
     create_temp_file(file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -1518,7 +1653,12 @@ fn delete_file() {
     file_3_path.push("file3");
     create_temp_file(&file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
         .expect("could not acquire lock on terminal events");
@@ -1605,7 +1745,12 @@ fn cant_delete_file_with_term_too_small() {
     file_3_path.push("file3");
     create_temp_file(&file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
         .expect("could not acquire lock on terminal events");
@@ -1685,7 +1830,12 @@ fn delete_folder() {
     file_3_path.push("file3");
     create_temp_file(&file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
         .expect("could not acquire lock on terminal events");
@@ -1780,7 +1930,12 @@ fn delete_folder_small_window() {
     file_3_path.push("file3");
     create_temp_file(&file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
         .expect("could not acquire lock on terminal events");
@@ -1890,7 +2045,12 @@ fn delete_folder_with_multiple_children() {
     file_5_path.push("file5");
     create_temp_file(&file_5_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
         .expect("could not acquire lock on terminal events");
@@ -1986,7 +2146,12 @@ fn pressing_delete_with_no_selected_tile() {
     file_3_path.push("file3");
     create_temp_file(&file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
         .expect("could not acquire lock on terminal events");
@@ -2063,7 +2228,12 @@ fn delete_file_press_n() {
     file_3_path.push("file3");
     create_temp_file(&file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
         .expect("could not acquire lock on terminal events");
@@ -2127,7 +2297,12 @@ fn files_with_size_zero() {
     file_3_path.push("file3");
     create_temp_file(file_3_path, 0).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(
@@ -2155,7 +2330,12 @@ fn empty_folder() {
     let keyboard_events = sleep_and_quit_events(1, true);
     let temp_dir_path = create_root_temp_dir("empty_folder").expect("failed to create temp dir");
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(
@@ -2215,7 +2395,12 @@ fn permission_denied_when_deleting() {
     perms.set_readonly(true);
     std::fs::set_permissions(&subfolder_1_path, perms.clone()).unwrap();
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
         .expect("could not acquire lock on terminal events");
@@ -2276,7 +2461,12 @@ fn small_files_with_y_as_zero() {
         create_temp_file(small_file_path, 4096).expect("failed to create temp file");
     }
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(
@@ -2319,7 +2509,12 @@ fn small_files_with_x_as_zero() {
         create_temp_file(small_file_path, 4096).expect("failed to create temp file");
     }
 
-    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+    );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(

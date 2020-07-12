@@ -74,7 +74,12 @@ fn try_main() -> Result<(), failure::Error> {
             if !folder.as_path().is_dir() {
                 failure::bail!("Folder '{}' does not exist", folder.to_string_lossy())
             }
-            start(terminal_backend, Box::new(keyboard_events), folder, opts.apparent_size);
+            start(
+                terminal_backend,
+                Box::new(keyboard_events),
+                folder,
+                opts.apparent_size,
+            );
         }
         Err(_) => failure::bail!("Failed to get stdout: are you trying to pipe 'diskonaut'?"),
     }

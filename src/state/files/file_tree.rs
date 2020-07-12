@@ -75,6 +75,7 @@ impl FileTree {
         for dir in entry_full_path.components().skip(base_path_length) {
             relative_path.push(dir);
         }
-        self.base_folder.add_entry(entry_metadata, relative_path, self.show_apparent_size);
+        self.base_folder
+            .add_entry(entry_metadata, relative_path, self.show_apparent_size);
     }
 }
