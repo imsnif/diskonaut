@@ -49,6 +49,9 @@ pub struct Opt {
     #[structopt(name = "folder", parse(from_os_str))]
     /// The folder to scan
     folder: Option<PathBuf>,
+    #[structopt(short, long)]
+    /// Show file sizes rather than their block usage on disk
+    apparent_size: bool,
 }
 
 fn main() {
@@ -71,7 +74,12 @@ fn try_main() -> Result<(), failure::Error> {
             if !folder.as_path().is_dir() {
                 failure::bail!("Folder '{}' does not exist", folder.to_string_lossy())
             }
-            start(terminal_backend, Box::new(keyboard_events), folder);
+            start(
+                terminal_backend,
+                Box::new(keyboard_events),
+                folder,
+                opts.apparent_size,
+            );
         }
         Err(_) => failure::bail!("Failed to get stdout: are you trying to pipe 'diskonaut'?"),
     }
@@ -82,6 +90,7 @@ pub fn start<B>(
     terminal_backend: B,
     keyboard_events: Box<dyn Iterator<Item = TermionEvent> + Send>,
     path: PathBuf,
+    show_apparent_size: bool,
 ) where
     B: Backend + Send + 'static,
 {
@@ -222,7 +231,7 @@ pub fn start<B>(
         );
     }
 
-    let mut app = App::new(terminal_backend, path, event_sender);
+    let mut app = App::new(terminal_backend, path, event_sender, show_apparent_size);
     app.start(instruction_receiver);
     running.store(false, Ordering::Release);
     cleanup();

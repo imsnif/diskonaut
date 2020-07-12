@@ -55,13 +55,25 @@ impl Folder {
         }
     }
 
-    pub fn add_entry(&mut self, entry_metadata: &Metadata, relative_path: PathBuf) {
+    pub fn add_entry(
+        &mut self,
+        entry_metadata: &Metadata,
+        relative_path: PathBuf,
+        show_apparent_size: bool,
+    ) {
+        // apparent_size (named after the flag of the same name in 'du')
+        // means "show the file size, rather than the actual space it takes on disk"
+        // these may differ (for example) in filesystems that use compression
         if entry_metadata.is_dir() {
             self.add_folder(relative_path);
         } else {
-            let size = relative_path
-                .size_on_disk_fast(&entry_metadata)
-                .unwrap_or(entry_metadata.len()) as u128;
+            let size = if show_apparent_size {
+                entry_metadata.len() as u128
+            } else {
+                relative_path
+                    .size_on_disk_fast(&entry_metadata)
+                    .unwrap_or(entry_metadata.len()) as u128
+            };
             self.add_file(relative_path, size);
         }
     }

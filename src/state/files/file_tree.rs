@@ -6,21 +6,23 @@ use crate::state::files::{FileOrFolder, Folder};
 use crate::state::FileToDelete;
 
 pub struct FileTree {
-    base_folder: Folder,
     pub current_folder_names: Vec<OsString>,
     pub space_freed: u128,
     pub failed_to_read: u64,
     pub path_in_filesystem: PathBuf,
+    base_folder: Folder,
+    show_apparent_size: bool,
 }
 
 impl FileTree {
-    pub fn new(base_folder: Folder, path_in_filesystem: PathBuf) -> Self {
+    pub fn new(base_folder: Folder, path_in_filesystem: PathBuf, show_apparent_size: bool) -> Self {
         FileTree {
             base_folder,
             current_folder_names: Vec::new(),
             path_in_filesystem,
             space_freed: 0,
             failed_to_read: 0,
+            show_apparent_size,
         }
     }
     pub fn get_total_size(&self) -> u128 {
@@ -73,6 +75,7 @@ impl FileTree {
         for dir in entry_full_path.components().skip(base_path_length) {
             relative_path.push(dir);
         }
-        self.base_folder.add_entry(entry_metadata, relative_path);
+        self.base_folder
+            .add_entry(entry_metadata, relative_path, self.show_apparent_size);
     }
 }
