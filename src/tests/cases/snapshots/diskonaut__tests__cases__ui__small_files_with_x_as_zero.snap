@@ -2,7 +2,7 @@
 source: src/tests/cases/ui.rs
 expression: "&terminal_draw_events_mirror[0]"
 ---
- 2.3M | /tmp/diskonaut_tes[..]les_with_x_as_zero  
+ 2.4M | /tmp/diskonaut_tes[..]les_with_x_as_zero  
 ┌────────────────────────────────────────────────┐
 │                                                │
 │                                                │
@@ -30,10 +30,11 @@ expression: "&terminal_draw_events_mirror[0]"
 │                                                │
 │                                                │
 │                                                │
+│                                                │
 │                     file2                      │
 │                                                │
-│                                                │
 │                   1.0M (42%)                   │
+│                                                │
 │                                                │
 │                                                │
 │                                                │
@@ -48,8 +49,7 @@ expression: "&terminal_draw_events_mirror[0]"
 │xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx│
 │xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx│
 │xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx│
-│xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx│
 └────────────────────────────────────────────────┘
                                 (x = Small files) 
- ←↓↑→/<ENTER>/<ESC>: navigate, <BACKSPACE>: del      
+ ←↓↑→/<ENTER>/<ESC>: navigate, <BACKSPACE>: del   
 

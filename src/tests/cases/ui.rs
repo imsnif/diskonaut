@@ -12,6 +12,12 @@ use crate::tests::cases::test_utils::{sleep_and_quit_events, test_backend_factor
 use crate::tests::fakes::KeyboardEvents;
 use crate::tests::fakes::TerminalEvent::*;
 
+// this means we ask diskonaut to show the actual file size rather than the size taken on disk
+//
+// this is in order to make the tests more possible, so they will show the same result
+// on filesystems with and without compression
+const SHOW_APPARENT_SIZE: bool = true;
+
 fn create_root_temp_dir(name: &str) -> Result<PathBuf, failure::Error> {
     let mut dir = PathBuf::new();
     dir.push(String::from("/tmp/diskonaut_tests")); // TODO: fix this for other platforms
@@ -44,17 +50,17 @@ fn two_large_files_one_small_file() {
 
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("file1");
-    create_temp_file(file_1_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_1_path, 4096).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
-    create_temp_file(file_2_path, 5000).expect("failed to create temp file");
+    create_temp_file(file_2_path, 8192).expect("failed to create temp file");
 
     let mut file_3_path = PathBuf::from(&temp_dir_path);
     file_3_path.push("file3");
-    create_temp_file(file_3_path, 5000).expect("failed to create temp file");
+    create_temp_file(file_3_path, 8192).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(
@@ -84,17 +90,17 @@ fn medium_width() {
 
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("file1");
-    create_temp_file(file_1_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_1_path, 4096).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
-    create_temp_file(file_2_path, 5000).expect("failed to create temp file");
+    create_temp_file(file_2_path, 8192).expect("failed to create temp file");
 
     let mut file_3_path = PathBuf::from(&temp_dir_path);
     file_3_path.push("file3");
-    create_temp_file(file_3_path, 5000).expect("failed to create temp file");
+    create_temp_file(file_3_path, 8192).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(
@@ -124,17 +130,17 @@ fn small_width() {
 
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("file1");
-    create_temp_file(file_1_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_1_path, 4096).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
-    create_temp_file(file_2_path, 5000).expect("failed to create temp file");
+    create_temp_file(file_2_path, 8192).expect("failed to create temp file");
 
     let mut file_3_path = PathBuf::from(&temp_dir_path);
     file_3_path.push("file3");
-    create_temp_file(file_3_path, 5000).expect("failed to create temp file");
+    create_temp_file(file_3_path, 8192).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(
@@ -165,17 +171,17 @@ fn small_width_long_folder_name() {
 
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("file1");
-    create_temp_file(file_1_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_1_path, 4096).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
-    create_temp_file(file_2_path, 5000).expect("failed to create temp file");
+    create_temp_file(file_2_path, 8192).expect("failed to create temp file");
 
     let mut file_3_path = PathBuf::from(&temp_dir_path);
     file_3_path.push("file3");
-    create_temp_file(file_3_path, 5000).expect("failed to create temp file");
+    create_temp_file(file_3_path, 8192).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(
@@ -206,17 +212,17 @@ fn too_small_width_one() {
 
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("file1");
-    create_temp_file(file_1_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_1_path, 4096).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
-    create_temp_file(file_2_path, 5000).expect("failed to create temp file");
+    create_temp_file(file_2_path, 8192).expect("failed to create temp file");
 
     let mut file_3_path = PathBuf::from(&temp_dir_path);
     file_3_path.push("file3");
-    create_temp_file(file_3_path, 5000).expect("failed to create temp file");
+    create_temp_file(file_3_path, 8192).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(
@@ -244,17 +250,17 @@ fn too_small_width_two() {
 
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("file1");
-    create_temp_file(file_1_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_1_path, 4096).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
-    create_temp_file(file_2_path, 5000).expect("failed to create temp file");
+    create_temp_file(file_2_path, 8192).expect("failed to create temp file");
 
     let mut file_3_path = PathBuf::from(&temp_dir_path);
     file_3_path.push("file3");
-    create_temp_file(file_3_path, 5000).expect("failed to create temp file");
+    create_temp_file(file_3_path, 8192).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(
@@ -280,7 +286,7 @@ fn too_small_width_three() {
     let temp_dir_path =
         create_root_temp_dir("too_small_width_three").expect("failed to create temp dir");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(
@@ -306,7 +312,7 @@ fn too_small_width_four() {
     let temp_dir_path =
         create_root_temp_dir("too_small_width_four").expect("failed to create temp dir");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(
@@ -332,7 +338,7 @@ fn too_small_width_five() {
     let temp_dir_path =
         create_root_temp_dir("too_small_width_five").expect("failed to create temp dir");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(
@@ -358,7 +364,7 @@ fn too_small_height() {
     let temp_dir_path =
         create_root_temp_dir("too_small_height").expect("failed to create temp dir");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(
@@ -385,49 +391,49 @@ fn eleven_files() {
 
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("file1");
-    create_temp_file(file_1_path, 5000).expect("failed to create temp file");
+    create_temp_file(file_1_path, 8192).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
-    create_temp_file(file_2_path, 5000).expect("failed to create temp file");
+    create_temp_file(file_2_path, 8192).expect("failed to create temp file");
 
     let mut file_3_path = PathBuf::from(&temp_dir_path);
     file_3_path.push("file3");
-    create_temp_file(file_3_path, 5000).expect("failed to create temp file");
+    create_temp_file(file_3_path, 8192).expect("failed to create temp file");
 
     let mut file_4_path = PathBuf::from(&temp_dir_path);
     file_4_path.push("file4");
-    create_temp_file(file_4_path, 5000).expect("failed to create temp file");
+    create_temp_file(file_4_path, 8192).expect("failed to create temp file");
 
     let mut file_5_path = PathBuf::from(&temp_dir_path);
     file_5_path.push("file5");
-    create_temp_file(file_5_path, 5000).expect("failed to create temp file");
+    create_temp_file(file_5_path, 8192).expect("failed to create temp file");
 
     let mut file_6_path = PathBuf::from(&temp_dir_path);
     file_6_path.push("file6");
-    create_temp_file(file_6_path, 50000).expect("failed to create temp file");
+    create_temp_file(file_6_path, 53248).expect("failed to create temp file");
 
     let mut file_7_path = PathBuf::from(&temp_dir_path);
     file_7_path.push("file7");
-    create_temp_file(file_7_path, 150000).expect("failed to create temp file");
+    create_temp_file(file_7_path, 151552).expect("failed to create temp file");
 
     let mut file_8_path = PathBuf::from(&temp_dir_path);
     file_8_path.push("file8");
-    create_temp_file(file_8_path, 50000).expect("failed to create temp file");
+    create_temp_file(file_8_path, 53248).expect("failed to create temp file");
 
     let mut file_9_path = PathBuf::from(&temp_dir_path);
     file_9_path.push("file9");
-    create_temp_file(file_9_path, 50000).expect("failed to create temp file");
+    create_temp_file(file_9_path, 53248).expect("failed to create temp file");
 
     let mut file_10_path = PathBuf::from(&temp_dir_path);
     file_10_path.push("file10");
-    create_temp_file(file_10_path, 50000).expect("failed to create temp file");
+    create_temp_file(file_10_path, 53248).expect("failed to create temp file");
 
     let mut file_11_path = PathBuf::from(&temp_dir_path);
     file_11_path.push("file11");
-    create_temp_file(file_11_path, 50000).expect("failed to create temp file");
+    create_temp_file(file_11_path, 53248).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
 
@@ -472,17 +478,17 @@ fn enter_folder() {
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("subfolder1");
     file_1_path.push("file1");
-    create_temp_file(file_1_path, 8000).expect("failed to create temp file");
+    create_temp_file(file_1_path, 8192).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
-    create_temp_file(file_2_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_2_path, 4096).expect("failed to create temp file");
 
     let mut file_3_path = PathBuf::from(&temp_dir_path);
     file_3_path.push("file3");
-    create_temp_file(file_3_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -535,17 +541,17 @@ fn enter_folder_medium_width() {
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("subfolder1");
     file_1_path.push("file1");
-    create_temp_file(file_1_path, 8000).expect("failed to create temp file");
+    create_temp_file(file_1_path, 8192).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
-    create_temp_file(file_2_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_2_path, 4096).expect("failed to create temp file");
 
     let mut file_3_path = PathBuf::from(&temp_dir_path);
     file_3_path.push("file3");
-    create_temp_file(file_3_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -598,17 +604,17 @@ fn enter_folder_small_width() {
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("subfolder_with_quite_a_long_name");
     file_1_path.push("file1");
-    create_temp_file(file_1_path, 8000).expect("failed to create temp file");
+    create_temp_file(file_1_path, 8192).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
-    create_temp_file(file_2_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_2_path, 4096).expect("failed to create temp file");
 
     let mut file_3_path = PathBuf::from(&temp_dir_path);
     file_3_path.push("file3");
-    create_temp_file(file_3_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -640,7 +646,7 @@ fn small_files() {
 
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("file1");
-    create_temp_file(file_1_path, 400000).expect("failed to create temp file");
+    create_temp_file(file_1_path, 401408).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
@@ -652,13 +658,13 @@ fn small_files() {
 
     let mut file_4_path = PathBuf::from(&temp_dir_path);
     file_4_path.push("file4");
-    create_temp_file(file_4_path, 8000).expect("failed to create temp file");
+    create_temp_file(file_4_path, 8192).expect("failed to create temp file");
 
     let mut file_5_path = PathBuf::from(&temp_dir_path);
     file_5_path.push("file5");
-    create_temp_file(file_5_path, 8000).expect("failed to create temp file");
+    create_temp_file(file_5_path, 8192).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
 
@@ -702,7 +708,7 @@ fn zoom_into_small_files() {
 
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("file1");
-    create_temp_file(file_1_path, 400000).expect("failed to create temp file");
+    create_temp_file(file_1_path, 401408).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
@@ -714,13 +720,13 @@ fn zoom_into_small_files() {
 
     let mut file_4_path = PathBuf::from(&temp_dir_path);
     file_4_path.push("file4");
-    create_temp_file(file_4_path, 8000).expect("failed to create temp file");
+    create_temp_file(file_4_path, 8192).expect("failed to create temp file");
 
     let mut file_5_path = PathBuf::from(&temp_dir_path);
     file_5_path.push("file5");
-    create_temp_file(file_5_path, 8000).expect("failed to create temp file");
+    create_temp_file(file_5_path, 8192).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
 
@@ -765,7 +771,7 @@ fn cannot_move_into_small_files() {
 
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("file1");
-    create_temp_file(file_1_path, 400000).expect("failed to create temp file");
+    create_temp_file(file_1_path, 401408).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
@@ -777,41 +783,41 @@ fn cannot_move_into_small_files() {
 
     let mut file_4_path = PathBuf::from(&temp_dir_path);
     file_4_path.push("file4");
-    create_temp_file(file_4_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_4_path, 4096).expect("failed to create temp file");
 
     let mut file_5_path = PathBuf::from(&temp_dir_path);
     file_5_path.push("file5");
-    create_temp_file(file_5_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_5_path, 4096).expect("failed to create temp file");
 
     let mut file_6_path = PathBuf::from(&temp_dir_path);
     file_6_path.push("file6");
-    create_temp_file(file_6_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_6_path, 4096).expect("failed to create temp file");
 
     let mut file_7_path = PathBuf::from(&temp_dir_path);
     file_7_path.push("file7");
-    create_temp_file(file_7_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_7_path, 4096).expect("failed to create temp file");
 
     let mut file_8_path = PathBuf::from(&temp_dir_path);
     file_8_path.push("file8");
-    create_temp_file(file_8_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_8_path, 4096).expect("failed to create temp file");
 
     let mut file_9_path = PathBuf::from(&temp_dir_path);
     file_9_path.push("file9");
-    create_temp_file(file_9_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_9_path, 4096).expect("failed to create temp file");
 
     let mut file_10_path = PathBuf::from(&temp_dir_path);
     file_10_path.push("file10");
-    create_temp_file(file_10_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_10_path, 4096).expect("failed to create temp file");
 
     let mut file_11_path = PathBuf::from(&temp_dir_path);
     file_11_path.push("file11");
-    create_temp_file(file_11_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_11_path, 4096).expect("failed to create temp file");
 
     let mut file_12_path = PathBuf::from(&temp_dir_path);
     file_12_path.push("file12");
-    create_temp_file(file_12_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_12_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
 
@@ -849,22 +855,22 @@ fn minimum_tile_sides() {
     for i in 0..7 {
         let mut file_path = PathBuf::from(&temp_dir_path);
         file_path.push(format!("big_file{}", i));
-        create_temp_file(file_path, 134000).expect("failed to create temp file");
+        create_temp_file(file_path, 135168).expect("failed to create temp file");
     }
 
     for i in 0..2 {
         let mut file_path = PathBuf::from(&temp_dir_path);
         file_path.push(format!("medium_file{}", i));
-        create_temp_file(file_path, 8000).expect("failed to create temp file");
+        create_temp_file(file_path, 8192).expect("failed to create temp file");
     }
 
     for i in 0..50 {
         let mut file_path = PathBuf::from(&temp_dir_path);
         file_path.push(format!("file{}", i));
-        create_temp_file(file_path, 4000).expect("failed to create temp file");
+        create_temp_file(file_path, 4096).expect("failed to create temp file");
     }
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
 
@@ -907,11 +913,11 @@ fn move_down_and_enter_folder() {
 
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("file1");
-    create_temp_file(file_1_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_1_path, 4096).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
-    create_temp_file(file_2_path, 5000).expect("failed to create temp file");
+    create_temp_file(file_2_path, 8192).expect("failed to create temp file");
 
     let mut subfolder_1_path = PathBuf::from(&temp_dir_path);
     subfolder_1_path.push("subfolder1");
@@ -920,9 +926,9 @@ fn move_down_and_enter_folder() {
     let mut file_3_path = PathBuf::from(&temp_dir_path);
     file_3_path.push("subfolder1");
     file_3_path.push("file3");
-    create_temp_file(file_3_path, 5000).expect("failed to create temp file");
+    create_temp_file(file_3_path, 8192).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -973,17 +979,17 @@ fn noop_when_entering_file() {
 
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("file1");
-    create_temp_file(file_1_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_1_path, 4096).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
-    create_temp_file(file_2_path, 5000).expect("failed to create temp file");
+    create_temp_file(file_2_path, 8192).expect("failed to create temp file");
 
     let mut file_3_path = PathBuf::from(&temp_dir_path);
     file_3_path.push("file3");
-    create_temp_file(file_3_path, 5000).expect("failed to create temp file");
+    create_temp_file(file_3_path, 8192).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -1039,17 +1045,17 @@ fn move_up_and_enter_folder() {
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("subfolder1");
     file_1_path.push("file1");
-    create_temp_file(file_1_path, 10000).expect("failed to create temp file");
+    create_temp_file(file_1_path, 12288).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
-    create_temp_file(file_2_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_2_path, 4096).expect("failed to create temp file");
 
     let mut file_3_path = PathBuf::from(&temp_dir_path);
     file_3_path.push("file3");
-    create_temp_file(file_3_path, 5000).expect("failed to create temp file");
+    create_temp_file(file_3_path, 8192).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -1106,17 +1112,17 @@ fn move_right_and_enter_folder() {
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("subfolder1");
     file_1_path.push("file1");
-    create_temp_file(file_1_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_1_path, 4096).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
-    create_temp_file(file_2_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_2_path, 4096).expect("failed to create temp file");
 
     let mut file_3_path = PathBuf::from(&temp_dir_path);
     file_3_path.push("file3");
-    create_temp_file(file_3_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -1174,17 +1180,17 @@ fn move_left_and_enter_folder() {
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("subfolder1");
     file_1_path.push("file1");
-    create_temp_file(file_1_path, 8000).expect("failed to create temp file");
+    create_temp_file(file_1_path, 8192).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
-    create_temp_file(file_2_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_2_path, 4096).expect("failed to create temp file");
 
     let mut file_3_path = PathBuf::from(&temp_dir_path);
     file_3_path.push("file3");
-    create_temp_file(file_3_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -1237,17 +1243,17 @@ fn enter_largest_folder_with_no_selected_tile() {
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("subfolder1");
     file_1_path.push("file1");
-    create_temp_file(file_1_path, 8000).expect("failed to create temp file");
+    create_temp_file(file_1_path, 8192).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
-    create_temp_file(file_2_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_2_path, 4096).expect("failed to create temp file");
 
     let mut file_3_path = PathBuf::from(&temp_dir_path);
     file_3_path.push("file3");
-    create_temp_file(file_3_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -1291,17 +1297,17 @@ fn clear_selection_when_moving_off_screen_edges() {
 
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("file1");
-    create_temp_file(file_1_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_1_path, 4096).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
-    create_temp_file(file_2_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_2_path, 4096).expect("failed to create temp file");
 
     let mut file_3_path = PathBuf::from(&temp_dir_path);
     file_3_path.push("file3");
-    create_temp_file(file_3_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -1359,17 +1365,17 @@ fn esc_to_go_up() {
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("subfolder1");
     file_1_path.push("file1");
-    create_temp_file(file_1_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_1_path, 4096).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
-    create_temp_file(file_2_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_2_path, 4096).expect("failed to create temp file");
 
     let mut file_3_path = PathBuf::from(&temp_dir_path);
     file_3_path.push("file3");
-    create_temp_file(file_3_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -1434,17 +1440,17 @@ fn noop_when_pressing_esc_at_base_folder() {
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("subfolder1");
     file_1_path.push("file1");
-    create_temp_file(file_1_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_1_path, 4096).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
-    create_temp_file(file_2_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_2_path, 4096).expect("failed to create temp file");
 
     let mut file_3_path = PathBuf::from(&temp_dir_path);
     file_3_path.push("file3");
-    create_temp_file(file_3_path, 4000).expect("failed to create temp file");
+    create_temp_file(file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -1502,17 +1508,17 @@ fn delete_file() {
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("subfolder1");
     file_1_path.push("file1");
-    create_temp_file(&file_1_path, 4000).expect("failed to create temp file");
+    create_temp_file(&file_1_path, 4096).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
-    create_temp_file(&file_2_path, 4000).expect("failed to create temp file");
+    create_temp_file(&file_2_path, 4096).expect("failed to create temp file");
 
     let mut file_3_path = PathBuf::from(&temp_dir_path);
     file_3_path.push("file3");
-    create_temp_file(&file_3_path, 4000).expect("failed to create temp file");
+    create_temp_file(&file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
         .expect("could not acquire lock on terminal events");
@@ -1589,17 +1595,17 @@ fn cant_delete_file_with_term_too_small() {
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("subfolder1");
     file_1_path.push("file1");
-    create_temp_file(&file_1_path, 4000).expect("failed to create temp file");
+    create_temp_file(&file_1_path, 4096).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
-    create_temp_file(&file_2_path, 4000).expect("failed to create temp file");
+    create_temp_file(&file_2_path, 4096).expect("failed to create temp file");
 
     let mut file_3_path = PathBuf::from(&temp_dir_path);
     file_3_path.push("file3");
-    create_temp_file(&file_3_path, 4000).expect("failed to create temp file");
+    create_temp_file(&file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
         .expect("could not acquire lock on terminal events");
@@ -1669,17 +1675,17 @@ fn delete_folder() {
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("subfolder1");
     file_1_path.push("file1");
-    create_temp_file(&file_1_path, 4000).expect("failed to create temp file");
+    create_temp_file(&file_1_path, 4096).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
-    create_temp_file(&file_2_path, 4000).expect("failed to create temp file");
+    create_temp_file(&file_2_path, 4096).expect("failed to create temp file");
 
     let mut file_3_path = PathBuf::from(&temp_dir_path);
     file_3_path.push("file3");
-    create_temp_file(&file_3_path, 4000).expect("failed to create temp file");
+    create_temp_file(&file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
         .expect("could not acquire lock on terminal events");
@@ -1764,17 +1770,17 @@ fn delete_folder_small_window() {
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("subfolder1");
     file_1_path.push("file1");
-    create_temp_file(&file_1_path, 4000).expect("failed to create temp file");
+    create_temp_file(&file_1_path, 4096).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
-    create_temp_file(&file_2_path, 4000).expect("failed to create temp file");
+    create_temp_file(&file_2_path, 4096).expect("failed to create temp file");
 
     let mut file_3_path = PathBuf::from(&temp_dir_path);
     file_3_path.push("file3");
-    create_temp_file(&file_3_path, 4000).expect("failed to create temp file");
+    create_temp_file(&file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
         .expect("could not acquire lock on terminal events");
@@ -1852,11 +1858,11 @@ fn delete_folder_with_multiple_children() {
 
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("file1");
-    create_temp_file(&file_1_path, 16000).expect("failed to create temp file");
+    create_temp_file(&file_1_path, 16384).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
-    create_temp_file(&file_2_path, 16000).expect("failed to create temp file");
+    create_temp_file(&file_2_path, 16384).expect("failed to create temp file");
 
     let mut subfolder_1_path = PathBuf::from(&temp_dir_path);
     subfolder_1_path.push("subfolder1");
@@ -1871,20 +1877,20 @@ fn delete_folder_with_multiple_children() {
     file_3_path.push("subfolder1");
     file_3_path.push("subfolder2");
     file_3_path.push("file3");
-    create_temp_file(&file_3_path, 4000).expect("failed to create temp file");
+    create_temp_file(&file_3_path, 4096).expect("failed to create temp file");
 
     let mut file_4_path = PathBuf::from(&temp_dir_path);
     file_4_path.push("subfolder1");
     file_4_path.push("subfolder2");
     file_4_path.push("file4");
-    create_temp_file(&file_4_path, 4000).expect("failed to create temp file");
+    create_temp_file(&file_4_path, 4096).expect("failed to create temp file");
 
     let mut file_5_path = PathBuf::from(&temp_dir_path);
     file_5_path.push("subfolder1");
     file_5_path.push("file5");
-    create_temp_file(&file_5_path, 4000).expect("failed to create temp file");
+    create_temp_file(&file_5_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
         .expect("could not acquire lock on terminal events");
@@ -1970,17 +1976,17 @@ fn pressing_delete_with_no_selected_tile() {
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("subfolder1");
     file_1_path.push("file1");
-    create_temp_file(&file_1_path, 4000).expect("failed to create temp file");
+    create_temp_file(&file_1_path, 4096).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
-    create_temp_file(&file_2_path, 4000).expect("failed to create temp file");
+    create_temp_file(&file_2_path, 4096).expect("failed to create temp file");
 
     let mut file_3_path = PathBuf::from(&temp_dir_path);
     file_3_path.push("file3");
-    create_temp_file(&file_3_path, 4000).expect("failed to create temp file");
+    create_temp_file(&file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
         .expect("could not acquire lock on terminal events");
@@ -2047,17 +2053,17 @@ fn delete_file_press_n() {
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("subfolder1");
     file_1_path.push("file1");
-    create_temp_file(&file_1_path, 4000).expect("failed to create temp file");
+    create_temp_file(&file_1_path, 4096).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
-    create_temp_file(&file_2_path, 4000).expect("failed to create temp file");
+    create_temp_file(&file_2_path, 4096).expect("failed to create temp file");
 
     let mut file_3_path = PathBuf::from(&temp_dir_path);
     file_3_path.push("file3");
-    create_temp_file(&file_3_path, 4000).expect("failed to create temp file");
+    create_temp_file(&file_3_path, 4096).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
         .expect("could not acquire lock on terminal events");
@@ -2121,7 +2127,7 @@ fn files_with_size_zero() {
     file_3_path.push("file3");
     create_temp_file(file_3_path, 0).expect("failed to create temp file");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(
@@ -2149,7 +2155,7 @@ fn empty_folder() {
     let keyboard_events = sleep_and_quit_events(1, true);
     let temp_dir_path = create_root_temp_dir("empty_folder").expect("failed to create temp dir");
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(
@@ -2203,13 +2209,13 @@ fn permission_denied_when_deleting() {
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("subfolder1");
     file_1_path.push("file1");
-    create_temp_file(&file_1_path, 4000).expect("failed to create temp file");
+    create_temp_file(&file_1_path, 4096).expect("failed to create temp file");
 
     let mut perms = std::fs::metadata(&subfolder_1_path).unwrap().permissions();
     perms.set_readonly(true);
     std::fs::set_permissions(&subfolder_1_path, perms.clone()).unwrap();
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
         .expect("could not acquire lock on terminal events");
@@ -2262,15 +2268,15 @@ fn small_files_with_y_as_zero() {
 
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("file1");
-    create_temp_file(file_1_path, 1000000).expect("failed to create temp file");
+    create_temp_file(file_1_path, 1048576).expect("failed to create temp file");
 
     for i in 1..100 {
         let mut small_file_path = PathBuf::from(&temp_dir_path);
         small_file_path.push(format!("small_file{}", i));
-        create_temp_file(small_file_path, 1).expect("failed to create temp file");
+        create_temp_file(small_file_path, 4096).expect("failed to create temp file");
     }
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(
@@ -2301,19 +2307,19 @@ fn small_files_with_x_as_zero() {
 
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("file1");
-    create_temp_file(file_1_path, 1000000).expect("failed to create temp file");
+    create_temp_file(file_1_path, 1048576).expect("failed to create temp file");
 
     let mut file_2_path = PathBuf::from(&temp_dir_path);
     file_2_path.push("file2");
-    create_temp_file(file_2_path, 1000000).expect("failed to create temp file");
+    create_temp_file(file_2_path, 1048576).expect("failed to create temp file");
 
     for i in 1..100 {
         let mut small_file_path = PathBuf::from(&temp_dir_path);
         small_file_path.push(format!("small_file{}", i));
-        create_temp_file(small_file_path, 1).expect("failed to create temp file");
+        create_temp_file(small_file_path, 4096).expect("failed to create temp file");
     }
 
-    start(backend, keyboard_events, temp_dir_path.clone());
+    start(backend, keyboard_events, temp_dir_path.clone(), SHOW_APPARENT_SIZE);
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
     println!(

@@ -44,11 +44,12 @@ where
         terminal_backend: B,
         path_in_filesystem: PathBuf,
         event_sender: SyncSender<Event>,
+        show_apparent_size: bool,
     ) -> Self {
         let display = Display::new(terminal_backend);
         let board = Board::new(&Folder::new(&path_in_filesystem));
         let base_folder = Folder::new(&path_in_filesystem);
-        let file_tree = ManuallyDrop::new(FileTree::new(base_folder, path_in_filesystem));
+        let file_tree = ManuallyDrop::new(FileTree::new(base_folder, path_in_filesystem, show_apparent_size));
         // we use ManuallyDrop here because otherwise the app takes forever to exit
         let ui_effects = UiEffects::new();
         App {
