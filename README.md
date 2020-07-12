@@ -47,6 +47,13 @@ Available through the following overlay as `sys-fs/diskonaut`:
 
 https://github.com/telans/EBUILDS
 
+### Nix / NixOS
+Available in [nixpkgs](https://github.com/NixOS/nixpkgs/blob/master/pkgs/tools/misc/diskonaut/default.nix):
+```
+$ nix-env --install diskonaut
+$ # (Or using the attribute name, which is also diskonaut.)
+```
+
 ## Supported platforms
 Right now `diskonaut` supports linux and macos. If you're on a different operating system and would like to help port it, that would be amazing!
 
