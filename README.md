@@ -54,6 +54,12 @@ $ nix-env --install diskonaut
 $ # (Or using the attribute name, which is also diskonaut.)
 ```
 
+### FreeBSD
+Available in [freshports](https://www.freshports.org/sysutils/diskonaut/):
+```
+pkg install diskonaut
+```
+
 ## Supported platforms
 Right now `diskonaut` supports linux and macos. If you're on a different operating system and would like to help port it, that would be amazing!
 
