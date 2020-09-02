@@ -30,13 +30,6 @@ sudo dnf install diskonaut
 
 Available in the [AUR](https://aur.archlinux.org/packages/diskonaut):
 
-With `makepkg`:
-```
-git clone https://aur.archlinux.org/diskonaut.git
-cd diskonaut
-makepkg -si
-```
-With `yay`:
 ```
 yay diskonaut
 ```
@@ -58,6 +51,12 @@ $ # (Or using the attribute name, which is also diskonaut.)
 Available in [freshports](https://www.freshports.org/sysutils/diskonaut/):
 ```
 pkg install diskonaut
+```
+
+### macOS
+Available in [Homebrew](https://formulae.brew.sh/formula/diskonaut)
+```
+brew install diskonaut
 ```
 
 ## Supported platforms
