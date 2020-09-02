@@ -13,7 +13,9 @@ Once completed, you can navigate through subfolders, getting a visual treemap re
 If you're using linux, you can check out the "releases" of this repository to download the latest prebuilt binary.
 
 ### With cargo (linux/macOS)
-`cargo install diskonaut`
+```
+cargo install diskonaut
+```
 
 ### Fedora/CentOS
 
