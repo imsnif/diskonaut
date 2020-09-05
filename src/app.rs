@@ -222,11 +222,10 @@ where
                 // Here we just delete the file.
                 // As we have set the UI mode above we will get the deletion in progress message box instead of the prompt.
                 self.delete_file(&file_to_delete);
-            }
-            else {
+            } else {
                 // Here we will render which will display the confirmation prompt
                 self.render();
-            }   
+            }
         }
     }
     pub fn normal_mode(&mut self) {

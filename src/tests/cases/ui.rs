@@ -1754,7 +1754,8 @@ fn delete_file_no_confirmation() {
     events.push(Some(Event::Key(Key::Char('y'))));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
-    let temp_dir_path = create_root_temp_dir("delete_file_no_confirmation").expect("failed to create temp dir");
+    let temp_dir_path =
+        create_root_temp_dir("delete_file_no_confirmation").expect("failed to create temp dir");
 
     let mut subfolder_1_path = PathBuf::from(&temp_dir_path);
     subfolder_1_path.push("subfolder1");
@@ -1785,8 +1786,8 @@ fn delete_file_no_confirmation() {
         .expect("could not acquire lock on terminal events");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
+        Flush, Draw, Flush, Clear, ShowCursor,
     ];
     assert_eq!(
         &terminal_events
@@ -2027,7 +2028,8 @@ fn delete_folder_no_confirmation() {
     events.push(Some(Event::Key(Key::Char('y'))));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
-    let temp_dir_path = create_root_temp_dir("delete_folder_no_confirmation").expect("failed to create temp dir");
+    let temp_dir_path =
+        create_root_temp_dir("delete_folder_no_confirmation").expect("failed to create temp dir");
 
     let mut subfolder_1_path = PathBuf::from(&temp_dir_path);
     subfolder_1_path.push("subfolder1");
@@ -2058,8 +2060,8 @@ fn delete_folder_no_confirmation() {
         .expect("could not acquire lock on terminal events");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
+        Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
     ];
     assert_eq!(
         &terminal_events
@@ -2226,8 +2228,8 @@ fn delete_folder_small_window_no_confirmation() {
     events.push(Some(Event::Key(Key::Char('y'))));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
-    let temp_dir_path =
-        create_root_temp_dir("delete_folder_small_window_no_confirmation").expect("failed to create temp dir");
+    let temp_dir_path = create_root_temp_dir("delete_folder_small_window_no_confirmation")
+        .expect("failed to create temp dir");
 
     let mut subfolder_1_path = PathBuf::from(&temp_dir_path);
     subfolder_1_path.push("subfolder1");
@@ -2258,8 +2260,8 @@ fn delete_folder_small_window_no_confirmation() {
         .expect("could not acquire lock on terminal events");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
+        Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
     ];
     assert_eq!(
         &terminal_events
@@ -2452,8 +2454,9 @@ fn delete_folder_with_multiple_children_no_confirmation() {
     events.push(Some(Event::Key(Key::Char('y'))));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
-    let temp_dir_path = create_root_temp_dir("delete_folder_with_multiple_children_no_confirmation")
-        .expect("failed to create temp dir");
+    let temp_dir_path =
+        create_root_temp_dir("delete_folder_with_multiple_children_no_confirmation")
+            .expect("failed to create temp dir");
 
     let mut file_1_path = PathBuf::from(&temp_dir_path);
     file_1_path.push("file1");
@@ -2501,8 +2504,8 @@ fn delete_folder_with_multiple_children_no_confirmation() {
         .expect("could not acquire lock on terminal events");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
+        Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
     ];
     assert_eq!(
         &terminal_events
@@ -2913,8 +2916,8 @@ fn permission_denied_when_deleting_no_confirmation() {
     events.push(Some(Event::Key(Key::Char('y'))));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
-    let temp_dir_path =
-        create_root_temp_dir("permission_denied_when_deleting_no_confirmation").expect("failed to create temp dir");
+    let temp_dir_path = create_root_temp_dir("permission_denied_when_deleting_no_confirmation")
+        .expect("failed to create temp dir");
 
     let mut subfolder_1_path = PathBuf::from(&temp_dir_path);
     subfolder_1_path.push("subfolder1");
@@ -2956,8 +2959,8 @@ fn permission_denied_when_deleting_no_confirmation() {
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
+        Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
     ];
 
     assert_eq!(
