@@ -18,6 +18,10 @@ use crate::tests::fakes::TerminalEvent::*;
 // on filesystems with and without compression
 const SHOW_APPARENT_SIZE: bool = true;
 
+// This leaves delete confirmations enabled (The default behaviour).
+const DELETE_CONFIRMATION_ENABLED: bool = false;
+const DELETE_CONFIRMATION_DISABLED: bool = true;
+
 fn create_root_temp_dir(name: &str) -> Result<PathBuf, failure::Error> {
     let mut dir = PathBuf::new();
     dir.push(String::from("/tmp/diskonaut_tests")); // TODO: fix this for other platforms
@@ -65,6 +69,7 @@ fn two_large_files_one_small_file() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -110,6 +115,7 @@ fn medium_width() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -155,6 +161,7 @@ fn small_width() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -201,6 +208,7 @@ fn small_width_long_folder_name() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -247,6 +255,7 @@ fn too_small_width_one() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -290,6 +299,7 @@ fn too_small_width_two() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -321,6 +331,7 @@ fn too_small_width_three() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -352,6 +363,7 @@ fn too_small_width_four() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -383,6 +395,7 @@ fn too_small_width_five() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -414,6 +427,7 @@ fn too_small_height() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -488,6 +502,7 @@ fn eleven_files() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -548,6 +563,7 @@ fn enter_folder() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
@@ -616,6 +632,7 @@ fn enter_folder_medium_width() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
@@ -684,6 +701,7 @@ fn enter_folder_small_width() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
@@ -739,6 +757,7 @@ fn small_files() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -806,6 +825,7 @@ fn zoom_into_small_files() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -902,6 +922,7 @@ fn cannot_move_into_small_files() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -960,6 +981,7 @@ fn minimum_tile_sides() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -1023,6 +1045,7 @@ fn move_down_and_enter_folder() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
@@ -1089,6 +1112,7 @@ fn noop_when_entering_file() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
@@ -1160,6 +1184,7 @@ fn move_up_and_enter_folder() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
@@ -1232,6 +1257,7 @@ fn move_right_and_enter_folder() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
@@ -1305,6 +1331,7 @@ fn move_left_and_enter_folder() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
@@ -1373,6 +1400,7 @@ fn enter_largest_folder_with_no_selected_tile() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
@@ -1432,6 +1460,7 @@ fn clear_selection_when_moving_off_screen_edges() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
@@ -1505,6 +1534,7 @@ fn esc_to_go_up() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
@@ -1585,6 +1615,7 @@ fn noop_when_pressing_esc_at_base_folder() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
@@ -1658,6 +1689,7 @@ fn delete_file() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -1703,7 +1735,95 @@ fn delete_file() {
     assert_snapshot!(&terminal_draw_events_mirror[4]);
     assert_snapshot!(&terminal_draw_events_mirror[5]);
     assert_snapshot!(&terminal_draw_events_mirror[6]);
-    assert_snapshot!(&terminal_draw_events_mirror[7]);
+}
+
+#[test]
+fn delete_file_no_confirmation() {
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+
+    let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
+    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(None);
+    events.push(Some(Event::Key(Key::Backspace)));
+    events.push(None);
+    events.push(None);
+    events.push(None);
+    events.push(None);
+    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(None);
+    events.push(Some(Event::Key(Key::Char('y'))));
+    let keyboard_events = Box::new(KeyboardEvents::new(events));
+
+    let temp_dir_path = create_root_temp_dir("delete_file_no_confirmation").expect("failed to create temp dir");
+
+    let mut subfolder_1_path = PathBuf::from(&temp_dir_path);
+    subfolder_1_path.push("subfolder1");
+    create_dir(&subfolder_1_path).expect("failed to create temporary directory");
+
+    let mut file_1_path = PathBuf::from(&temp_dir_path);
+    file_1_path.push("subfolder1");
+    file_1_path.push("file1");
+    create_temp_file(&file_1_path, 4096).expect("failed to create temp file");
+
+    let mut file_2_path = PathBuf::from(&temp_dir_path);
+    file_2_path.push("file2");
+    create_temp_file(&file_2_path, 4096).expect("failed to create temp file");
+
+    let mut file_3_path = PathBuf::from(&temp_dir_path);
+    file_3_path.push("file3");
+    create_temp_file(&file_3_path, 4096).expect("failed to create temp file");
+
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_DISABLED,
+    );
+    let terminal_draw_events_mirror = terminal_draw_events
+        .lock()
+        .expect("could not acquire lock on terminal events");
+
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
+        Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    ];
+    assert_eq!(
+        &terminal_events
+            .lock()
+            .expect("could not acquire lock on terminal_events")[..],
+        &expected_terminal_events[..]
+    );
+    assert_eq!(
+        std::fs::metadata(&file_2_path).is_err(),
+        true,
+        "file successfully deleted"
+    );
+    assert_eq!(
+        std::fs::metadata(&subfolder_1_path).is_ok(),
+        true,
+        "different folder stayed the same"
+    );
+    assert_eq!(
+        std::fs::metadata(&file_1_path).is_ok(),
+        true,
+        "different file was untoucehd"
+    );
+    assert_eq!(
+        std::fs::metadata(&file_3_path).is_ok(),
+        true,
+        "second different file was untouched"
+    );
+    std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
+
+    assert_eq!(terminal_draw_events_mirror.len(), 7);
+    assert_snapshot!(&terminal_draw_events_mirror[0]);
+    assert_snapshot!(&terminal_draw_events_mirror[1]);
+    assert_snapshot!(&terminal_draw_events_mirror[2]);
+    assert_snapshot!(&terminal_draw_events_mirror[3]);
+    assert_snapshot!(&terminal_draw_events_mirror[4]);
+    assert_snapshot!(&terminal_draw_events_mirror[5]);
+    assert_snapshot!(&terminal_draw_events_mirror[6]);
 }
 
 #[test]
@@ -1750,6 +1870,7 @@ fn cant_delete_file_with_term_too_small() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -1835,6 +1956,7 @@ fn delete_folder() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -1885,6 +2007,100 @@ fn delete_folder() {
 }
 
 #[test]
+fn delete_folder_no_confirmation() {
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+
+    let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
+    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(None);
+    events.push(Some(Event::Key(Key::Char('l'))));
+    events.push(None);
+    events.push(Some(Event::Key(Key::Backspace)));
+    // here we sleep extra to allow the blink events to happen and be tested before the app exits
+    // with the following ctrl-c
+    events.push(None);
+    events.push(None);
+    events.push(None);
+    events.push(None);
+    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(None);
+    events.push(Some(Event::Key(Key::Char('y'))));
+    let keyboard_events = Box::new(KeyboardEvents::new(events));
+
+    let temp_dir_path = create_root_temp_dir("delete_folder_no_confirmation").expect("failed to create temp dir");
+
+    let mut subfolder_1_path = PathBuf::from(&temp_dir_path);
+    subfolder_1_path.push("subfolder1");
+    create_dir(&subfolder_1_path).expect("failed to create temporary directory");
+
+    let mut file_1_path = PathBuf::from(&temp_dir_path);
+    file_1_path.push("subfolder1");
+    file_1_path.push("file1");
+    create_temp_file(&file_1_path, 4096).expect("failed to create temp file");
+
+    let mut file_2_path = PathBuf::from(&temp_dir_path);
+    file_2_path.push("file2");
+    create_temp_file(&file_2_path, 4096).expect("failed to create temp file");
+
+    let mut file_3_path = PathBuf::from(&temp_dir_path);
+    file_3_path.push("file3");
+    create_temp_file(&file_3_path, 4096).expect("failed to create temp file");
+
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_DISABLED,
+    );
+    let terminal_draw_events_mirror = terminal_draw_events
+        .lock()
+        .expect("could not acquire lock on terminal events");
+
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
+        Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    ];
+    assert_eq!(
+        &terminal_events
+            .lock()
+            .expect("could not acquire lock on terminal_events")[..],
+        &expected_terminal_events[..]
+    );
+    assert_eq!(
+        std::fs::metadata(&subfolder_1_path).is_err(),
+        true,
+        "folder successfully deleted"
+    );
+    assert_eq!(
+        std::fs::metadata(&file_1_path).is_err(),
+        true,
+        "internal file successfully deleted"
+    ); // can't really fail on its own, but left here for clarity
+    assert_eq!(
+        std::fs::metadata(&file_2_path).is_ok(),
+        true,
+        "different file was untouched"
+    );
+    assert_eq!(
+        std::fs::metadata(&file_3_path).is_ok(),
+        true,
+        "second different file was untouched"
+    );
+    std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
+
+    assert_eq!(terminal_draw_events_mirror.len(), 8);
+    assert_snapshot!(&terminal_draw_events_mirror[0]);
+    assert_snapshot!(&terminal_draw_events_mirror[1]);
+    assert_snapshot!(&terminal_draw_events_mirror[2]);
+    assert_snapshot!(&terminal_draw_events_mirror[3]);
+    assert_snapshot!(&terminal_draw_events_mirror[4]);
+    assert_snapshot!(&terminal_draw_events_mirror[5]);
+    assert_snapshot!(&terminal_draw_events_mirror[6]);
+    assert_snapshot!(&terminal_draw_events_mirror[7]);
+}
+
+#[test]
 fn delete_folder_small_window() {
     // terminal window with a width of 60 (shorter message window layout)
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(60, 50);
@@ -1911,7 +2127,7 @@ fn delete_folder_small_window() {
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
     let temp_dir_path =
-        create_root_temp_dir("delete_folder_small_wikndow").expect("failed to create temp dir");
+        create_root_temp_dir("delete_folder_small_window").expect("failed to create temp dir");
 
     let mut subfolder_1_path = PathBuf::from(&temp_dir_path);
     subfolder_1_path.push("subfolder1");
@@ -1935,6 +2151,7 @@ fn delete_folder_small_window() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -1983,6 +2200,105 @@ fn delete_folder_small_window() {
     assert_snapshot!(&terminal_draw_events_mirror[7]);
     assert_snapshot!(&terminal_draw_events_mirror[8]);
     assert_snapshot!(&terminal_draw_events_mirror[9]);
+}
+
+#[test]
+fn delete_folder_small_window_no_confirmation() {
+    // terminal window with a width of 60 (shorter message window layout)
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(60, 50);
+
+    let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
+    events.push(Some(Event::Key(Key::Char('j')))); // once to place selected marker on screen
+    events.push(None);
+    events.push(Some(Event::Key(Key::Char('j'))));
+    events.push(None);
+    events.push(Some(Event::Key(Key::Char('j'))));
+    events.push(None);
+    events.push(Some(Event::Key(Key::Backspace)));
+    events.push(None);
+    // here we sleep extra to allow the blink events to happen and be tested before the app exits
+    // with the following ctrl-c
+    events.push(None);
+    events.push(None);
+    events.push(None);
+    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(None);
+    events.push(Some(Event::Key(Key::Char('y'))));
+    let keyboard_events = Box::new(KeyboardEvents::new(events));
+
+    let temp_dir_path =
+        create_root_temp_dir("delete_folder_small_window_no_confirmation").expect("failed to create temp dir");
+
+    let mut subfolder_1_path = PathBuf::from(&temp_dir_path);
+    subfolder_1_path.push("subfolder1");
+    create_dir(&subfolder_1_path).expect("failed to create temporary directory");
+
+    let mut file_1_path = PathBuf::from(&temp_dir_path);
+    file_1_path.push("subfolder1");
+    file_1_path.push("file1");
+    create_temp_file(&file_1_path, 4096).expect("failed to create temp file");
+
+    let mut file_2_path = PathBuf::from(&temp_dir_path);
+    file_2_path.push("file2");
+    create_temp_file(&file_2_path, 4096).expect("failed to create temp file");
+
+    let mut file_3_path = PathBuf::from(&temp_dir_path);
+    file_3_path.push("file3");
+    create_temp_file(&file_3_path, 4096).expect("failed to create temp file");
+
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_DISABLED,
+    );
+    let terminal_draw_events_mirror = terminal_draw_events
+        .lock()
+        .expect("could not acquire lock on terminal events");
+
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
+        Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    ];
+    assert_eq!(
+        &terminal_events
+            .lock()
+            .expect("could not acquire lock on terminal_events")[..],
+        &expected_terminal_events[..]
+    );
+    assert_eq!(
+        std::fs::metadata(&file_2_path).is_ok(),
+        true,
+        "different file was untouched"
+    );
+    assert_eq!(
+        std::fs::metadata(&subfolder_1_path).is_err(),
+        true,
+        "file successfully deleted"
+    );
+    assert_eq!(
+        std::fs::metadata(&file_1_path).is_err(),
+        true,
+        "file in folder deleted"
+    );
+    assert_eq!(
+        std::fs::metadata(&file_3_path).is_ok(),
+        true,
+        "second different file was untouched"
+    );
+    std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
+
+    assert_eq!(terminal_draw_events_mirror.len(), 9);
+    assert_snapshot!(&terminal_draw_events_mirror[0]);
+    assert_snapshot!(&terminal_draw_events_mirror[1]);
+    assert_snapshot!(&terminal_draw_events_mirror[2]);
+    assert_snapshot!(&terminal_draw_events_mirror[3]);
+    assert_snapshot!(&terminal_draw_events_mirror[4]);
+    assert_snapshot!(&terminal_draw_events_mirror[5]);
+    assert_snapshot!(&terminal_draw_events_mirror[6]);
+    assert_snapshot!(&terminal_draw_events_mirror[7]);
+    assert_snapshot!(&terminal_draw_events_mirror[8]);
 }
 
 #[test]
@@ -2050,6 +2366,7 @@ fn delete_folder_with_multiple_children() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -2115,6 +2432,133 @@ fn delete_folder_with_multiple_children() {
 }
 
 #[test]
+fn delete_folder_with_multiple_children_no_confirmation() {
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+
+    let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
+    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(None);
+    events.push(Some(Event::Key(Key::Char('l'))));
+    events.push(None);
+    events.push(Some(Event::Key(Key::Backspace)));
+    events.push(None);
+    // here we sleep extra to allow the blink events to happen and be tested before the app exits
+    // with the following ctrl-c
+    events.push(None);
+    events.push(None);
+    events.push(None);
+    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(None);
+    events.push(Some(Event::Key(Key::Char('y'))));
+    let keyboard_events = Box::new(KeyboardEvents::new(events));
+
+    let temp_dir_path = create_root_temp_dir("delete_folder_with_multiple_children_no_confirmation")
+        .expect("failed to create temp dir");
+
+    let mut file_1_path = PathBuf::from(&temp_dir_path);
+    file_1_path.push("file1");
+    create_temp_file(&file_1_path, 16384).expect("failed to create temp file");
+
+    let mut file_2_path = PathBuf::from(&temp_dir_path);
+    file_2_path.push("file2");
+    create_temp_file(&file_2_path, 16384).expect("failed to create temp file");
+
+    let mut subfolder_1_path = PathBuf::from(&temp_dir_path);
+    subfolder_1_path.push("subfolder1");
+    create_dir(&subfolder_1_path).expect("failed to create temporary directory");
+
+    let mut subfolder_2_path = PathBuf::from(&temp_dir_path);
+    subfolder_2_path.push("subfolder1");
+    subfolder_2_path.push("subfolder2");
+    create_dir(&subfolder_2_path).expect("failed to create temporary directory");
+
+    let mut file_3_path = PathBuf::from(&temp_dir_path);
+    file_3_path.push("subfolder1");
+    file_3_path.push("subfolder2");
+    file_3_path.push("file3");
+    create_temp_file(&file_3_path, 4096).expect("failed to create temp file");
+
+    let mut file_4_path = PathBuf::from(&temp_dir_path);
+    file_4_path.push("subfolder1");
+    file_4_path.push("subfolder2");
+    file_4_path.push("file4");
+    create_temp_file(&file_4_path, 4096).expect("failed to create temp file");
+
+    let mut file_5_path = PathBuf::from(&temp_dir_path);
+    file_5_path.push("subfolder1");
+    file_5_path.push("file5");
+    create_temp_file(&file_5_path, 4096).expect("failed to create temp file");
+
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_DISABLED,
+    );
+    let terminal_draw_events_mirror = terminal_draw_events
+        .lock()
+        .expect("could not acquire lock on terminal events");
+
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
+        Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    ];
+    assert_eq!(
+        &terminal_events
+            .lock()
+            .expect("could not acquire lock on terminal_events")[..],
+        &expected_terminal_events[..]
+    );
+    assert_eq!(
+        std::fs::metadata(&subfolder_1_path).is_err(),
+        true,
+        "folder successfully deleted"
+    );
+    assert_eq!(
+        std::fs::metadata(&subfolder_2_path).is_err(),
+        true,
+        "folder inside deleted folder successfully deleted"
+    );
+    assert_eq!(
+        std::fs::metadata(&file_1_path).is_ok(),
+        true,
+        "different file was untouched"
+    );
+    assert_eq!(
+        std::fs::metadata(&file_2_path).is_ok(),
+        true,
+        "different file was untouched"
+    );
+    assert_eq!(
+        std::fs::metadata(&file_3_path).is_err(),
+        true,
+        "internal file in folder deleted"
+    );
+    assert_eq!(
+        std::fs::metadata(&file_4_path).is_err(),
+        true,
+        "internal file in folder deleted"
+    );
+    assert_eq!(
+        std::fs::metadata(&file_5_path).is_err(),
+        true,
+        "internal file in folder deleted"
+    );
+    std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
+
+    assert_eq!(terminal_draw_events_mirror.len(), 8);
+    assert_snapshot!(&terminal_draw_events_mirror[0]);
+    assert_snapshot!(&terminal_draw_events_mirror[1]);
+    assert_snapshot!(&terminal_draw_events_mirror[2]);
+    assert_snapshot!(&terminal_draw_events_mirror[3]);
+    assert_snapshot!(&terminal_draw_events_mirror[4]);
+    assert_snapshot!(&terminal_draw_events_mirror[5]);
+    assert_snapshot!(&terminal_draw_events_mirror[6]);
+    assert_snapshot!(&terminal_draw_events_mirror[7]);
+}
+
+#[test]
 fn pressing_delete_with_no_selected_tile() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
@@ -2151,6 +2595,7 @@ fn pressing_delete_with_no_selected_tile() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -2233,6 +2678,7 @@ fn delete_file_press_n() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -2302,6 +2748,7 @@ fn files_with_size_zero() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -2335,6 +2782,7 @@ fn empty_folder() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -2400,6 +2848,7 @@ fn permission_denied_when_deleting() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -2445,6 +2894,91 @@ fn permission_denied_when_deleting() {
 }
 
 #[test]
+fn permission_denied_when_deleting_no_confirmation() {
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+
+    let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
+    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(None);
+    events.push(Some(Event::Key(Key::Char('\n'))));
+    events.push(None);
+    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(None);
+    events.push(Some(Event::Key(Key::Backspace)));
+    events.push(None);
+    events.push(Some(Event::Key(Key::Esc)));
+    events.push(None);
+    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(None);
+    events.push(Some(Event::Key(Key::Char('y'))));
+    let keyboard_events = Box::new(KeyboardEvents::new(events));
+
+    let temp_dir_path =
+        create_root_temp_dir("permission_denied_when_deleting_no_confirmation").expect("failed to create temp dir");
+
+    let mut subfolder_1_path = PathBuf::from(&temp_dir_path);
+    subfolder_1_path.push("subfolder1");
+    create_dir(&subfolder_1_path).expect("failed to create temporary directory");
+
+    let mut file_1_path = PathBuf::from(&temp_dir_path);
+    file_1_path.push("subfolder1");
+    file_1_path.push("file1");
+    create_temp_file(&file_1_path, 4096).expect("failed to create temp file");
+
+    let mut perms = std::fs::metadata(&subfolder_1_path).unwrap().permissions();
+    perms.set_readonly(true);
+    std::fs::set_permissions(&subfolder_1_path, perms.clone()).unwrap();
+
+    start(
+        backend,
+        keyboard_events,
+        temp_dir_path.clone(),
+        SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_DISABLED,
+    );
+    let terminal_draw_events_mirror = terminal_draw_events
+        .lock()
+        .expect("could not acquire lock on terminal events");
+
+    assert_eq!(
+        std::fs::metadata(&file_1_path).is_ok(),
+        true,
+        "file was not deleted"
+    ); // can't really fail on its own, but left here for clarity
+    assert_eq!(
+        std::fs::metadata(&subfolder_1_path).is_ok(),
+        true,
+        "containing folder was not deleted"
+    );
+
+    perms.set_readonly(false);
+    std::fs::set_permissions(&subfolder_1_path, perms).unwrap();
+    std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
+
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
+        Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    ];
+
+    assert_eq!(
+        &terminal_events
+            .lock()
+            .expect("could not acquire lock on terminal_events")[..],
+        &expected_terminal_events[..]
+    );
+
+    assert_eq!(terminal_draw_events_mirror.len(), 8);
+    assert_snapshot!(&terminal_draw_events_mirror[0]);
+    assert_snapshot!(&terminal_draw_events_mirror[1]);
+    assert_snapshot!(&terminal_draw_events_mirror[2]);
+    assert_snapshot!(&terminal_draw_events_mirror[3]);
+    assert_snapshot!(&terminal_draw_events_mirror[4]);
+    assert_snapshot!(&terminal_draw_events_mirror[5]);
+    assert_snapshot!(&terminal_draw_events_mirror[6]);
+    assert_snapshot!(&terminal_draw_events_mirror[7]);
+}
+
+#[test]
 fn small_files_with_y_as_zero() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
     let keyboard_events = sleep_and_quit_events(1, true);
@@ -2466,6 +3000,7 @@ fn small_files_with_y_as_zero() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -2514,6 +3049,7 @@ fn small_files_with_x_as_zero() {
         keyboard_events,
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
+        DELETE_CONFIRMATION_ENABLED,
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();

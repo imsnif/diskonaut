@@ -1,8 +1,8 @@
 ---
 source: src/tests/cases/ui.rs
-expression: "&terminal_draw_events_mirror[6]"
+expression: "&terminal_draw_events_mirror[7]"
 ---
- 8.0K | /tmp/diskonaut_tests/delete_folder_smal _window     
+ 8.0K                                                       
                                                             
                                                             
                                                             
@@ -13,12 +13,6 @@ expression: "&terminal_draw_events_mirror[6]"
                                                             
                                                             
                                                             
-                           file2                            
-                                                            
-                                                            
-                         4.0K (50%)                         
-                                                            
-│                                                          │
                                                             
                                                             
                                                             
@@ -26,7 +20,6 @@ expression: "&terminal_draw_events_mirror[6]"
                                                             
                                                             
                                                             
-├──────────────────────────────────────────────────────────┤
                                                             
                                                             
                                                             
@@ -34,12 +27,19 @@ expression: "&terminal_draw_events_mirror[6]"
                                                             
                                                             
                                                             
-│                                                          │
-                                                            
-                           file3                            
                                                             
                                                             
-                         4.0K (50%)                         
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
+                                                            
                                                             
                                                             
                                                             

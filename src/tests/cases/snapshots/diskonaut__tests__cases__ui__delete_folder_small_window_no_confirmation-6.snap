@@ -1,8 +1,8 @@
 ---
 source: src/tests/cases/ui.rs
-expression: "&terminal_draw_events_mirror[6]"
+expression: "&terminal_draw_events_mirror[5]"
 ---
- 8.0K | /tmp/diskonaut_tests/delete_folder_smal _window     
+ 8.0K | /tmp/diskonaut_tests/de[. ]_window_no_confirmation  
                                                             
                                                             
                                                             
