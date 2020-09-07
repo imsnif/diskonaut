@@ -60,6 +60,7 @@ Available in [Homebrew](https://formulae.brew.sh/formula/diskonaut)
 ```
 brew install diskonaut
 ```
+Also available in [nixpkgs](https://github.com/NixOS/nixpkgs/blob/master/pkgs/tools/misc/diskonaut/default.nix): see Nix section for more details.
 
 ## Supported platforms
 Right now `diskonaut` supports linux and macos. If you're on a different operating system and would like to help port it, that would be amazing!
