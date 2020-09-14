@@ -5,13 +5,35 @@ use ::std::iter;
 use ::std::path::{Path, PathBuf};
 
 use ::insta::assert_snapshot;
-use ::termion::event::{Event, Key};
+use crossterm::event::KeyModifiers;
+use crossterm::event::{Event , KeyCode, KeyEvent};
 
 use crate::start;
-use crate::tests::cases::test_utils::{sleep_and_quit_events, test_backend_factory};
+use crate::tests::cases::test_utils::*;
 use crate::tests::fakes::KeyboardEvents;
 use crate::tests::fakes::TerminalEvent::*;
 
+
+macro_rules! key {
+    (char $x:expr) => {
+        Event::Key(KeyEvent {
+            code: KeyCode::Char($x),
+            modifiers: KeyModifiers::NONE,
+        })
+    };
+    (ctrl $x:expr) => {
+        Event::Key(KeyEvent {
+            code: KeyCode::Char($x),
+            modifiers: KeyModifiers::CONTROL,
+        })
+    };
+    ($x:ident) => {
+        Event::Key(KeyEvent {
+            code: KeyCode::$x,
+            modifiers: KeyModifiers::NONE,
+        })
+    };
+}
 // this means we ask diskonaut to show the actual file size rather than the size taken on disk
 //
 // this is in order to make the tests more possible, so they will show the same result
@@ -525,18 +547,18 @@ fn enter_folder() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('j')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'j'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('\n'))));
+    events.push(Some(key!(char '\n')));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("enter_folder").expect("failed to create temp dir");
@@ -593,18 +615,18 @@ fn enter_folder_medium_width() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(90, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('j')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'j'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('\n'))));
+    events.push(Some(key!(char '\n')));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'j')));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
     let temp_dir_path =
@@ -662,18 +684,18 @@ fn enter_folder_small_width() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(60, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('j')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'j'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('\n'))));
+    events.push(Some(key!(char '\n')));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
     let temp_dir_path =
@@ -779,23 +801,23 @@ fn small_files() {
 fn zoom_into_small_files() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(2).collect();
-    events.push(Some(Event::Key(Key::Char('+'))));
+    events.push(Some(key!(char '+')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('+'))));
+    events.push(Some(key!(char '+')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('+'))));
+    events.push(Some(key!(char '+')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('+'))));
+    events.push(Some(key!(char '+')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('-'))));
+    events.push(Some(key!(char '-')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('-'))));
+    events.push(Some(key!(char '-')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('0'))));
+    events.push(Some(key!(char '0')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
     let temp_dir_path =
         create_root_temp_dir("zoom_into_small_files").expect("failed to create temp dir");
@@ -855,15 +877,15 @@ fn cannot_move_into_small_files() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(2).collect();
-    events.push(Some(Event::Key(Key::Char('j')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'j'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('l'))));
+    events.push(Some(key!(char 'l')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('j'))));
+    events.push(Some(key!(char 'j')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
     let temp_dir_path =
@@ -1005,19 +1027,19 @@ fn move_down_and_enter_folder() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(2).collect();
-    events.push(Some(Event::Key(Key::Char('j')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'j'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('j'))));
+    events.push(Some(key!(char 'j')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('\n'))));
+    events.push(Some(key!(char '\n')));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
     let temp_dir_path =
@@ -1077,19 +1099,19 @@ fn noop_when_entering_file() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('j')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'j'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('j'))));
+    events.push(Some(key!(char 'j')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('\n'))));
+    events.push(Some(key!(char '\n')));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
     let temp_dir_path =
@@ -1142,21 +1164,21 @@ fn move_up_and_enter_folder() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('j')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'j'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('j'))));
+    events.push(Some(key!(char 'j')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('k'))));
+    events.push(Some(key!(char 'k')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('\n'))));
+    events.push(Some(key!(char '\n')));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
     let temp_dir_path =
@@ -1217,19 +1239,19 @@ fn move_right_and_enter_folder() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('l'))));
+    events.push(Some(key!(char 'l')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('\n'))));
+    events.push(Some(key!(char '\n')));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
     let temp_dir_path =
@@ -1289,21 +1311,21 @@ fn move_left_and_enter_folder() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('l'))));
+    events.push(Some(key!(char 'l')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('h'))));
+    events.push(Some(key!(char 'h')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('\n'))));
+    events.push(Some(key!(char '\n')));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
     let temp_dir_path =
@@ -1364,15 +1386,15 @@ fn enter_largest_folder_with_no_selected_tile() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('\n'))));
+    events.push(Some(key!(char '\n')));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("enter_largest_folder_with_no_selected_tile")
@@ -1429,15 +1451,15 @@ fn clear_selection_when_moving_off_screen_edges() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('l'))));
+    events.push(Some(key!(char 'l')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('l'))));
+    events.push(Some(key!(char 'l')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("noop_when_moving_off_screen_edges")
@@ -1491,13 +1513,13 @@ fn esc_to_go_up() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('l'))));
+    events.push(Some(key!(char 'l')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('\n'))));
+    events.push(Some(key!(char '\n')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Esc)));
+    events.push(Some(key!(Esc)));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
@@ -1505,9 +1527,9 @@ fn esc_to_go_up() {
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("esc_to_go_up").expect("failed to create temp dir");
@@ -1567,27 +1589,27 @@ fn noop_when_pressing_esc_at_base_folder() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('l'))));
+    events.push(Some(key!(char 'l')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('\n'))));
+    events.push(Some(key!(char '\n')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Esc)));
-    events.push(None);
-    events.push(None);
+    events.push(Some(key!(Esc)));
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Esc)));
+    events.push(None);
+    events.push(None);
+    events.push(Some(key!(Esc)));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("noop_when_pressing_esc_at_base_folder")
@@ -1651,18 +1673,18 @@ fn delete_file() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Backspace)));
+    events.push(Some(key!(Backspace)));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    events.push(None);
-    events.push(None);
+    events.push(Some(key!(char 'y')));
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(None);
+    events.push(Some(key!(ctrl 'c')));
+    events.push(None);
+    events.push(Some(key!(char 'y')));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("delete_file").expect("failed to create temp dir");
@@ -1742,16 +1764,16 @@ fn delete_file_no_confirmation() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Backspace)));
-    events.push(None);
-    events.push(None);
+    events.push(Some(key!(Backspace)));
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(None);
+    events.push(Some(key!(ctrl 'c')));
+    events.push(None);
+    events.push(Some(key!(char 'y')));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
     let temp_dir_path =
@@ -1832,18 +1854,18 @@ fn cant_delete_file_with_term_too_small() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(49, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Backspace)));
+    events.push(Some(key!(Backspace)));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    events.push(None);
-    events.push(None);
+    events.push(Some(key!(char 'y')));
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(None);
+    events.push(Some(key!(ctrl 'c')));
+    events.push(None);
+    events.push(Some(key!(char 'y')));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("cant_delete_file_with_term_too_small")
@@ -1915,22 +1937,22 @@ fn delete_folder() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('l'))));
+    events.push(Some(key!(char 'l')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Backspace)));
+    events.push(Some(key!(Backspace)));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("delete_folder").expect("failed to create temp dir");
@@ -2012,20 +2034,20 @@ fn delete_folder_no_confirmation() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('l'))));
+    events.push(Some(key!(char 'l')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Backspace)));
+    events.push(Some(key!(Backspace)));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
     let temp_dir_path =
@@ -2108,24 +2130,24 @@ fn delete_folder_small_window() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(60, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('j')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'j'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('j'))));
+    events.push(Some(key!(char 'j')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('j'))));
+    events.push(Some(key!(char 'j')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Backspace)));
+    events.push(Some(key!(Backspace)));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
     let temp_dir_path =
@@ -2210,22 +2232,22 @@ fn delete_folder_small_window_no_confirmation() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(60, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('j')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'j'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('j'))));
+    events.push(Some(key!(char 'j')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('j'))));
+    events.push(Some(key!(char 'j')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Backspace)));
+    events.push(Some(key!(Backspace)));
     events.push(None);
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("delete_folder_small_window_no_confirmation")
@@ -2308,22 +2330,22 @@ fn delete_folder_with_multiple_children() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('l'))));
+    events.push(Some(key!(char 'l')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Backspace)));
+    events.push(Some(key!(Backspace)));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("delete_folder_with_multiple_children")
@@ -2438,20 +2460,20 @@ fn delete_folder_with_multiple_children_no_confirmation() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('l'))));
+    events.push(Some(key!(char 'l')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Backspace)));
+    events.push(Some(key!(Backspace)));
     events.push(None);
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
     let temp_dir_path =
@@ -2566,11 +2588,11 @@ fn pressing_delete_with_no_selected_tile() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Backspace)));
+    events.push(Some(key!(Backspace)));
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("pressing_delete_with_no_selected_tile")
@@ -2645,15 +2667,15 @@ fn delete_file_press_n() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Backspace)));
+    events.push(Some(key!(Backspace)));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('n'))));
+    events.push(Some(key!(char 'n')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
     let temp_dir_path =
@@ -2813,21 +2835,21 @@ fn permission_denied_when_deleting() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('\n'))));
+    events.push(Some(key!(char '\n')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Backspace)));
+    events.push(Some(key!(Backspace)));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Esc)));
+    events.push(Some(key!(Esc)));
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
     let temp_dir_path =
@@ -2901,19 +2923,19 @@ fn permission_denied_when_deleting_no_confirmation() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('\n'))));
+    events.push(Some(key!(char '\n')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Backspace)));
+    events.push(Some(key!(Backspace)));
     events.push(None);
-    events.push(Some(Event::Key(Key::Esc)));
+    events.push(Some(key!(Esc)));
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     let keyboard_events = Box::new(KeyboardEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("permission_denied_when_deleting_no_confirmation")

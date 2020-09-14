@@ -6,7 +6,7 @@ use winapi::um::winnt::{
 };
 
 use winapi::um::securitybaseapi::{AllocateAndInitializeSid, CheckTokenMembership};
-
+// https://stackoverflow.com/questions/4230602/detect-if-program-is-running-with-full-administrator-rights
 pub(crate) fn is_user_admin() -> bool {
     let mut auth_nt = SID_IDENTIFIER_AUTHORITY {
         Value: SECURITY_NT_AUTHORITY,
