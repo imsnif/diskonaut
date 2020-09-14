@@ -13,7 +13,7 @@ fn render_currently_selected(buf: &mut Buffer, currently_selected: &Tile, max_le
     let descendants = currently_selected.descendants;
     let (style, lines) = match currently_selected.file_type {
         FileType::File => (
-            Style::default().modifier(Modifier::BOLD),
+            Style::default().add_modifier(Modifier::BOLD),
             vec![
                 format!("SELECTED: {} ({})", file_name, size),
                 format!("SELECTED: {}", file_name),
@@ -21,7 +21,7 @@ fn render_currently_selected(buf: &mut Buffer, currently_selected: &Tile, max_le
             ],
         ),
         FileType::Folder => (
-            Style::default().fg(Color::Blue).modifier(Modifier::BOLD),
+            Style::default().fg(Color::Blue).add_modifier(Modifier::BOLD),
             vec![
                 format!(
                     "SELECTED: {} ({}, {} files)",
@@ -77,21 +77,21 @@ fn render_controls_legend(buf: &mut Buffer, hide_delete: bool, max_len: u16, y: 
             1,
             y,
             long_controls_line,
-            Style::default().modifier(Modifier::BOLD),
+            Style::default().add_modifier(Modifier::BOLD),
         );
     } else if max_len >= short_controls_line.chars().count() as u16 {
         buf.set_string(
             1,
             y,
             short_controls_line,
-            Style::default().modifier(Modifier::BOLD),
+            Style::default().add_modifier(Modifier::BOLD),
         );
     } else {
         buf.set_string(
             1,
             y,
             too_small_line,
-            Style::default().modifier(Modifier::BOLD),
+            Style::default().add_modifier(Modifier::BOLD),
         );
     }
 }

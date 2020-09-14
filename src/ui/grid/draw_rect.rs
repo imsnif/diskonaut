@@ -67,11 +67,11 @@ pub fn tile_style(tile: &Tile, selected: bool) -> (Option<Style>, Style, Style) 
             Style::default()
                 .fg(Color::Magenta)
                 .bg(Color::Gray)
-                .modifier(Modifier::BOLD),
+                .add_modifier(Modifier::BOLD),
             Style::default()
                 .fg(Color::Magenta)
                 .bg(Color::Gray)
-                .modifier(Modifier::BOLD),
+                .add_modifier(Modifier::BOLD),
         ),
         (false, FileType::File) => (None, Style::default(), Style::default()),
         (true, FileType::Folder) => (
@@ -79,12 +79,12 @@ pub fn tile_style(tile: &Tile, selected: bool) -> (Option<Style>, Style, Style) 
             Style::default()
                 .fg(Color::White)
                 .bg(Color::Blue)
-                .modifier(Modifier::BOLD),
+                .add_modifier(Modifier::BOLD),
             Style::default().fg(Color::Black).bg(Color::Blue),
         ),
         (false, FileType::Folder) => (
             None,
-            Style::default().fg(Color::Blue).modifier(Modifier::BOLD),
+            Style::default().fg(Color::Blue).add_modifier(Modifier::BOLD),
             Style::default(),
         ),
     };

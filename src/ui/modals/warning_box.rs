@@ -37,7 +37,7 @@ impl<'a> Widget for WarningBox {
         let fill_style = Style::default()
             .bg(Color::Black)
             .fg(Color::Yellow)
-            .modifier(Modifier::BOLD);
+            .add_modifier(Modifier::BOLD);
         let text_max_length = warning_rect.width - 4;
         let mut warning_text_start_position: u16 = 0;
 
