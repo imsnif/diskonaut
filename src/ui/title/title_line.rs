@@ -8,10 +8,10 @@ use crate::ui::format::DisplaySize;
 use crate::ui::title::{CellSizeOpt, TitleTelescope};
 use crate::ui::FolderInfo;
 
-#[cfg(target_os = "windows")]
-use crate::os::windows::is_user_admin;
 #[cfg(not(target_os = "windows"))]
 use crate::os::linux::is_user_admin;
+#[cfg(target_os = "windows")]
+use crate::os::windows::is_user_admin;
 
 pub struct TitleLine<'a> {
     base_path_info: FolderInfo<'a>,

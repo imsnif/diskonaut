@@ -1,5 +1,3 @@
-
-
 use ::tui::backend::Backend;
 use crossterm::event::Event;
 use crossterm::event::KeyModifiers;
@@ -14,7 +12,6 @@ pub struct KeyboardEvents;
 impl Iterator for KeyboardEvents {
     type Item = Event;
     fn next(&mut self) -> Option<Event> {
-
         // note : these are all events not just kb
         // resize comes here too
 

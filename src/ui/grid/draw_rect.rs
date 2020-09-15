@@ -84,7 +84,9 @@ pub fn tile_style(tile: &Tile, selected: bool) -> (Option<Style>, Style, Style) 
         ),
         (false, FileType::Folder) => (
             None,
-            Style::default().fg(Color::Blue).add_modifier(Modifier::BOLD),
+            Style::default()
+                .fg(Color::Blue)
+                .add_modifier(Modifier::BOLD),
             Style::default(),
         ),
     };

@@ -4,9 +4,9 @@ mod tests;
 mod app;
 mod input;
 mod messages;
+mod os;
 mod state;
 mod ui;
-mod os;
 
 use ::failure;
 use ::jwalk::Parallelism::{RayonDefaultPool, Serial};

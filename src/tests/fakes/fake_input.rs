@@ -1,7 +1,6 @@
 use ::std::{thread, time};
 use crossterm::event::Event;
 
-
 pub struct KeyboardEvents {
     pub events: Vec<Option<Event>>,
 }

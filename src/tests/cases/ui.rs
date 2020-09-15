@@ -6,13 +6,12 @@ use ::std::path::{Path, PathBuf};
 
 use ::insta::assert_snapshot;
 use crossterm::event::KeyModifiers;
-use crossterm::event::{Event , KeyCode, KeyEvent};
+use crossterm::event::{Event, KeyCode, KeyEvent};
 
 use crate::start;
 use crate::tests::cases::test_utils::*;
 use crate::tests::fakes::KeyboardEvents;
 use crate::tests::fakes::TerminalEvent::*;
-
 
 macro_rules! key {
     (char $x:expr) => {

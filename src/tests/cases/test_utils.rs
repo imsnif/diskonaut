@@ -1,11 +1,9 @@
 use ::std::iter;
 use ::std::sync::{Arc, Mutex};
 use crossterm::event::KeyModifiers;
-use crossterm::event::{Event , KeyCode, KeyEvent};
-
+use crossterm::event::{Event, KeyCode, KeyEvent};
 
 use crate::tests::fakes::{KeyboardEvents, TerminalEvent, TestBackend};
-
 
 macro_rules! key {
     (char $x:expr) => {

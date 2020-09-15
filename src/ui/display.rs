@@ -46,7 +46,7 @@ where
         ui_effects: &UiEffects,
     ) {
         self.terminal
-            .draw(| f| {
+            .draw(|f| {
                 let full_screen = f.size();
                 let current_path = file_tree.get_current_path();
                 let current_path_size = file_tree.get_current_folder_size();

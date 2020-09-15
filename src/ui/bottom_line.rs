@@ -21,7 +21,9 @@ fn render_currently_selected(buf: &mut Buffer, currently_selected: &Tile, max_le
             ],
         ),
         FileType::Folder => (
-            Style::default().fg(Color::Blue).add_modifier(Modifier::BOLD),
+            Style::default()
+                .fg(Color::Blue)
+                .add_modifier(Modifier::BOLD),
             vec![
                 format!(
                     "SELECTED: {} ({}, {} files)",
