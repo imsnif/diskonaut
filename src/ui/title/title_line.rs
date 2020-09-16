@@ -90,8 +90,7 @@ impl<'a> Widget for TitleLine<'a> {
             }
             current_path_relative_to_base.to_string_lossy().into_owned()
         };
-
-        let separator = if base_path.ends_with('/') {
+        let separator = if base_path.ends_with(::std::path::MAIN_SEPARATOR) {
             // eg. if base_path is "/", we don't want current path to
             // also start with "/" otherwise we'll have "//path_to_my/location"
             // instead of "/path_to_my/location"
@@ -99,6 +98,12 @@ impl<'a> Widget for TitleLine<'a> {
         } else {
             format!("{}", ::std::path::MAIN_SEPARATOR)
         };
+        #[cfg(test)]
+        let current_path = str::replace(&current_path, "\\", "/");
+        #[cfg(test)]
+        let base_path = str::replace(&base_path, "\\", "/");
+        #[cfg(test)]
+        let separator = str::replace(&separator, "\\", "/");
         let total_size = DisplaySize(self.base_path_info.size as f64);
         let total_descendants = &self.base_path_info.num_descendants;
         let current_folder_size = DisplaySize(self.current_path_info.size as f64);

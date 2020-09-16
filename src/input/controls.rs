@@ -25,6 +25,12 @@ macro_rules! key {
             modifiers: KeyModifiers::NONE,
         })
     };
+    (sh_char $x:expr) => {
+        Event::Key(KeyEvent {
+            code: KeyCode::Char($x),
+            modifiers: KeyModifiers::SHIFT,
+        })
+    };
     (ctrl $x:expr) => {
         Event::Key(KeyEvent {
             code: KeyCode::Char($x),
@@ -56,7 +62,7 @@ pub fn handle_keypress_loading_mode<B: Backend>(evt: Event, app: &mut App<B>) {
         key!(char 'k') | key!(Up) | key!(ctrl 'p') => {
             app.move_selected_up();
         }
-        key!(char '+') => {
+        key!(char '+') | key!(sh_char '+') => {
             app.zoom_in();
         }
         key!(char '-') => {
@@ -98,7 +104,7 @@ pub fn handle_keypress_normal_mode<B: Backend>(evt: Event, app: &mut App<B>) {
         key!(char 'k') | key!(Up) | key!(ctrl 'p') => {
             app.move_selected_up();
         }
-        key!(char '+') => {
+        key!(char '+') | key!(sh_char '+') => {
             app.zoom_in();
         }
         key!(char '-') => {

@@ -19,6 +19,8 @@ fn truncated_file_name_line(file_to_delete: &FileToDelete, max_len: u16) -> Stri
         .last()
         .expect("could not find file to delete")
         .to_string_lossy();
+    #[cfg(test)]
+    let full_path = str::replace(&full_path, "\\", "/");
     if max_len > full_path.len() as u16 {
         full_path
     } else {
