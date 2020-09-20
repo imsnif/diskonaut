@@ -26,7 +26,7 @@ use ::structopt::StructOpt;
 use ::tui::backend::Backend;
 use crossterm::event::KeyModifiers;
 use crossterm::event::{Event as BackEvent, KeyCode, KeyEvent};
-use crossterm::terminal::enable_raw_mode;
+use crossterm::terminal::{enable_raw_mode,disable_raw_mode};
 use tui::backend::CrosstermBackend;
 
 use app::{App, UiMode};
@@ -95,6 +95,7 @@ fn try_main() -> Result<(), failure::Error> {
         }
         Err(_) => failure::bail!("Failed to get stdout: are you trying to pipe 'diskonaut'?"),
     }
+    disable_raw_mode()?;
     Ok(())
 }
 
