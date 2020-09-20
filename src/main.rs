@@ -26,7 +26,7 @@ use ::structopt::StructOpt;
 use ::tui::backend::Backend;
 use crossterm::event::KeyModifiers;
 use crossterm::event::{Event as BackEvent, KeyCode, KeyEvent};
-use crossterm::terminal::{enable_raw_mode,disable_raw_mode};
+use crossterm::terminal::{disable_raw_mode, enable_raw_mode};
 use tui::backend::CrosstermBackend;
 
 use app::{App, UiMode};
