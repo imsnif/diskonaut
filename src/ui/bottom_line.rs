@@ -130,8 +130,8 @@ impl<'a> Widget for BottomLine<'a> {
     fn render(self, area: Rect, buf: &mut Buffer) {
         let small_files_legend = "(x = Small files)";
         let small_files_len = small_files_legend.chars().count() as u16;
-        let max_status_len = area.width - small_files_len;
-        let max_controls_len = area.width;
+        let max_status_len = area.width - small_files_len - 1;
+        let max_controls_len = area.width - 1;
         let status_line_y = area.y + area.height - 2;
         let controls_line_y = status_line_y + 1;
         if let Some(currently_selected) = self.currently_selected {
@@ -144,7 +144,7 @@ impl<'a> Widget for BottomLine<'a> {
             area.width - small_files_len - 1,
             status_line_y,
             small_files_legend,
-            Style::default(),
+            Style::default().fg(Color::Reset).bg(Color::Reset).remove_modifier(Modifier::all())
         );
         let small_files_legend_character = buf.get_mut(area.width - small_files_len, status_line_y);
         small_files_legend_character.set_style(Style::default().bg(Color::White).fg(Color::Black));

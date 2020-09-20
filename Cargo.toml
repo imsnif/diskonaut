@@ -10,8 +10,8 @@ license = "MIT"
 edition = "2018"
 
 [dependencies]
-tui = { version = "0.10", default-features = false, features = ['crossterm'] }
-crossterm = "0.17"
+tui = {git="https://github.com/fdehau/tui-rs", default-features = false, features = ['crossterm'] }
+crossterm = {path = "c:/work/rust/crossterm"}
 failure = "0.1"
 jwalk = "0.5"
 structopt = "0.3"
@@ -19,7 +19,7 @@ filesize = "0.2.0"
 unicode-width = "0.1.7"
 nix = "0.17.0"
 [target.'cfg(windows)'.dependencies]
-winapi = { version = "0.3", features = ["securitybaseapi"] }
+winapi = { version = "0.3", features = ["securitybaseapi","debugapi"] }
 
 [dev-dependencies]
 insta = "0.16.0"
