@@ -144,7 +144,10 @@ impl<'a> Widget for BottomLine<'a> {
             area.width - small_files_len - 1,
             status_line_y,
             small_files_legend,
-            Style::default().fg(Color::Reset).bg(Color::Reset).remove_modifier(Modifier::all())
+            Style::default()
+                .fg(Color::Reset)
+                .bg(Color::Reset)
+                .remove_modifier(Modifier::all()),
         );
         let small_files_legend_character = buf.get_mut(area.width - small_files_len, status_line_y);
         small_files_legend_character.set_style(Style::default().bg(Color::White).fg(Color::Black));

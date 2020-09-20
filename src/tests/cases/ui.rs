@@ -681,7 +681,7 @@ fn enter_folder_medium_width() {
 #[test]
 fn enter_folder_small_width() {
     let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(60, 50);
- 
+
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
     events.push(Some(key!(char 'j'))); // once to place selected marker on screen
     events.push(None);
@@ -2828,7 +2828,7 @@ fn empty_folder() {
     assert_snapshot!(&terminal_draw_events_mirror[0]);
     assert_snapshot!(&terminal_draw_events_mirror[1]);
 }
-#[cfg(not (target_os = "windows"))]
+#[cfg(not(target_os = "windows"))]
 #[test]
 fn permission_denied_when_deleting() {
     let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
@@ -2916,7 +2916,7 @@ fn permission_denied_when_deleting() {
     assert_snapshot!(&terminal_draw_events_mirror[7]);
     assert_snapshot!(&terminal_draw_events_mirror[8]);
 }
-#[cfg(not (target_os = "windows"))]
+#[cfg(not(target_os = "windows"))]
 #[test]
 fn permission_denied_when_deleting_no_confirmation() {
     let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
