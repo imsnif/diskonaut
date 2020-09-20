@@ -848,7 +848,7 @@ fn zoom_into_small_files() {
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
     );
-    //std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
+    std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
 
     let _expected_terminal_events = vec![
