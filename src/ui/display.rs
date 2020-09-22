@@ -78,7 +78,7 @@ where
                     .split(full_screen);
 
                 // -1 cos we draw starting at offset 1 in both x and y directions
-                
+
                 chunks[1].width -= 1;
                 chunks[1].height -= 1;
                 board.change_area(&chunks[1]);

@@ -10,7 +10,7 @@ license = "MIT"
 edition = "2018"
 
 [dependencies]
-tui = {git="https://github.com/fdehau/tui-rs", default-features = false, features = ['crossterm'] }
+tui = {version="0.11", default-features = false, features = ['crossterm'] }
 crossterm = "0.17"
 failure = "0.1"
 jwalk = "0.5"

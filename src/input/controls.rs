@@ -12,7 +12,6 @@ pub struct TerminalEvents;
 impl Iterator for TerminalEvents {
     type Item = Event;
     fn next(&mut self) -> Option<Event> {
-
         // note : these are all events not just kb
         // resize comes here too
 
@@ -26,7 +25,7 @@ macro_rules! key {
             modifiers: KeyModifiers::NONE,
         })
     };
-    (sh_char $x:expr) => {
+    (shift) $x:expr) => {
         Event::Key(KeyEvent {
             code: KeyCode::Char($x),
             modifiers: KeyModifiers::SHIFT,
@@ -63,7 +62,7 @@ pub fn handle_keypress_loading_mode<B: Backend>(evt: Event, app: &mut App<B>) {
         key!(char 'k') | key!(Up) | key!(ctrl 'p') => {
             app.move_selected_up();
         }
-        key!(char '+') | key!(sh_char '+') => {
+        key!(char '+') | key!(shift '+') => {
             app.zoom_in();
         }
         key!(char '-') => {
@@ -105,7 +104,7 @@ pub fn handle_keypress_normal_mode<B: Backend>(evt: Event, app: &mut App<B>) {
         key!(char 'k') | key!(Up) | key!(ctrl 'p') => {
             app.move_selected_up();
         }
-        key!(char '+') | key!(sh_char '+') => {
+        key!(char '+') | key!(shift '+') => {
             app.zoom_in();
         }
         key!(char '-') => {

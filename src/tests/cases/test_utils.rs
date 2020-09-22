@@ -3,7 +3,7 @@ use ::std::sync::{Arc, Mutex};
 use crossterm::event::KeyModifiers;
 use crossterm::event::{Event, KeyCode, KeyEvent};
 
-use crate::tests::fakes::{TerminalEvents, TerminalEvent, TestBackend};
+use crate::tests::fakes::{TerminalEvent, TerminalEvents, TestBackend};
 
 macro_rules! key {
     (char $x:expr) => {
@@ -33,7 +33,7 @@ pub fn sleep_and_quit_events(sleep_num: usize, quit_after_confirm: bool) -> Box<
         events.push(None);
         events.push(Some(key!(char 'y')));
     }
-    Box::new(KeyboardEvents::new(events))
+    Box::new(TerminalEvents::new(events))
 }
 
 type BackendWithStreams = (

@@ -10,8 +10,8 @@ use crossterm::event::{Event, KeyCode, KeyEvent};
 
 use crate::start;
 use crate::tests::cases::test_utils::*;
-use crate::tests::fakes::TerminalEvents;
 use crate::tests::fakes::TerminalEvent::*;
+use crate::tests::fakes::TerminalEvents;
 
 macro_rules! key {
     (char $x:expr) => {
@@ -68,7 +68,7 @@ fn create_temp_file<P: AsRef<Path>>(path: P, size: usize) -> Result<(), failure:
 
 #[test]
 fn two_large_files_one_small_file() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
     let keyboard_events = sleep_and_quit_events(1, true);
     let temp_dir_path =
         create_root_temp_dir("two_large_files_one_small_file").expect("failed to create temp dir");
@@ -99,14 +99,17 @@ fn two_large_files_one_small_file() {
         terminal_draw_events_mirror[0]
     );
     std::fs::write("snap.txt", &terminal_draw_events_mirror[0]).expect("Unable to write file");
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-
-    // assert_eq!(
-    //     &_terminal_events.lock().unwrap()[..],
-    //     &_expected_terminal_events[..]
-    // );
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 2);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -115,7 +118,7 @@ fn two_large_files_one_small_file() {
 
 #[test]
 fn medium_width() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(60, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(60, 50);
     let keyboard_events = sleep_and_quit_events(1, true);
     let temp_dir_path = create_root_temp_dir("medium_width").expect("failed to create temp dir");
 
@@ -145,14 +148,18 @@ fn medium_width() {
         terminal_draw_events_mirror[0]
     );
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
 
-    // assert_eq!(
-    //     &_terminal_events.lock().unwrap()[..],
-    //     &_expected_terminal_events[..]
-    // );
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 2);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -161,7 +168,7 @@ fn medium_width() {
 
 #[test]
 fn small_width() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(50, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(50, 50);
     let keyboard_events = sleep_and_quit_events(1, true);
     let temp_dir_path = create_root_temp_dir("small_width").expect("failed to create temp dir");
 
@@ -191,14 +198,18 @@ fn small_width() {
         terminal_draw_events_mirror[0]
     );
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
 
-    // assert_eq!(
-    //     &_terminal_events.lock().unwrap()[..],
-    //     &_expected_terminal_events[..]
-    // );
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 2);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -207,7 +218,7 @@ fn small_width() {
 
 #[test]
 fn small_width_long_folder_name() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(50, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(50, 50);
     let keyboard_events = sleep_and_quit_events(1, true);
     let temp_dir_path =
         create_root_temp_dir("small_width_long_folder_name").expect("failed to create temp dir");
@@ -238,14 +249,18 @@ fn small_width_long_folder_name() {
         terminal_draw_events_mirror[0]
     );
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
 
-    // assert_eq!(
-    //     &_terminal_events.lock().unwrap()[..],
-    //     &_expected_terminal_events[..]
-    // );
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 2);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -254,7 +269,7 @@ fn small_width_long_folder_name() {
 
 #[test]
 fn too_small_width_one() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(49, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(49, 50);
     let keyboard_events = sleep_and_quit_events(1, false);
     let temp_dir_path =
         create_root_temp_dir("too_small_width_one").expect("failed to create temp dir");
@@ -285,12 +300,18 @@ fn too_small_width_one() {
         terminal_draw_events_mirror[0]
     );
 
-    let _expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Clear, ShowCursor,
+    ];
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
 
-    // assert_eq!(
-    //     &_terminal_events.lock().unwrap()[..],
-    //     &_expected_terminal_events[..]
-    // );
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 1);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -298,7 +319,7 @@ fn too_small_width_one() {
 
 #[test]
 fn too_small_width_two() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(26, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(26, 50);
     let keyboard_events = sleep_and_quit_events(1, false);
     let temp_dir_path =
         create_root_temp_dir("too_small_width_two").expect("failed to create temp dir");
@@ -329,12 +350,18 @@ fn too_small_width_two() {
         terminal_draw_events_mirror[0]
     );
 
-    let _expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Clear, ShowCursor,
+    ];
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
 
-    // assert_eq!(
-    //     &_terminal_events.lock().unwrap()[..],
-    //     &_expected_terminal_events[..]
-    // );
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 1);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -342,7 +369,7 @@ fn too_small_width_two() {
 
 #[test]
 fn too_small_width_three() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(20, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(20, 50);
     let keyboard_events = sleep_and_quit_events(1, false);
     let temp_dir_path =
         create_root_temp_dir("too_small_width_three").expect("failed to create temp dir");
@@ -361,12 +388,18 @@ fn too_small_width_three() {
         terminal_draw_events_mirror[0]
     );
 
-    let _expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Clear, ShowCursor,
+    ];
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
 
-    // assert_eq!(
-    //     &_terminal_events.lock().unwrap()[..],
-    //     &_expected_terminal_events[..]
-    // );
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 1);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -374,7 +407,7 @@ fn too_small_width_three() {
 
 #[test]
 fn too_small_width_four() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(15, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(15, 50);
     let keyboard_events = sleep_and_quit_events(1, false);
     let temp_dir_path =
         create_root_temp_dir("too_small_width_four").expect("failed to create temp dir");
@@ -393,12 +426,18 @@ fn too_small_width_four() {
         terminal_draw_events_mirror[0]
     );
 
-    let _expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Clear, ShowCursor,
+    ];
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
 
-    // assert_eq!(
-    //     &_terminal_events.lock().unwrap()[..],
-    //     &_expected_terminal_events[..]
-    // );
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 1);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -406,7 +445,7 @@ fn too_small_width_four() {
 
 #[test]
 fn too_small_width_five() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(5, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(5, 50);
     let keyboard_events = sleep_and_quit_events(1, false);
     let temp_dir_path =
         create_root_temp_dir("too_small_width_five").expect("failed to create temp dir");
@@ -425,12 +464,18 @@ fn too_small_width_five() {
         terminal_draw_events_mirror[0]
     );
 
-    let _expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Clear, ShowCursor,
+    ];
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
 
-    // assert_eq!(
-    //     &_terminal_events.lock().unwrap()[..],
-    //     &_expected_terminal_events[..]
-    // );
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 1);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -438,7 +483,7 @@ fn too_small_width_five() {
 
 #[test]
 fn too_small_height() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 14);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 14);
     let keyboard_events = sleep_and_quit_events(1, false);
     let temp_dir_path =
         create_root_temp_dir("too_small_height").expect("failed to create temp dir");
@@ -457,12 +502,18 @@ fn too_small_height() {
         terminal_draw_events_mirror[0]
     );
 
-    let _expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Clear, ShowCursor,
+    ];
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
 
-    // assert_eq!(
-    //     &_terminal_events.lock().unwrap()[..],
-    //     &_expected_terminal_events[..]
-    // );
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 1);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -470,7 +521,7 @@ fn too_small_height() {
 
 #[test]
 fn eleven_files() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
     let keyboard_events = sleep_and_quit_events(1, true);
     let temp_dir_path = create_root_temp_dir("eleven_files").expect("failed to create temp dir");
 
@@ -528,13 +579,18 @@ fn eleven_files() {
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    // assert_eq!(
-    //     &_terminal_events.lock().unwrap()[..],
-    //     &_expected_terminal_events[..]
-    // );
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
+
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 2);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -543,7 +599,7 @@ fn eleven_files() {
 
 #[test]
 fn enter_folder() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
     events.push(Some(key!(char 'j'))); // once to place selected marker on screen
@@ -591,16 +647,21 @@ fn enter_folder() {
         .lock()
         .expect("could not acquire lock on terminal events");
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
 
-    // assert_eq!(
-    //     &_terminal_events
-    //         .lock()
-    //         .expect("could not acquire lock on _terminal_events")[..],
-    //     &_expected_terminal_events[..]
-    // );
+    assert_eq!(
+        &terminal_events
+            .lock()
+            .expect("could not acquire lock on _terminal_events")[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 4);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -611,7 +672,7 @@ fn enter_folder() {
 
 #[test]
 fn enter_folder_medium_width() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(90, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(90, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
     events.push(Some(key!(char 'j'))); // once to place selected marker on screen
@@ -660,16 +721,22 @@ fn enter_folder_medium_width() {
         .lock()
         .expect("could not acquire lock on terminal events");
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
 
-    // assert_eq!(
-    //     &_terminal_events
-    //         .lock()
-    //         .expect("could not acquire lock on _terminal_events")[..],
-    //     &_expected_terminal_events[..]
-    // );
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
+
+    assert_eq!(
+        &terminal_events
+            .lock()
+            .expect("could not acquire lock on _terminal_events")[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 4);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -680,7 +747,7 @@ fn enter_folder_medium_width() {
 
 #[test]
 fn enter_folder_small_width() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(60, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(60, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
     events.push(Some(key!(char 'j'))); // once to place selected marker on screen
@@ -729,18 +796,23 @@ fn enter_folder_small_width() {
         .lock()
         .expect("could not acquire lock on terminal events");
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
 
-    // assert_eq!(
-    //     &_terminal_events
-    //         .lock()
-    //         .expect("could not acquire lock on _terminal_events")[..],
-    //     &_expected_terminal_events[..]
-    // );
+    assert_eq!(
+        &terminal_events
+            .lock()
+            .expect("could not acquire lock on _terminal_events")[..],
+        &expected_terminal_events[..]
+    );
 
-    // assert_eq!(terminal_draw_events_mirror.len(), 4);
+    assert_eq!(terminal_draw_events_mirror.len(), 4);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
     assert_snapshot!(&terminal_draw_events_mirror[1]);
     assert_snapshot!(&terminal_draw_events_mirror[2]);
@@ -749,7 +821,7 @@ fn enter_folder_small_width() {
 
 #[test]
 fn small_files() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
     let keyboard_events = sleep_and_quit_events(1, true);
     let temp_dir_path = create_root_temp_dir("small_files").expect("failed to create temp dir");
 
@@ -783,13 +855,18 @@ fn small_files() {
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    // assert_eq!(
-    //     &_terminal_events.lock().unwrap()[..],
-    //     &_expected_terminal_events[..]
-    // );
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
+
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 2);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -798,7 +875,7 @@ fn small_files() {
 
 #[test]
 fn zoom_into_small_files() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(2).collect();
     events.push(Some(key!(char '+')));
     events.push(None);
@@ -851,16 +928,22 @@ fn zoom_into_small_files() {
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
+        HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    // assert_eq!(
-    //     &_terminal_events.lock().unwrap()[..],
-    //     &_expected_terminal_events[..]
-    // );
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
 
-    // assert_eq!(terminal_draw_events_mirror.len(), 8);
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
+
+    assert_eq!(terminal_draw_events_mirror.len(), 9);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
     assert_snapshot!(&terminal_draw_events_mirror[1]);
     assert_snapshot!(&terminal_draw_events_mirror[2]);
@@ -873,7 +956,7 @@ fn zoom_into_small_files() {
 
 #[test]
 fn cannot_move_into_small_files() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(2).collect();
     events.push(Some(key!(char 'j'))); // once to place selected marker on screen
@@ -948,14 +1031,19 @@ fn cannot_move_into_small_files() {
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear,
-        ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    // assert_eq!(
-    //     &_terminal_events.lock().unwrap()[..],
-    //     &_expected_terminal_events[..]
-    // );
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
+
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 5);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -974,7 +1062,7 @@ fn minimum_tile_sides() {
     // this case might in the future be solved by artificially increasing its size
     // to the minimum with some sort of asterisk to explain
 
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
     let keyboard_events = sleep_and_quit_events(1, true);
     let temp_dir_path =
         create_root_temp_dir("minimum_tile_sides").expect("failed to create temp dir");
@@ -1007,14 +1095,19 @@ fn minimum_tile_sides() {
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    // let _expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor];
-    // assert_eq!(
-    //     &_terminal_events.lock().unwrap()[..],
-    //     &_expected_terminal_events[..]
-    // );
+
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
+
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 2);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -1023,7 +1116,7 @@ fn minimum_tile_sides() {
 
 #[test]
 fn move_down_and_enter_folder() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(2).collect();
     events.push(Some(key!(char 'j'))); // once to place selected marker on screen
@@ -1073,17 +1166,21 @@ fn move_down_and_enter_folder() {
         .lock()
         .expect("could not acquire lock on terminal events");
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear,
-        ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
 
-    // assert_eq!(
-    //     &_terminal_events
-    //         .lock()
-    //         .expect("could not acquire lock on _terminal_events")[..],
-    //     &_expected_terminal_events[..]
-    // );
+    assert_eq!(
+        &terminal_events
+            .lock()
+            .expect("could not acquire lock on _terminal_events")[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 5);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -1095,7 +1192,7 @@ fn move_down_and_enter_folder() {
 
 #[test]
 fn noop_when_entering_file() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
     events.push(Some(key!(char 'j'))); // once to place selected marker on screen
@@ -1140,16 +1237,22 @@ fn noop_when_entering_file() {
         .lock()
         .expect("could not acquire lock on terminal events");
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
 
-    // assert_eq!(
-    //     &_terminal_events
-    //         .lock()
-    //         .expect("could not acquire lock on _terminal_events")[..],
-    //     &_expected_terminal_events[..]
-    // );
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
+
+    assert_eq!(
+        &terminal_events
+            .lock()
+            .expect("could not acquire lock on _terminal_events")[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 4);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -1160,7 +1263,7 @@ fn noop_when_entering_file() {
 
 #[test]
 fn move_up_and_enter_folder() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
     events.push(Some(key!(char 'j'))); // once to place selected marker on screen
@@ -1212,17 +1315,22 @@ fn move_up_and_enter_folder() {
         .lock()
         .expect("could not acquire lock on terminal events");
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear,
+        ShowCursor,
     ];
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
 
-    // assert_eq!(
-    //     &_terminal_events
-    //         .lock()
-    //         .expect("could not acquire lock on _terminal_events")[..],
-    //     &_expected_terminal_events[..]
-    // );
+    assert_eq!(
+        &terminal_events
+            .lock()
+            .expect("could not acquire lock on _terminal_events")[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 6);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -1235,7 +1343,7 @@ fn move_up_and_enter_folder() {
 
 #[test]
 fn move_right_and_enter_folder() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
     events.push(Some(key!(char 'l'))); // once to place selected marker on screen
@@ -1285,17 +1393,21 @@ fn move_right_and_enter_folder() {
         .lock()
         .expect("could not acquire lock on terminal events");
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear,
-        ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
 
-    // assert_eq!(
-    //     &_terminal_events
-    //         .lock()
-    //         .expect("could not acquire lock on _terminal_events")[..],
-    //     &_expected_terminal_events[..]
-    // );
+    assert_eq!(
+        &terminal_events
+            .lock()
+            .expect("could not acquire lock on _terminal_events")[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 5);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -1307,7 +1419,7 @@ fn move_right_and_enter_folder() {
 
 #[test]
 fn move_left_and_enter_folder() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
     events.push(Some(key!(char 'l'))); // once to place selected marker on screen
@@ -1359,17 +1471,22 @@ fn move_left_and_enter_folder() {
         .lock()
         .expect("could not acquire lock on terminal events");
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear,
+        ShowCursor,
     ];
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
 
-    // assert_eq!(
-    //     &_terminal_events
-    //         .lock()
-    //         .expect("could not acquire lock on _terminal_events")[..],
-    //     &_expected_terminal_events[..]
-    // );
+    assert_eq!(
+        &terminal_events
+            .lock()
+            .expect("could not acquire lock on _terminal_events")[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 6);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -1382,7 +1499,7 @@ fn move_left_and_enter_folder() {
 
 #[test]
 fn enter_largest_folder_with_no_selected_tile() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
     events.push(Some(key!(char '\n')));
@@ -1428,16 +1545,22 @@ fn enter_largest_folder_with_no_selected_tile() {
         .lock()
         .expect("could not acquire lock on terminal events");
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Clear, ShowCursor,
     ];
 
-    // assert_eq!(
-    //     &_terminal_events
-    //         .lock()
-    //         .expect("could not acquire lock on _terminal_events")[..],
-    //     &_expected_terminal_events[..]
-    // );
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
+
+    assert_eq!(
+        &terminal_events
+            .lock()
+            .expect("could not acquire lock on _terminal_events")[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 3);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -1447,7 +1570,7 @@ fn enter_largest_folder_with_no_selected_tile() {
 
 #[test]
 fn clear_selection_when_moving_off_screen_edges() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
     events.push(Some(key!(char 'l'))); // once to place selected marker on screen
@@ -1488,16 +1611,21 @@ fn clear_selection_when_moving_off_screen_edges() {
         .lock()
         .expect("could not acquire lock on terminal events");
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear,
-        ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    // assert_eq!(
-    //     &_terminal_events
-    //         .lock()
-    //         .expect("could not acquire lock on _terminal_events")[..],
-    //     &_expected_terminal_events[..]
-    // );
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
+
+    assert_eq!(
+        &terminal_events
+            .lock()
+            .expect("could not acquire lock on _terminal_events")[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 5);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -1509,7 +1637,7 @@ fn clear_selection_when_moving_off_screen_edges() {
 
 #[test]
 fn esc_to_go_up() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
     events.push(Some(key!(char 'l'))); // once to place selected marker on screen
@@ -1562,17 +1690,22 @@ fn esc_to_go_up() {
         .lock()
         .expect("could not acquire lock on terminal events");
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear,
+        ShowCursor,
     ];
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
 
-    // assert_eq!(
-    //     &_terminal_events
-    //         .lock()
-    //         .expect("could not acquire lock on _terminal_events")[..],
-    //     &_expected_terminal_events[..]
-    // );
+    assert_eq!(
+        &terminal_events
+            .lock()
+            .expect("could not acquire lock on _terminal_events")[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 6);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -1585,7 +1718,7 @@ fn esc_to_go_up() {
 
 #[test]
 fn noop_when_pressing_esc_at_base_folder() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
     events.push(Some(key!(char 'l'))); // once to place selected marker on screen
@@ -1643,17 +1776,22 @@ fn noop_when_pressing_esc_at_base_folder() {
         .lock()
         .expect("could not acquire lock on terminal events");
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
+        HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
 
-    // assert_eq!(
-    //     &_terminal_events
-    //         .lock()
-    //         .expect("could not acquire lock on _terminal_events")[..],
-    //     &_expected_terminal_events[..]
-    // );
+    assert_eq!(
+        &terminal_events
+            .lock()
+            .expect("could not acquire lock on _terminal_events")[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 9);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -1669,7 +1807,7 @@ fn noop_when_pressing_esc_at_base_folder() {
 
 #[test]
 fn delete_file() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
     events.push(Some(key!(char 'l'))); // once to place selected marker on screen
@@ -1716,16 +1854,22 @@ fn delete_file() {
         .lock()
         .expect("could not acquire lock on terminal events");
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
+        HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    // assert_eq!(
-    //     &_terminal_events
-    //         .lock()
-    //         .expect("could not acquire lock on _terminal_events")[..],
-    //     &_expected_terminal_events[..]
-    // );
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
+
+    assert_eq!(
+        &terminal_events
+            .lock()
+            .expect("could not acquire lock on _terminal_events")[..],
+        &expected_terminal_events[..]
+    );
     assert_eq!(
         std::fs::metadata(&file_2_path).is_err(),
         true,
@@ -1760,7 +1904,7 @@ fn delete_file() {
 
 #[test]
 fn delete_file_no_confirmation() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
     events.push(Some(key!(char 'l'))); // once to place selected marker on screen
@@ -1806,16 +1950,22 @@ fn delete_file_no_confirmation() {
         .lock()
         .expect("could not acquire lock on terminal events");
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
+        HideCursor, Flush, Clear, ShowCursor,
     ];
-    // assert_eq!(
-    //     &_terminal_events
-    //         .lock()
-    //         .expect("could not acquire lock on _terminal_events")[..],
-    //     &_expected_terminal_events[..]
-    // );
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
+
+    assert_eq!(
+        &terminal_events
+            .lock()
+            .expect("could not acquire lock on _terminal_events")[..],
+        &expected_terminal_events[..]
+    );
     assert_eq!(
         std::fs::metadata(&file_2_path).is_err(),
         true,
@@ -1850,7 +2000,7 @@ fn delete_file_no_confirmation() {
 
 #[test]
 fn cant_delete_file_with_term_too_small() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(49, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(49, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
     events.push(Some(key!(char 'l'))); // once to place selected marker on screen
@@ -1898,13 +2048,20 @@ fn cant_delete_file_with_term_too_small() {
         .lock()
         .expect("could not acquire lock on terminal events");
 
-    let _expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
-    // assert_eq!(
-    //     &_terminal_events
-    //         .lock()
-    //         .expect("could not acquire lock on _terminal_events")[..],
-    //     &_expected_terminal_events[..]
-    // );
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Clear, ShowCursor,
+    ];
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
+
+    assert_eq!(
+        &terminal_events
+            .lock()
+            .expect("could not acquire lock on _terminal_events")[..],
+        &expected_terminal_events[..]
+    );
     assert_eq!(
         std::fs::metadata(&file_2_path).is_ok(),
         true,
@@ -1933,7 +2090,7 @@ fn cant_delete_file_with_term_too_small() {
 
 #[test]
 fn delete_folder() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
     events.push(Some(key!(char 'l'))); // once to place selected marker on screen
@@ -1984,16 +2141,21 @@ fn delete_folder() {
         .lock()
         .expect("could not acquire lock on terminal events");
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
+        HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    // assert_eq!(
-    //     &_terminal_events
-    //         .lock()
-    //         .expect("could not acquire lock on _terminal_events")[..],
-    //     &_expected_terminal_events[..]
-    // );
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
+    assert_eq!(
+        &terminal_events
+            .lock()
+            .expect("could not acquire lock on _terminal_events")[..],
+        &expected_terminal_events[..]
+    );
     assert_eq!(
         std::fs::metadata(&subfolder_1_path).is_err(),
         true,
@@ -2030,7 +2192,7 @@ fn delete_folder() {
 
 #[test]
 fn delete_folder_no_confirmation() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
     events.push(Some(key!(char 'l'))); // once to place selected marker on screen
@@ -2080,16 +2242,21 @@ fn delete_folder_no_confirmation() {
         .lock()
         .expect("could not acquire lock on terminal events");
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
+        HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    // assert_eq!(
-    //     &_terminal_events
-    //         .lock()
-    //         .expect("could not acquire lock on _terminal_events")[..],
-    //     &_expected_terminal_events[..]
-    // );
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
+    assert_eq!(
+        &terminal_events
+            .lock()
+            .expect("could not acquire lock on _terminal_events")[..],
+        &expected_terminal_events[..]
+    );
     assert_eq!(
         std::fs::metadata(&subfolder_1_path).is_err(),
         true,
@@ -2126,7 +2293,7 @@ fn delete_folder_no_confirmation() {
 #[test]
 fn delete_folder_small_window() {
     // terminal window with a width of 60 (shorter message window layout)
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(60, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(60, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
     events.push(Some(key!(char 'j'))); // once to place selected marker on screen
@@ -2180,16 +2347,23 @@ fn delete_folder_small_window() {
         .lock()
         .expect("could not acquire lock on terminal events");
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
+        HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Clear, ShowCursor,
     ];
-    // assert_eq!(
-    //     &_terminal_events
-    //         .lock()
-    //         .expect("could not acquire lock on _terminal_events")[..],
-    //     &_expected_terminal_events[..]
-    // );
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
+
+    assert_eq!(
+        &terminal_events
+            .lock()
+            .expect("could not acquire lock on _terminal_events")[..],
+        &expected_terminal_events[..]
+    );
     assert_eq!(
         std::fs::metadata(&file_2_path).is_ok(),
         true,
@@ -2228,7 +2402,7 @@ fn delete_folder_small_window() {
 #[test]
 fn delete_folder_small_window_no_confirmation() {
     // terminal window with a width of 60 (shorter message window layout)
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(60, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(60, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
     events.push(Some(key!(char 'j'))); // once to place selected marker on screen
@@ -2280,16 +2454,22 @@ fn delete_folder_small_window_no_confirmation() {
         .lock()
         .expect("could not acquire lock on terminal events");
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
+        HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    // assert_eq!(
-    //     &_terminal_events
-    //         .lock()
-    //         .expect("could not acquire lock on _terminal_events")[..],
-    //     &_expected_terminal_events[..]
-    // );
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
+
+    assert_eq!(
+        &terminal_events
+            .lock()
+            .expect("could not acquire lock on _terminal_events")[..],
+        &expected_terminal_events[..]
+    );
     assert_eq!(
         std::fs::metadata(&file_2_path).is_ok(),
         true,
@@ -2326,7 +2506,7 @@ fn delete_folder_small_window_no_confirmation() {
 
 #[test]
 fn delete_folder_with_multiple_children() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
     events.push(Some(key!(char 'l'))); // once to place selected marker on screen
@@ -2395,16 +2575,23 @@ fn delete_folder_with_multiple_children() {
         .lock()
         .expect("could not acquire lock on terminal events");
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
+        HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    // assert_eq!(
-    //     &_terminal_events
-    //         .lock()
-    //         .expect("could not acquire lock on _terminal_events")[..],
-    //     &_expected_terminal_events[..]
-    // );
+
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
+
+    assert_eq!(
+        &terminal_events
+            .lock()
+            .expect("could not acquire lock on _terminal_events")[..],
+        &expected_terminal_events[..]
+    );
     assert_eq!(
         std::fs::metadata(&subfolder_1_path).is_err(),
         true,
@@ -2456,7 +2643,7 @@ fn delete_folder_with_multiple_children() {
 
 #[test]
 fn delete_folder_with_multiple_children_no_confirmation() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
     events.push(Some(key!(char 'l'))); // once to place selected marker on screen
@@ -2524,16 +2711,22 @@ fn delete_folder_with_multiple_children_no_confirmation() {
         .lock()
         .expect("could not acquire lock on terminal events");
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
+        HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    // assert_eq!(
-    //     &_terminal_events
-    //         .lock()
-    //         .expect("could not acquire lock on _terminal_events")[..],
-    //     &_expected_terminal_events[..]
-    // );
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
+
+    assert_eq!(
+        &terminal_events
+            .lock()
+            .expect("could not acquire lock on _terminal_events")[..],
+        &expected_terminal_events[..]
+    );
     assert_eq!(
         std::fs::metadata(&subfolder_1_path).is_err(),
         true,
@@ -2584,7 +2777,7 @@ fn delete_folder_with_multiple_children_no_confirmation() {
 
 #[test]
 fn pressing_delete_with_no_selected_tile() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
     events.push(Some(key!(Backspace)));
@@ -2625,15 +2818,20 @@ fn pressing_delete_with_no_selected_tile() {
         .lock()
         .expect("could not acquire lock on terminal events");
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    // assert_eq!(
-    //     &_terminal_events
-    //         .lock()
-    //         .expect("could not acquire lock on _terminal_events")[..],
-    //     &_expected_terminal_events[..]
-    // );
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
+
+    assert_eq!(
+        &terminal_events
+            .lock()
+            .expect("could not acquire lock on _terminal_events")[..],
+        &expected_terminal_events[..]
+    );
     assert_eq!(
         std::fs::metadata(&file_2_path).is_ok(),
         true,
@@ -2663,7 +2861,7 @@ fn pressing_delete_with_no_selected_tile() {
 
 #[test]
 fn delete_file_press_n() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
     events.push(Some(key!(char 'l'))); // once to place selected marker on screen
@@ -2708,16 +2906,20 @@ fn delete_file_press_n() {
         .lock()
         .expect("could not acquire lock on terminal events");
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear,
-        ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    // assert_eq!(
-    //     &_terminal_events
-    //         .lock()
-    //         .expect("could not acquire lock on _terminal_events")[..],
-    //     &_expected_terminal_events[..]
-    // );
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
+    assert_eq!(
+        &terminal_events
+            .lock()
+            .expect("could not acquire lock on _terminal_events")[..],
+        &expected_terminal_events[..]
+    );
     assert_eq!(
         std::fs::metadata(&file_2_path).is_ok(),
         true,
@@ -2750,7 +2952,7 @@ fn delete_file_press_n() {
 
 #[test]
 fn files_with_size_zero() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
     let keyboard_events = sleep_and_quit_events(1, true);
     let temp_dir_path =
         create_root_temp_dir("files_with_size_zero").expect("failed to create temp dir");
@@ -2781,14 +2983,18 @@ fn files_with_size_zero() {
         terminal_draw_events_mirror[0]
     );
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
 
-    // assert_eq!(
-    //     &_terminal_events.lock().unwrap()[..],
-    //     &_expected_terminal_events[..]
-    // );
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 2);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -2797,7 +3003,7 @@ fn files_with_size_zero() {
 
 #[test]
 fn empty_folder() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
     let keyboard_events = sleep_and_quit_events(1, true);
     let temp_dir_path = create_root_temp_dir("empty_folder").expect("failed to create temp dir");
 
@@ -2815,14 +3021,18 @@ fn empty_folder() {
         terminal_draw_events_mirror[0]
     );
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
 
-    // assert_eq!(
-    //     &_terminal_events.lock().unwrap()[..],
-    //     &_expected_terminal_events[..]
-    // );
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 2);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -2897,13 +3107,17 @@ fn permission_denied_when_deleting() {
         Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
         Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
     ];
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &_terminal_events.lock().unwrap()
+    );
 
-    // assert_eq!(
-    //     &_terminal_events
-    //         .lock()
-    //         .expect("could not acquire lock on _terminal_events")[..],
-    //     &_expected_terminal_events[..]
-    // );
+    assert_eq!(
+        &_terminal_events
+            .lock()
+            .expect("could not acquire lock on _terminal_events")[..],
+        &_expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 9);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -2983,13 +3197,17 @@ fn permission_denied_when_deleting_no_confirmation() {
         Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
         Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
     ];
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &_terminal_events.lock().unwrap()
+    );
 
-    // assert_eq!(
-    //     &_terminal_events
-    //         .lock()
-    //         .expect("could not acquire lock on _terminal_events")[..],
-    //     &_expected_terminal_events[..]
-    // );
+    assert_eq!(
+        &_terminal_events
+            .lock()
+            .expect("could not acquire lock on _terminal_events")[..],
+        &_expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 8);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -3004,7 +3222,7 @@ fn permission_denied_when_deleting_no_confirmation() {
 
 #[test]
 fn small_files_with_y_as_zero() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
     let keyboard_events = sleep_and_quit_events(1, true);
     let temp_dir_path =
         create_root_temp_dir("small_files_with_y_as_zero").expect("failed to create temp dir");
@@ -3033,14 +3251,18 @@ fn small_files_with_y_as_zero() {
         terminal_draw_events_mirror[0]
     );
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
 
-    // assert_eq!(
-    //     &_terminal_events.lock().unwrap()[..],
-    //     &_expected_terminal_events[..]
-    // );
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 2);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
@@ -3049,7 +3271,7 @@ fn small_files_with_y_as_zero() {
 
 #[test]
 fn small_files_with_x_as_zero() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(50, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(50, 50);
     let keyboard_events = sleep_and_quit_events(1, true);
     let temp_dir_path =
         create_root_temp_dir("small_files_with_x_as_zero").expect("failed to create temp dir");
@@ -3082,14 +3304,18 @@ fn small_files_with_x_as_zero() {
         terminal_draw_events_mirror[0]
     );
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
+    println!(
+        "let expected_terminal_events = vec!{:?};",
+        &terminal_events.lock().unwrap()
+    );
 
-    // assert_eq!(
-    //     &_terminal_events.lock().unwrap()[..],
-    //     &_expected_terminal_events[..]
-    // );
+    assert_eq!(
+        &terminal_events.lock().unwrap()[..],
+        &expected_terminal_events[..]
+    );
 
     assert_eq!(terminal_draw_events_mirror.len(), 2);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
