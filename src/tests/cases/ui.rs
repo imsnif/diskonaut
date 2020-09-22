@@ -98,7 +98,7 @@ fn two_large_files_one_small_file() {
         "terminal_draw_events_mirror[0] {:?}",
         terminal_draw_events_mirror[0]
     );
-   
+
     let expected_terminal_events = vec![
         Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
