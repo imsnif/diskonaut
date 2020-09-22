@@ -3041,7 +3041,7 @@ fn empty_folder() {
 #[cfg(not(target_os = "windows"))]
 #[test]
 fn permission_denied_when_deleting() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
     events.push(Some(key!(char 'l'))); // once to place selected marker on screen
@@ -3103,20 +3103,22 @@ fn permission_denied_when_deleting() {
     std::fs::set_permissions(&subfolder_1_path, perms).unwrap();
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
+        HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
+
     println!(
         "let expected_terminal_events = vec!{:?};",
-        &_terminal_events.lock().unwrap()
+        &terminal_events.lock().unwrap()
     );
 
     assert_eq!(
-        &_terminal_events
+        &terminal_events
             .lock()
             .expect("could not acquire lock on _terminal_events")[..],
-        &_expected_terminal_events[..]
+        &expected_terminal_events[..]
     );
 
     assert_eq!(terminal_draw_events_mirror.len(), 9);
@@ -3133,7 +3135,7 @@ fn permission_denied_when_deleting() {
 #[cfg(not(target_os = "windows"))]
 #[test]
 fn permission_denied_when_deleting_no_confirmation() {
-    let (_terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
+    let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
     events.push(Some(key!(char 'l'))); // once to place selected marker on screen
@@ -3193,20 +3195,22 @@ fn permission_denied_when_deleting_no_confirmation() {
     std::fs::set_permissions(&subfolder_1_path, perms).unwrap();
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
 
-    let _expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
+        HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
+
     println!(
         "let expected_terminal_events = vec!{:?};",
-        &_terminal_events.lock().unwrap()
+        &terminal_events.lock().unwrap()
     );
 
     assert_eq!(
-        &_terminal_events
+        &terminal_events
             .lock()
             .expect("could not acquire lock on _terminal_events")[..],
-        &_expected_terminal_events[..]
+        &expected_terminal_events[..]
     );
 
     assert_eq!(terminal_draw_events_mirror.len(), 8);
