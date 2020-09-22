@@ -10,7 +10,7 @@ use crossterm::event::{Event, KeyCode, KeyEvent};
 
 use crate::start;
 use crate::tests::cases::test_utils::*;
-use crate::tests::fakes::KeyboardEvents;
+use crate::tests::fakes::TerminalEvents;
 use crate::tests::fakes::TerminalEvent::*;
 
 macro_rules! key {
@@ -558,7 +558,7 @@ fn enter_folder() {
     events.push(Some(key!(ctrl 'c')));
     events.push(None);
     events.push(Some(key!(char 'y')));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("enter_folder").expect("failed to create temp dir");
 
@@ -626,7 +626,7 @@ fn enter_folder_medium_width() {
     events.push(Some(key!(ctrl 'c')));
     events.push(None);
     events.push(Some(key!(char 'y')));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path =
         create_root_temp_dir("enter_folder_medium_width").expect("failed to create temp dir");
@@ -695,7 +695,7 @@ fn enter_folder_small_width() {
     events.push(Some(key!(ctrl 'c')));
     events.push(None);
     events.push(Some(key!(char 'y')));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path =
         create_root_temp_dir("enter_folder_small_width").expect("failed to create temp dir");
@@ -817,7 +817,7 @@ fn zoom_into_small_files() {
     events.push(Some(key!(ctrl 'c')));
     events.push(None);
     events.push(Some(key!(char 'y')));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
     let temp_dir_path =
         create_root_temp_dir("zoom_into_small_files").expect("failed to create temp dir");
 
@@ -885,7 +885,7 @@ fn cannot_move_into_small_files() {
     events.push(Some(key!(ctrl 'c')));
     events.push(None);
     events.push(Some(key!(char 'y')));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path =
         create_root_temp_dir("cannot_move_into_small_files").expect("failed to create temp dir");
@@ -1039,7 +1039,7 @@ fn move_down_and_enter_folder() {
     events.push(Some(key!(ctrl 'c')));
     events.push(None);
     events.push(Some(key!(char 'y')));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path =
         create_root_temp_dir("move_down_and_enter_folder").expect("failed to create temp dir");
@@ -1111,7 +1111,7 @@ fn noop_when_entering_file() {
     events.push(Some(key!(ctrl 'c')));
     events.push(None);
     events.push(Some(key!(char 'y')));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path =
         create_root_temp_dir("noop_when_entering_file").expect("failed to create temp dir");
@@ -1178,7 +1178,7 @@ fn move_up_and_enter_folder() {
     events.push(Some(key!(ctrl 'c')));
     events.push(None);
     events.push(Some(key!(char 'y')));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path =
         create_root_temp_dir("move_up_and_enter_folder").expect("failed to create temp dir");
@@ -1251,7 +1251,7 @@ fn move_right_and_enter_folder() {
     events.push(Some(key!(ctrl 'c')));
     events.push(None);
     events.push(Some(key!(char 'y')));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path =
         create_root_temp_dir("move_right_and_enter_folder").expect("failed to create temp dir");
@@ -1325,7 +1325,7 @@ fn move_left_and_enter_folder() {
     events.push(Some(key!(ctrl 'c')));
     events.push(None);
     events.push(Some(key!(char 'y')));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path =
         create_root_temp_dir("move_left_and_enter_folder").expect("failed to create temp dir");
@@ -1394,7 +1394,7 @@ fn enter_largest_folder_with_no_selected_tile() {
     events.push(Some(key!(ctrl 'c')));
     events.push(None);
     events.push(Some(key!(char 'y')));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("enter_largest_folder_with_no_selected_tile")
         .expect("failed to create temp dir");
@@ -1459,7 +1459,7 @@ fn clear_selection_when_moving_off_screen_edges() {
     events.push(Some(key!(ctrl 'c')));
     events.push(None);
     events.push(Some(key!(char 'y')));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("noop_when_moving_off_screen_edges")
         .expect("failed to create temp dir");
@@ -1529,7 +1529,7 @@ fn esc_to_go_up() {
     events.push(Some(key!(ctrl 'c')));
     events.push(None);
     events.push(Some(key!(char 'y')));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("esc_to_go_up").expect("failed to create temp dir");
 
@@ -1609,7 +1609,7 @@ fn noop_when_pressing_esc_at_base_folder() {
     events.push(Some(key!(ctrl 'c')));
     events.push(None);
     events.push(Some(key!(char 'y')));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("noop_when_pressing_esc_at_base_folder")
         .expect("failed to create temp dir");
@@ -1684,7 +1684,7 @@ fn delete_file() {
     events.push(Some(key!(ctrl 'c')));
     events.push(None);
     events.push(Some(key!(char 'y')));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("delete_file").expect("failed to create temp dir");
 
@@ -1773,7 +1773,7 @@ fn delete_file_no_confirmation() {
     events.push(Some(key!(ctrl 'c')));
     events.push(None);
     events.push(Some(key!(char 'y')));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path =
         create_root_temp_dir("delete_file_no_confirmation").expect("failed to create temp dir");
@@ -1865,7 +1865,7 @@ fn cant_delete_file_with_term_too_small() {
     events.push(Some(key!(ctrl 'c')));
     events.push(None);
     events.push(Some(key!(char 'y')));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("cant_delete_file_with_term_too_small")
         .expect("failed to create temp dir");
@@ -1952,7 +1952,7 @@ fn delete_folder() {
     events.push(Some(key!(ctrl 'c')));
     events.push(None);
     events.push(Some(key!(char 'y')));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("delete_folder").expect("failed to create temp dir");
 
@@ -2047,7 +2047,7 @@ fn delete_folder_no_confirmation() {
     events.push(Some(key!(ctrl 'c')));
     events.push(None);
     events.push(Some(key!(char 'y')));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path =
         create_root_temp_dir("delete_folder_no_confirmation").expect("failed to create temp dir");
@@ -2147,7 +2147,7 @@ fn delete_folder_small_window() {
     events.push(Some(key!(ctrl 'c')));
     events.push(None);
     events.push(Some(key!(char 'y')));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path =
         create_root_temp_dir("delete_folder_small_window").expect("failed to create temp dir");
@@ -2247,7 +2247,7 @@ fn delete_folder_small_window_no_confirmation() {
     events.push(Some(key!(ctrl 'c')));
     events.push(None);
     events.push(Some(key!(char 'y')));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("delete_folder_small_window_no_confirmation")
         .expect("failed to create temp dir");
@@ -2345,7 +2345,7 @@ fn delete_folder_with_multiple_children() {
     events.push(Some(key!(ctrl 'c')));
     events.push(None);
     events.push(Some(key!(char 'y')));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("delete_folder_with_multiple_children")
         .expect("failed to create temp dir");
@@ -2473,7 +2473,7 @@ fn delete_folder_with_multiple_children_no_confirmation() {
     events.push(Some(key!(ctrl 'c')));
     events.push(None);
     events.push(Some(key!(char 'y')));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path =
         create_root_temp_dir("delete_folder_with_multiple_children_no_confirmation")
@@ -2592,7 +2592,7 @@ fn pressing_delete_with_no_selected_tile() {
     events.push(Some(key!(ctrl 'c')));
     events.push(None);
     events.push(Some(key!(char 'y')));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("pressing_delete_with_no_selected_tile")
         .expect("failed to create temp dir");
@@ -2675,7 +2675,7 @@ fn delete_file_press_n() {
     events.push(Some(key!(ctrl 'c')));
     events.push(None);
     events.push(Some(key!(char 'y')));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path =
         create_root_temp_dir("delete_file_press_n").expect("failed to create temp dir");
@@ -2849,7 +2849,7 @@ fn permission_denied_when_deleting() {
     events.push(Some(key!(ctrl 'c')));
     events.push(None);
     events.push(Some(key!(char 'y')));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path =
         create_root_temp_dir("permission_denied_when_deleting").expect("failed to create temp dir");
@@ -2935,7 +2935,7 @@ fn permission_denied_when_deleting_no_confirmation() {
     events.push(Some(key!(ctrl 'c')));
     events.push(None);
     events.push(Some(key!(char 'y')));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("permission_denied_when_deleting_no_confirmation")
         .expect("failed to create temp dir");

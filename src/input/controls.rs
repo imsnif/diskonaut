@@ -7,11 +7,12 @@ use crate::state::FileToDelete;
 use crate::App;
 
 #[derive(Clone)]
-pub struct KeyboardEvents;
+pub struct TerminalEvents;
 
-impl Iterator for KeyboardEvents {
+impl Iterator for TerminalEvents {
     type Item = Event;
     fn next(&mut self) -> Option<Event> {
+
         // note : these are all events not just kb
         // resize comes here too
 

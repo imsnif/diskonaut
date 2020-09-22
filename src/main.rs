@@ -30,7 +30,7 @@ use crossterm::terminal::{disable_raw_mode, enable_raw_mode};
 use tui::backend::CrosstermBackend;
 
 use app::{App, UiMode};
-use input::KeyboardEvents;
+use input::TerminalEvents;
 use messages::{handle_events, Event, Instruction};
 
 #[cfg(not(test))]
@@ -77,7 +77,7 @@ fn try_main() -> Result<(), failure::Error> {
         Ok(stdout) => {
             enable_raw_mode()?;
             let terminal_backend = CrosstermBackend::new(stdout);
-            let keyboard_events = KeyboardEvents {};
+            let keyboard_events = TerminalEvents {};
             let folder = match opts.folder {
                 Some(folder) => folder,
                 None => env::current_dir()?,

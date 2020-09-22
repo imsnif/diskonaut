@@ -77,20 +77,8 @@ where
                     )
                     .split(full_screen);
 
-                // TODO: we have to do this because otherwise we get "Trying to access area outside the
-                // buffer" errors from tui
-                // we need to investigate if it's a bug in TUI or with us
-
-                // its because you start at 1 when you draw the rectangle grid
-
-                /*
-                  for x in area.x + 1..area.x + area.width {
-                    for y in area.y + 1..area.y + area.height {
-                        let buf = buf.get_mut(x, y);
-                        buf.set_symbol("█");
-                        buf.set_style(Style::default().bg(Color::White).fg(Color::Black));
-                    }
-                }*/
+                // -1 cos we draw starting at offset 1 in both x and y directions
+                
                 chunks[1].width -= 1;
                 chunks[1].height -= 1;
                 board.change_area(&chunks[1]);
