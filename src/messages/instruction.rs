@@ -1,7 +1,7 @@
 use ::std::fs::Metadata;
 use ::std::path::PathBuf;
 use ::std::sync::mpsc::Receiver;
-//use ::termion::event::Event as TermionEvent;
+
 use ::tui::backend::Backend;
 use crossterm::event::Event as BackEvent;
 
