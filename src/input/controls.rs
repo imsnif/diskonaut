@@ -25,7 +25,7 @@ macro_rules! key {
             modifiers: KeyModifiers::NONE,
         })
     };
-    (shift) $x:expr) => {
+    (shift $x:expr) => {
         Event::Key(KeyEvent {
             code: KeyCode::Char($x),
             modifiers: KeyModifiers::SHIFT,
