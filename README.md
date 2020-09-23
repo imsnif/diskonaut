@@ -12,7 +12,7 @@ Once completed, you can navigate through subfolders, getting a visual treemap re
 ### Download a prebuilt binary
 If you're using linux, you can check out the "releases" of this repository to download the latest prebuilt binary.
 
-### With cargo (linux/macOS)
+### With cargo (linux/macOS/windows)
 ```
 cargo install diskonaut
 ```
@@ -63,7 +63,7 @@ brew install diskonaut
 Also available in [nixpkgs](https://github.com/NixOS/nixpkgs/blob/master/pkgs/tools/misc/diskonaut/default.nix): see Nix section for more details.
 
 ## Supported platforms
-Right now `diskonaut` supports linux and macos. If you're on a different operating system and would like to help port it, that would be amazing!
+Right now `diskonaut` supports linux, macos and windows.
 
 ## Usage
 Either start `diskonaut` in the folder you want to scan, or provide it with the folder you'd like to scan as an argument:
