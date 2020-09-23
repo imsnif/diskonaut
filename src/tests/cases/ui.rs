@@ -63,9 +63,6 @@ fn create_temp_file<P: AsRef<Path>>(path: P, size: usize) -> Result<(), failure:
     Ok(())
 }
 
-// TODO: adjust tests for other platforms (currently the snapshots include the /tmp folder which
-// might not work when running on mac/windows)
-
 #[test]
 fn two_large_files_one_small_file() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
@@ -550,7 +547,7 @@ fn enter_folder() {
     assert_eq!(
         &terminal_events
             .lock()
-            .expect("could not acquire lock on _terminal_events")[..],
+            .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
 
@@ -620,7 +617,7 @@ fn enter_folder_medium_width() {
     assert_eq!(
         &terminal_events
             .lock()
-            .expect("could not acquire lock on _terminal_events")[..],
+            .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
 
@@ -689,7 +686,7 @@ fn enter_folder_small_width() {
     assert_eq!(
         &terminal_events
             .lock()
-            .expect("could not acquire lock on _terminal_events")[..],
+            .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
 
@@ -1034,7 +1031,7 @@ fn move_down_and_enter_folder() {
     assert_eq!(
         &terminal_events
             .lock()
-            .expect("could not acquire lock on _terminal_events")[..],
+            .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
 
@@ -1101,7 +1098,7 @@ fn noop_when_entering_file() {
     assert_eq!(
         &terminal_events
             .lock()
-            .expect("could not acquire lock on _terminal_events")[..],
+            .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
 
@@ -1174,7 +1171,7 @@ fn move_up_and_enter_folder() {
     assert_eq!(
         &terminal_events
             .lock()
-            .expect("could not acquire lock on _terminal_events")[..],
+            .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
 
@@ -1246,7 +1243,7 @@ fn move_right_and_enter_folder() {
     assert_eq!(
         &terminal_events
             .lock()
-            .expect("could not acquire lock on _terminal_events")[..],
+            .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
 
@@ -1320,7 +1317,7 @@ fn move_left_and_enter_folder() {
     assert_eq!(
         &terminal_events
             .lock()
-            .expect("could not acquire lock on _terminal_events")[..],
+            .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
 
@@ -1389,7 +1386,7 @@ fn enter_largest_folder_with_no_selected_tile() {
     assert_eq!(
         &terminal_events
             .lock()
-            .expect("could not acquire lock on _terminal_events")[..],
+            .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
 
@@ -1449,7 +1446,7 @@ fn clear_selection_when_moving_off_screen_edges() {
     assert_eq!(
         &terminal_events
             .lock()
-            .expect("could not acquire lock on _terminal_events")[..],
+            .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
 
@@ -1524,7 +1521,7 @@ fn esc_to_go_up() {
     assert_eq!(
         &terminal_events
             .lock()
-            .expect("could not acquire lock on _terminal_events")[..],
+            .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
 
@@ -1605,7 +1602,7 @@ fn noop_when_pressing_esc_at_base_folder() {
     assert_eq!(
         &terminal_events
             .lock()
-            .expect("could not acquire lock on _terminal_events")[..],
+            .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
 
@@ -1678,7 +1675,7 @@ fn delete_file() {
     assert_eq!(
         &terminal_events
             .lock()
-            .expect("could not acquire lock on _terminal_events")[..],
+            .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
     assert_eq!(
@@ -1769,7 +1766,7 @@ fn delete_file_no_confirmation() {
     assert_eq!(
         &terminal_events
             .lock()
-            .expect("could not acquire lock on _terminal_events")[..],
+            .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
     assert_eq!(
@@ -1860,7 +1857,7 @@ fn cant_delete_file_with_term_too_small() {
     assert_eq!(
         &terminal_events
             .lock()
-            .expect("could not acquire lock on _terminal_events")[..],
+            .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
     assert_eq!(
@@ -1950,7 +1947,7 @@ fn delete_folder() {
     assert_eq!(
         &terminal_events
             .lock()
-            .expect("could not acquire lock on _terminal_events")[..],
+            .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
     assert_eq!(
@@ -2047,7 +2044,7 @@ fn delete_folder_no_confirmation() {
     assert_eq!(
         &terminal_events
             .lock()
-            .expect("could not acquire lock on _terminal_events")[..],
+            .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
     assert_eq!(
@@ -2149,7 +2146,7 @@ fn delete_folder_small_window() {
     assert_eq!(
         &terminal_events
             .lock()
-            .expect("could not acquire lock on _terminal_events")[..],
+            .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
     assert_eq!(
@@ -2250,7 +2247,7 @@ fn delete_folder_small_window_no_confirmation() {
     assert_eq!(
         &terminal_events
             .lock()
-            .expect("could not acquire lock on _terminal_events")[..],
+            .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
     assert_eq!(
@@ -2367,7 +2364,7 @@ fn delete_folder_with_multiple_children() {
     assert_eq!(
         &terminal_events
             .lock()
-            .expect("could not acquire lock on _terminal_events")[..],
+            .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
     assert_eq!(
@@ -2497,7 +2494,7 @@ fn delete_folder_with_multiple_children_no_confirmation() {
     assert_eq!(
         &terminal_events
             .lock()
-            .expect("could not acquire lock on _terminal_events")[..],
+            .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
     assert_eq!(
@@ -2597,7 +2594,7 @@ fn pressing_delete_with_no_selected_tile() {
     assert_eq!(
         &terminal_events
             .lock()
-            .expect("could not acquire lock on _terminal_events")[..],
+            .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
     assert_eq!(
@@ -2681,7 +2678,7 @@ fn delete_file_press_n() {
     assert_eq!(
         &terminal_events
             .lock()
-            .expect("could not acquire lock on _terminal_events")[..],
+            .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
     assert_eq!(
@@ -2856,7 +2853,7 @@ fn permission_denied_when_deleting() {
     assert_eq!(
         &terminal_events
             .lock()
-            .expect("could not acquire lock on _terminal_events")[..],
+            .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
 
@@ -2943,7 +2940,7 @@ fn permission_denied_when_deleting_no_confirmation() {
     assert_eq!(
         &terminal_events
             .lock()
-            .expect("could not acquire lock on _terminal_events")[..],
+            .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
 
