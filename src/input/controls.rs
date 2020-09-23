@@ -12,9 +12,6 @@ pub struct TerminalEvents;
 impl Iterator for TerminalEvents {
     type Item = Event;
     fn next(&mut self) -> Option<Event> {
-        // note : these are all events not just kb
-        // resize comes here too
-
         Some(read().unwrap())
     }
 }

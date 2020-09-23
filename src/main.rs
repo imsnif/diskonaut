@@ -77,7 +77,7 @@ fn try_main() -> Result<(), failure::Error> {
         Ok(stdout) => {
             enable_raw_mode()?;
             let terminal_backend = CrosstermBackend::new(stdout);
-            let keyboard_events = TerminalEvents {};
+            let terminal_events = TerminalEvents {};
             let folder = match opts.folder {
                 Some(folder) => folder,
                 None => env::current_dir()?,
@@ -87,7 +87,7 @@ fn try_main() -> Result<(), failure::Error> {
             }
             start(
                 terminal_backend,
-                Box::new(keyboard_events),
+                Box::new(terminal_events),
                 folder,
                 opts.apparent_size,
                 opts.disable_delete_confirmation,
@@ -101,7 +101,7 @@ fn try_main() -> Result<(), failure::Error> {
 
 pub fn start<B>(
     terminal_backend: B,
-    keyboard_events: Box<dyn Iterator<Item = BackEvent> + Send>,
+    terminal_events: Box<dyn Iterator<Item = BackEvent> + Send>,
     path: PathBuf,
     show_apparent_size: bool,
     disable_delete_confirmation: bool,
@@ -137,7 +137,7 @@ pub fn start<B>(
                 let instruction_sender = instruction_sender.clone();
                 let running = running.clone();
                 move || {
-                    for evt in keyboard_events {
+                    for evt in terminal_events {
                         if let BackEvent::Resize(_x, _y) = evt {
                             if SHOULD_HANDLE_WIN_CHANGE {
                                 let _ = instruction_sender.send(Instruction::ResetUiMode);

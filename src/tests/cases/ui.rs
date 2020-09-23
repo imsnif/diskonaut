@@ -94,18 +94,9 @@ fn two_large_files_one_small_file() {
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-    println!(
-        "terminal_draw_events_mirror[0] {:?}",
-        terminal_draw_events_mirror[0]
-    );
-
     let expected_terminal_events = vec![
         Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -143,19 +134,9 @@ fn medium_width() {
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-    println!(
-        "terminal_draw_events_mirror[0] {:?}",
-        terminal_draw_events_mirror[0]
-    );
-
     let expected_terminal_events = vec![
         Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -193,19 +174,9 @@ fn small_width() {
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-    println!(
-        "terminal_draw_events_mirror[0] {:?}",
-        terminal_draw_events_mirror[0]
-    );
-
     let expected_terminal_events = vec![
         Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -244,19 +215,9 @@ fn small_width_long_folder_name() {
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-    println!(
-        "terminal_draw_events_mirror[0] {:?}",
-        terminal_draw_events_mirror[0]
-    );
-
     let expected_terminal_events = vec![
         Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -295,19 +256,9 @@ fn too_small_width_one() {
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-    println!(
-        "terminal_draw_events_mirror[0] {:?}",
-        terminal_draw_events_mirror[0]
-    );
-
     let expected_terminal_events = vec![
         Clear, HideCursor, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -345,19 +296,9 @@ fn too_small_width_two() {
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-    println!(
-        "terminal_draw_events_mirror[0] {:?}",
-        terminal_draw_events_mirror[0]
-    );
-
     let expected_terminal_events = vec![
         Clear, HideCursor, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -383,19 +324,9 @@ fn too_small_width_three() {
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-    println!(
-        "terminal_draw_events_mirror[0] {:?}",
-        terminal_draw_events_mirror[0]
-    );
-
     let expected_terminal_events = vec![
         Clear, HideCursor, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -421,19 +352,9 @@ fn too_small_width_four() {
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-    println!(
-        "terminal_draw_events_mirror[0] {:?}",
-        terminal_draw_events_mirror[0]
-    );
-
     let expected_terminal_events = vec![
         Clear, HideCursor, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -459,19 +380,9 @@ fn too_small_width_five() {
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-    println!(
-        "terminal_draw_events_mirror[0] {:?}",
-        terminal_draw_events_mirror[0]
-    );
-
     let expected_terminal_events = vec![
         Clear, HideCursor, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -497,19 +408,9 @@ fn too_small_height() {
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-    println!(
-        "terminal_draw_events_mirror[0] {:?}",
-        terminal_draw_events_mirror[0]
-    );
-
     let expected_terminal_events = vec![
         Clear, HideCursor, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -582,11 +483,6 @@ fn eleven_files() {
     let expected_terminal_events = vec![
         Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -651,11 +547,6 @@ fn enter_folder() {
         Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
         Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events
             .lock()
@@ -726,11 +617,6 @@ fn enter_folder_medium_width() {
         Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
 
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events
             .lock()
@@ -800,11 +686,6 @@ fn enter_folder_small_width() {
         Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
         Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events
             .lock()
@@ -858,11 +739,6 @@ fn small_files() {
     let expected_terminal_events = vec![
         Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -933,11 +809,6 @@ fn zoom_into_small_files() {
         Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
         HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -1035,11 +906,6 @@ fn cannot_move_into_small_files() {
         Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
         Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -1098,11 +964,6 @@ fn minimum_tile_sides() {
     let expected_terminal_events = vec![
         Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
 
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
@@ -1170,11 +1031,6 @@ fn move_down_and_enter_folder() {
         Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
         Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events
             .lock()
@@ -1241,11 +1097,6 @@ fn noop_when_entering_file() {
         Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
         Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
 
     assert_eq!(
         &terminal_events
@@ -1320,11 +1171,6 @@ fn move_up_and_enter_folder() {
         Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear,
         ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events
             .lock()
@@ -1397,11 +1243,6 @@ fn move_right_and_enter_folder() {
         Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
         Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events
             .lock()
@@ -1476,11 +1317,6 @@ fn move_left_and_enter_folder() {
         Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear,
         ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events
             .lock()
@@ -1550,11 +1386,6 @@ fn enter_largest_folder_with_no_selected_tile() {
         Flush, Clear, ShowCursor,
     ];
 
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events
             .lock()
@@ -1615,11 +1446,6 @@ fn clear_selection_when_moving_off_screen_edges() {
         Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
         Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events
             .lock()
@@ -1695,11 +1521,6 @@ fn esc_to_go_up() {
         Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear,
         ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events
             .lock()
@@ -1781,11 +1602,6 @@ fn noop_when_pressing_esc_at_base_folder() {
         Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
         HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events
             .lock()
@@ -1859,11 +1675,6 @@ fn delete_file() {
         Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
         HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events
             .lock()
@@ -1955,11 +1766,6 @@ fn delete_file_no_confirmation() {
         Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
         HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events
             .lock()
@@ -2051,11 +1857,6 @@ fn cant_delete_file_with_term_too_small() {
     let expected_terminal_events = vec![
         Clear, HideCursor, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events
             .lock()
@@ -2146,10 +1947,6 @@ fn delete_folder() {
         Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
         HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
     assert_eq!(
         &terminal_events
             .lock()
@@ -2247,10 +2044,6 @@ fn delete_folder_no_confirmation() {
         Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
         HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
     assert_eq!(
         &terminal_events
             .lock()
@@ -2353,11 +2146,6 @@ fn delete_folder_small_window() {
         HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
         Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events
             .lock()
@@ -2459,11 +2247,6 @@ fn delete_folder_small_window_no_confirmation() {
         Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
         HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events
             .lock()
@@ -2580,11 +2363,6 @@ fn delete_folder_with_multiple_children() {
         Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
         HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
 
     assert_eq!(
         &terminal_events
@@ -2716,11 +2494,6 @@ fn delete_folder_with_multiple_children_no_confirmation() {
         Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
         HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events
             .lock()
@@ -2821,11 +2594,6 @@ fn pressing_delete_with_no_selected_tile() {
     let expected_terminal_events = vec![
         Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events
             .lock()
@@ -2910,10 +2678,6 @@ fn delete_file_press_n() {
         Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
         Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
     assert_eq!(
         &terminal_events
             .lock()
@@ -2978,19 +2742,9 @@ fn files_with_size_zero() {
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-    println!(
-        "terminal_draw_events_mirror[0] {:?}",
-        terminal_draw_events_mirror[0]
-    );
-
     let expected_terminal_events = vec![
         Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -3016,19 +2770,9 @@ fn empty_folder() {
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-    println!(
-        "terminal_draw_events_mirror[0] {:?}",
-        terminal_draw_events_mirror[0]
-    );
-
     let expected_terminal_events = vec![
         Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -3108,11 +2852,6 @@ fn permission_denied_when_deleting() {
         Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
         HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
 
     assert_eq!(
         &terminal_events
@@ -3201,11 +2940,6 @@ fn permission_denied_when_deleting_no_confirmation() {
         HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
 
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events
             .lock()
@@ -3250,19 +2984,9 @@ fn small_files_with_y_as_zero() {
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-    println!(
-        "terminal_draw_events_mirror[0] {:?}",
-        terminal_draw_events_mirror[0]
-    );
-
     let expected_terminal_events = vec![
         Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -3303,19 +3027,9 @@ fn small_files_with_x_as_zero() {
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-    println!(
-        "terminal_draw_events_mirror[0] {:?}",
-        terminal_draw_events_mirror[0]
-    );
-
     let expected_terminal_events = vec![
         Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    println!(
-        "let expected_terminal_events = vec!{:?};",
-        &terminal_events.lock().unwrap()
-    );
-
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
