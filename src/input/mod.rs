@@ -1,5 +1,3 @@
-mod controls;
-mod signals;
+pub mod controls;
 
 pub use controls::*;
-pub use signals::*;

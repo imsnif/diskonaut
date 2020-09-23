@@ -1,6 +1,7 @@
 os:
   - linux
   - osx
+  - windows
 language: rust
 rust:
   - stable
@@ -22,6 +23,11 @@ matrix:
       rust: nightly
       before_script:
         - rustup component add rustfmt
+    - os: windows
+      rust: nightly
+      before_script:
+        - rustup component add rustfmt
+
   allow_failures:
     - rust: nightly
 

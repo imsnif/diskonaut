@@ -1,17 +1,39 @@
 use ::std::iter;
 use ::std::sync::{Arc, Mutex};
-use ::termion::event::{Event, Key};
+use crossterm::event::KeyModifiers;
+use crossterm::event::{Event, KeyCode, KeyEvent};
 
-use crate::tests::fakes::{KeyboardEvents, TerminalEvent, TestBackend};
+use crate::tests::fakes::{TerminalEvent, TerminalEvents, TestBackend};
 
-pub fn sleep_and_quit_events(sleep_num: usize, quit_after_confirm: bool) -> Box<KeyboardEvents> {
+macro_rules! key {
+    (char $x:expr) => {
+        Event::Key(KeyEvent {
+            code: KeyCode::Char($x),
+            modifiers: KeyModifiers::NONE,
+        })
+    };
+    (ctrl $x:expr) => {
+        Event::Key(KeyEvent {
+            code: KeyCode::Char($x),
+            modifiers: KeyModifiers::CONTROL,
+        })
+    };
+    ($x:ident) => {
+        Event::Key(KeyEvent {
+            code: KeyCode::$x,
+            modifiers: KeyModifiers::NONE,
+        })
+    };
+}
+
+pub fn sleep_and_quit_events(sleep_num: usize, quit_after_confirm: bool) -> Box<TerminalEvents> {
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(sleep_num).collect();
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     if quit_after_confirm {
         events.push(None);
-        events.push(Some(Event::Key(Key::Char('y'))));
+        events.push(Some(key!(char 'y')));
     }
-    Box::new(KeyboardEvents::new(events))
+    Box::new(TerminalEvents::new(events))
 }
 
 type BackendWithStreams = (

@@ -26,7 +26,7 @@ impl<'a> Widget for TermTooSmall {
                     ((area.x + area.width) / 2) as u16 - ((line.chars().count() / 2) as u16),
                     area.y + area.height / 2,
                     line,
-                    Style::default().modifier(Modifier::BOLD),
+                    Style::default().add_modifier(Modifier::BOLD),
                 );
                 break;
             }

@@ -10,7 +10,7 @@ fn render_confirm_prompt(buf: &mut Buffer, confirm_rect: &Rect) {
     let text_style = Style::default()
         .bg(Color::Black)
         .fg(Color::White)
-        .modifier(Modifier::BOLD);
+        .add_modifier(Modifier::BOLD);
 
     let possible_confirm_texts = [
         "Are you sure you want to quit?",
@@ -83,7 +83,7 @@ impl<'a> Widget for ConfirmBox {
         let fill_style = Style::default()
             .bg(Color::Black)
             .fg(Color::White)
-            .modifier(Modifier::BOLD);
+            .add_modifier(Modifier::BOLD);
 
         draw_filled_rect(buf, fill_style, &confirm_rect);
 

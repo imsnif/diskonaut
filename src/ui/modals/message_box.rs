@@ -19,6 +19,8 @@ fn truncated_file_name_line(file_to_delete: &FileToDelete, max_len: u16) -> Stri
         .last()
         .expect("could not find file to delete")
         .to_string_lossy();
+    #[cfg(test)]
+    let full_path = str::replace(&full_path, "\\", "/");
     if max_len > full_path.len() as u16 {
         full_path
     } else {
@@ -32,7 +34,7 @@ fn render_deletion_prompt(buf: &mut Buffer, message_rect: &Rect, file_to_delete:
     let text_style = Style::default()
         .bg(Color::Black)
         .fg(Color::Red)
-        .modifier(Modifier::BOLD);
+        .add_modifier(Modifier::BOLD);
     let question_line = match file_to_delete.file_type {
         FileType::File => {
             if max_text_len >= 17 {
@@ -98,7 +100,7 @@ fn render_deletion_in_progress(
     let text_style = Style::default()
         .bg(Color::Black)
         .fg(Color::Red)
-        .modifier(Modifier::BOLD);
+        .add_modifier(Modifier::BOLD);
     let deleting_line_start_position =
         ((message_rect.width - deleting_line.len() as u16) as f64 / 2.0).ceil() as u16
             + message_rect.x;
@@ -156,7 +158,7 @@ impl<'a> Widget for MessageBox<'a> {
         let fill_style = Style::default()
             .bg(Color::Black)
             .fg(Color::Red)
-            .modifier(Modifier::BOLD);
+            .add_modifier(Modifier::BOLD);
 
         draw_filled_rect(buf, fill_style, &message_rect);
         if self.deletion_in_progress {

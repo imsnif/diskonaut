@@ -1,17 +1,17 @@
 use ::std::{thread, time};
-use ::termion::event::Event;
+use crossterm::event::Event;
 
-pub struct KeyboardEvents {
+pub struct TerminalEvents {
     pub events: Vec<Option<Event>>,
 }
 
-impl KeyboardEvents {
+impl TerminalEvents {
     pub fn new(mut events: Vec<Option<Event>>) -> Self {
         events.reverse(); // this is so that we do not have to shift the array
-        KeyboardEvents { events }
+        TerminalEvents { events }
     }
 }
-impl Iterator for KeyboardEvents {
+impl Iterator for TerminalEvents {
     type Item = Event;
     fn next(&mut self) -> Option<Event> {
         match self.events.pop() {

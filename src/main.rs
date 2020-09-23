@@ -4,6 +4,7 @@ mod tests;
 mod app;
 mod input;
 mod messages;
+mod os;
 mod state;
 mod ui;
 
@@ -21,13 +22,15 @@ use ::std::sync::Arc;
 use ::std::thread::park_timeout;
 use ::std::{thread, time};
 use ::structopt::StructOpt;
-use ::termion::event::{Event as TermionEvent, Key};
-use ::termion::raw::IntoRawMode;
+
 use ::tui::backend::Backend;
-use ::tui::backend::TermionBackend;
+use crossterm::event::KeyModifiers;
+use crossterm::event::{Event as BackEvent, KeyCode, KeyEvent};
+use crossterm::terminal::{disable_raw_mode, enable_raw_mode};
+use tui::backend::CrosstermBackend;
 
 use app::{App, UiMode};
-use input::{sigwinch, KeyboardEvents};
+use input::TerminalEvents;
 use messages::{handle_events, Event, Instruction};
 
 #[cfg(not(test))]
@@ -63,13 +66,18 @@ fn main() {
         process::exit(2);
     }
 }
+fn get_stdout() -> io::Result<io::Stdout> {
+    Ok(io::stdout())
+}
 
 fn try_main() -> Result<(), failure::Error> {
     let opts = Opt::from_args();
-    match io::stdout().into_raw_mode() {
+
+    match get_stdout() {
         Ok(stdout) => {
-            let terminal_backend = TermionBackend::new(stdout);
-            let keyboard_events = KeyboardEvents {};
+            enable_raw_mode()?;
+            let terminal_backend = CrosstermBackend::new(stdout);
+            let terminal_events = TerminalEvents {};
             let folder = match opts.folder {
                 Some(folder) => folder,
                 None => env::current_dir()?,
@@ -79,7 +87,7 @@ fn try_main() -> Result<(), failure::Error> {
             }
             start(
                 terminal_backend,
-                Box::new(keyboard_events),
+                Box::new(terminal_events),
                 folder,
                 opts.apparent_size,
                 opts.disable_delete_confirmation,
@@ -87,12 +95,13 @@ fn try_main() -> Result<(), failure::Error> {
         }
         Err(_) => failure::bail!("Failed to get stdout: are you trying to pipe 'diskonaut'?"),
     }
+    disable_raw_mode()?;
     Ok(())
 }
 
 pub fn start<B>(
     terminal_backend: B,
-    keyboard_events: Box<dyn Iterator<Item = TermionEvent> + Send>,
+    terminal_events: Box<dyn Iterator<Item = BackEvent> + Send>,
     path: PathBuf,
     show_apparent_size: bool,
     disable_delete_confirmation: bool,
@@ -100,7 +109,6 @@ pub fn start<B>(
     B: Backend + Send + 'static,
 {
     let mut active_threads = vec![];
-    let (on_sigwinch, cleanup) = sigwinch();
 
     let (event_sender, event_receiver): (SyncSender<Event>, Receiver<Event>) =
         mpsc::sync_channel(1);
@@ -129,10 +137,27 @@ pub fn start<B>(
                 let instruction_sender = instruction_sender.clone();
                 let running = running.clone();
                 move || {
-                    for evt in keyboard_events {
-                        if let TermionEvent::Key(Key::Char('y'))
-                        | TermionEvent::Key(Key::Char('q'))
-                        | TermionEvent::Key(Key::Ctrl('c')) = evt
+                    for evt in terminal_events {
+                        if let BackEvent::Resize(_x, _y) = evt {
+                            if SHOULD_HANDLE_WIN_CHANGE {
+                                let _ = instruction_sender.send(Instruction::ResetUiMode);
+                                let _ = instruction_sender.send(Instruction::Render);
+                            }
+                            continue;
+                        }
+
+                        if let BackEvent::Key(KeyEvent {
+                            code: KeyCode::Char('y'),
+                            modifiers: KeyModifiers::NONE,
+                        })
+                        | BackEvent::Key(KeyEvent {
+                            code: KeyCode::Char('q'),
+                            modifiers: KeyModifiers::NONE,
+                        })
+                        | BackEvent::Key(KeyEvent {
+                            code: KeyCode::Char('c'),
+                            modifiers: KeyModifiers::CONTROL,
+                        }) = evt
                         {
                             // not ideal, but works in a pinch
                             let _ = instruction_sender.send(Instruction::Keypress(evt));
@@ -220,22 +245,6 @@ pub fn start<B>(
         );
     }
 
-    if SHOULD_HANDLE_WIN_CHANGE {
-        active_threads.push(
-            thread::Builder::new()
-                .name("resize_handler".to_string())
-                .spawn({
-                    move || {
-                        on_sigwinch(Box::new(move || {
-                            let _ = instruction_sender.send(Instruction::ResetUiMode);
-                            let _ = instruction_sender.send(Instruction::Render);
-                        }));
-                    }
-                })
-                .unwrap(),
-        );
-    }
-
     let mut app = App::new(
         terminal_backend,
         path,
@@ -245,7 +254,6 @@ pub fn start<B>(
     );
     app.start(instruction_receiver);
     running.store(false, Ordering::Release);
-    cleanup();
 
     for thread_handler in active_threads {
         thread_handler.join().unwrap();

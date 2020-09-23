@@ -46,7 +46,7 @@ where
         ui_effects: &UiEffects,
     ) {
         self.terminal
-            .draw(|mut f| {
+            .draw(|f| {
                 let full_screen = f.size();
                 let current_path = file_tree.get_current_path();
                 let current_path_size = file_tree.get_current_folder_size();
@@ -77,9 +77,8 @@ where
                     )
                     .split(full_screen);
 
-                // TODO: we have to do this because otherwise we get "Trying to access area outside the
-                // buffer" errors from tui
-                // we need to investigate if it's a bug in TUI or with us
+                // -1 cos we draw starting at offset 1 in both x and y directions
+
                 chunks[1].width -= 1;
                 chunks[1].height -= 1;
                 board.change_area(&chunks[1]);

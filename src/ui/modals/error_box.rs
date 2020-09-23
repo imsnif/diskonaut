@@ -39,7 +39,7 @@ impl<'a> Widget for ErrorBox<'a> {
         let fill_style = Style::default()
             .bg(Color::Black)
             .fg(Color::Red)
-            .modifier(Modifier::BOLD);
+            .add_modifier(Modifier::BOLD);
         let text_max_length = message_rect.width - 4;
 
         // here we truncate the end and not the middle because

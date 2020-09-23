@@ -1,8 +1,9 @@
 use ::std::fs::Metadata;
 use ::std::path::PathBuf;
 use ::std::sync::mpsc::Receiver;
-use ::termion::event::Event as TermionEvent;
+
 use ::tui::backend::Backend;
+use crossterm::event::Event as BackEvent;
 
 use crate::input::{
     handle_keypress_delete_file_mode, handle_keypress_error_message, handle_keypress_exiting_mode,
@@ -22,7 +23,7 @@ pub enum Instruction {
     RenderAndUpdateBoard,
     Render,
     ResetUiMode,
-    Keypress(TermionEvent),
+    Keypress(BackEvent),
     IncrementFailedToRead,
 }
 

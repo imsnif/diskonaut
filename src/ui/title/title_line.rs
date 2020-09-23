@@ -8,7 +8,10 @@ use crate::ui::format::DisplaySize;
 use crate::ui::title::{CellSizeOpt, TitleTelescope};
 use crate::ui::FolderInfo;
 
-use nix::unistd::geteuid;
+#[cfg(not(target_os = "windows"))]
+use crate::os::unix::is_user_admin;
+#[cfg(target_os = "windows")]
+use crate::os::windows::is_user_admin;
 
 pub struct TitleLine<'a> {
     base_path_info: FolderInfo<'a>,
@@ -87,8 +90,7 @@ impl<'a> Widget for TitleLine<'a> {
             }
             current_path_relative_to_base.to_string_lossy().into_owned()
         };
-
-        let separator = if base_path.ends_with('/') {
+        let separator = if base_path.ends_with(::std::path::MAIN_SEPARATOR) {
             // eg. if base_path is "/", we don't want current path to
             // also start with "/" otherwise we'll have "//path_to_my/location"
             // instead of "/path_to_my/location"
@@ -96,6 +98,12 @@ impl<'a> Widget for TitleLine<'a> {
         } else {
             format!("{}", ::std::path::MAIN_SEPARATOR)
         };
+        #[cfg(test)]
+        let current_path = str::replace(&current_path, "\\", "/");
+        #[cfg(test)]
+        let base_path = str::replace(&base_path, "\\", "/");
+        #[cfg(test)]
+        let separator = str::replace(&separator, "\\", "/");
         let total_size = DisplaySize(self.base_path_info.size as f64);
         let total_descendants = &self.base_path_info.num_descendants;
         let current_folder_size = DisplaySize(self.current_path_info.size as f64);
@@ -104,7 +112,7 @@ impl<'a> Widget for TitleLine<'a> {
 
         let mut default_style = Style::default().fg(Color::Yellow);
         if !self.show_loading {
-            default_style = default_style.modifier(Modifier::BOLD);
+            default_style = default_style.add_modifier(Modifier::BOLD);
         };
         let mut title_telescope = TitleTelescope::new(default_style);
         if self.show_loading {
@@ -136,7 +144,7 @@ impl<'a> Widget for TitleLine<'a> {
                 CellSizeOpt::new(" (errors)".to_string()).style(default_style.fg(Color::Red)),
             ]);
         }
-        if geteuid().is_root() {
+        if is_user_admin() {
             title_telescope.append_to_left_side(vec![
                 CellSizeOpt::new(format!(" (CAUTION: running as root)"))
                     .style(default_style.fg(Color::Red)),

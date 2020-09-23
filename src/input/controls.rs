@@ -1,34 +1,44 @@
-use ::std::io::stdin;
-use ::termion::event::Event;
-use ::termion::event::Key;
-use ::termion::input::TermRead;
 use ::tui::backend::Backend;
+use crossterm::event::Event;
+use crossterm::event::KeyModifiers;
+use crossterm::event::{read, KeyCode, KeyEvent};
 
 use crate::state::FileToDelete;
 use crate::App;
 
 #[derive(Clone)]
-pub struct KeyboardEvents;
+pub struct TerminalEvents;
 
-impl Iterator for KeyboardEvents {
+impl Iterator for TerminalEvents {
     type Item = Event;
     fn next(&mut self) -> Option<Event> {
-        match stdin().events().next() {
-            Some(Ok(ev)) => Some(ev),
-            _ => None,
-        }
+        Some(read().unwrap())
     }
 }
-
 macro_rules! key {
     (char $x:expr) => {
-        Event::Key(Key::Char($x))
+        Event::Key(KeyEvent {
+            code: KeyCode::Char($x),
+            modifiers: KeyModifiers::NONE,
+        })
+    };
+    (shift $x:expr) => {
+        Event::Key(KeyEvent {
+            code: KeyCode::Char($x),
+            modifiers: KeyModifiers::SHIFT,
+        })
     };
     (ctrl $x:expr) => {
-        Event::Key(Key::Ctrl($x))
+        Event::Key(KeyEvent {
+            code: KeyCode::Char($x),
+            modifiers: KeyModifiers::CONTROL,
+        })
     };
     ($x:ident) => {
-        Event::Key(Key::$x)
+        Event::Key(KeyEvent {
+            code: KeyCode::$x,
+            modifiers: KeyModifiers::NONE,
+        })
     };
 }
 
@@ -49,7 +59,7 @@ pub fn handle_keypress_loading_mode<B: Backend>(evt: Event, app: &mut App<B>) {
         key!(char 'k') | key!(Up) | key!(ctrl 'p') => {
             app.move_selected_up();
         }
-        key!(char '+') => {
+        key!(char '+') | key!(shift '+') => {
             app.zoom_in();
         }
         key!(char '-') => {
@@ -58,7 +68,7 @@ pub fn handle_keypress_loading_mode<B: Backend>(evt: Event, app: &mut App<B>) {
         key!(char '0') => {
             app.reset_zoom();
         }
-        key!(char '\n') => {
+        key!(char '\n') | key!(Enter) => {
             app.handle_enter();
         }
         key!(Backspace) => {
@@ -91,7 +101,7 @@ pub fn handle_keypress_normal_mode<B: Backend>(evt: Event, app: &mut App<B>) {
         key!(char 'k') | key!(Up) | key!(ctrl 'p') => {
             app.move_selected_up();
         }
-        key!(char '+') => {
+        key!(char '+') | key!(shift '+') => {
             app.zoom_in();
         }
         key!(char '-') => {
@@ -100,7 +110,7 @@ pub fn handle_keypress_normal_mode<B: Backend>(evt: Event, app: &mut App<B>) {
         key!(char '0') => {
             app.reset_zoom();
         }
-        key!(char '\n') => {
+        key!(char '\n') | key!(Enter) => {
             app.handle_enter();
         }
         key!(Esc) => {

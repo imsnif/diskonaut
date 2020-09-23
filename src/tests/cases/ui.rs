@@ -5,13 +5,34 @@ use ::std::iter;
 use ::std::path::{Path, PathBuf};
 
 use ::insta::assert_snapshot;
-use ::termion::event::{Event, Key};
+use crossterm::event::KeyModifiers;
+use crossterm::event::{Event, KeyCode, KeyEvent};
 
 use crate::start;
-use crate::tests::cases::test_utils::{sleep_and_quit_events, test_backend_factory};
-use crate::tests::fakes::KeyboardEvents;
+use crate::tests::cases::test_utils::*;
 use crate::tests::fakes::TerminalEvent::*;
+use crate::tests::fakes::TerminalEvents;
 
+macro_rules! key {
+    (char $x:expr) => {
+        Event::Key(KeyEvent {
+            code: KeyCode::Char($x),
+            modifiers: KeyModifiers::NONE,
+        })
+    };
+    (ctrl $x:expr) => {
+        Event::Key(KeyEvent {
+            code: KeyCode::Char($x),
+            modifiers: KeyModifiers::CONTROL,
+        })
+    };
+    ($x:ident) => {
+        Event::Key(KeyEvent {
+            code: KeyCode::$x,
+            modifiers: KeyModifiers::NONE,
+        })
+    };
+}
 // this means we ask diskonaut to show the actual file size rather than the size taken on disk
 //
 // this is in order to make the tests more possible, so they will show the same result
@@ -42,9 +63,6 @@ fn create_temp_file<P: AsRef<Path>>(path: P, size: usize) -> Result<(), failure:
     Ok(())
 }
 
-// TODO: adjust tests for other platforms (currently the snapshots include the /tmp folder which
-// might not work when running on mac/windows)
-
 #[test]
 fn two_large_files_one_small_file() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
@@ -73,15 +91,9 @@ fn two_large_files_one_small_file() {
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-    println!(
-        "terminal_draw_events_mirror[0] {:?}",
-        terminal_draw_events_mirror[0]
-    );
-
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -119,15 +131,9 @@ fn medium_width() {
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-    println!(
-        "terminal_draw_events_mirror[0] {:?}",
-        terminal_draw_events_mirror[0]
-    );
-
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -165,15 +171,9 @@ fn small_width() {
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-    println!(
-        "terminal_draw_events_mirror[0] {:?}",
-        terminal_draw_events_mirror[0]
-    );
-
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -212,15 +212,9 @@ fn small_width_long_folder_name() {
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-    println!(
-        "terminal_draw_events_mirror[0] {:?}",
-        terminal_draw_events_mirror[0]
-    );
-
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -259,13 +253,9 @@ fn too_small_width_one() {
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-    println!(
-        "terminal_draw_events_mirror[0] {:?}",
-        terminal_draw_events_mirror[0]
-    );
-
-    let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
-
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Clear, ShowCursor,
+    ];
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -303,13 +293,9 @@ fn too_small_width_two() {
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-    println!(
-        "terminal_draw_events_mirror[0] {:?}",
-        terminal_draw_events_mirror[0]
-    );
-
-    let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
-
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Clear, ShowCursor,
+    ];
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -335,13 +321,9 @@ fn too_small_width_three() {
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-    println!(
-        "terminal_draw_events_mirror[0] {:?}",
-        terminal_draw_events_mirror[0]
-    );
-
-    let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
-
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Clear, ShowCursor,
+    ];
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -367,13 +349,9 @@ fn too_small_width_four() {
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-    println!(
-        "terminal_draw_events_mirror[0] {:?}",
-        terminal_draw_events_mirror[0]
-    );
-
-    let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
-
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Clear, ShowCursor,
+    ];
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -399,13 +377,9 @@ fn too_small_width_five() {
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-    println!(
-        "terminal_draw_events_mirror[0] {:?}",
-        terminal_draw_events_mirror[0]
-    );
-
-    let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
-
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Clear, ShowCursor,
+    ];
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -431,13 +405,9 @@ fn too_small_height() {
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-    println!(
-        "terminal_draw_events_mirror[0] {:?}",
-        terminal_draw_events_mirror[0]
-    );
-
-    let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
-
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Clear, ShowCursor,
+    ];
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -508,7 +478,7 @@ fn eleven_files() {
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
@@ -525,19 +495,19 @@ fn enter_folder() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('j')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'j'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('\n'))));
+    events.push(Some(key!(char '\n')));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    events.push(Some(key!(char 'y')));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("enter_folder").expect("failed to create temp dir");
 
@@ -571,9 +541,9 @@ fn enter_folder() {
         .expect("could not acquire lock on terminal events");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-
     assert_eq!(
         &terminal_events
             .lock()
@@ -593,19 +563,19 @@ fn enter_folder_medium_width() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(90, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('j')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'j'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('\n'))));
+    events.push(Some(key!(char '\n')));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    events.push(Some(key!(char 'y')));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path =
         create_root_temp_dir("enter_folder_medium_width").expect("failed to create temp dir");
@@ -640,7 +610,8 @@ fn enter_folder_medium_width() {
         .expect("could not acquire lock on terminal events");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
 
     assert_eq!(
@@ -662,19 +633,19 @@ fn enter_folder_small_width() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(60, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('j')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'j'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('\n'))));
+    events.push(Some(key!(char '\n')));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    events.push(Some(key!(char 'y')));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path =
         create_root_temp_dir("enter_folder_small_width").expect("failed to create temp dir");
@@ -709,9 +680,9 @@ fn enter_folder_small_width() {
         .expect("could not acquire lock on terminal events");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-
     assert_eq!(
         &terminal_events
             .lock()
@@ -763,7 +734,7 @@ fn small_files() {
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
@@ -779,24 +750,24 @@ fn small_files() {
 fn zoom_into_small_files() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(2).collect();
-    events.push(Some(Event::Key(Key::Char('+'))));
+    events.push(Some(key!(char '+')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('+'))));
+    events.push(Some(key!(char '+')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('+'))));
+    events.push(Some(key!(char '+')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('+'))));
+    events.push(Some(key!(char '+')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('-'))));
+    events.push(Some(key!(char '-')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('-'))));
+    events.push(Some(key!(char '-')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('0'))));
+    events.push(Some(key!(char '0')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    events.push(Some(key!(char 'y')));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
     let temp_dir_path =
         create_root_temp_dir("zoom_into_small_files").expect("failed to create temp dir");
 
@@ -831,15 +802,16 @@ fn zoom_into_small_files() {
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
+        HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
     );
 
-    assert_eq!(terminal_draw_events_mirror.len(), 8);
+    assert_eq!(terminal_draw_events_mirror.len(), 9);
     assert_snapshot!(&terminal_draw_events_mirror[0]);
     assert_snapshot!(&terminal_draw_events_mirror[1]);
     assert_snapshot!(&terminal_draw_events_mirror[2]);
@@ -855,16 +827,16 @@ fn cannot_move_into_small_files() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(2).collect();
-    events.push(Some(Event::Key(Key::Char('j')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'j'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('l'))));
+    events.push(Some(key!(char 'l')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('j'))));
+    events.push(Some(key!(char 'j')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    events.push(Some(key!(char 'y')));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path =
         create_root_temp_dir("cannot_move_into_small_files").expect("failed to create temp dir");
@@ -928,8 +900,8 @@ fn cannot_move_into_small_files() {
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear,
-        ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
@@ -987,9 +959,9 @@ fn minimum_tile_sides() {
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-    // let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor];
+
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -1005,20 +977,20 @@ fn move_down_and_enter_folder() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(2).collect();
-    events.push(Some(Event::Key(Key::Char('j')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'j'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('j'))));
+    events.push(Some(key!(char 'j')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('\n'))));
+    events.push(Some(key!(char '\n')));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    events.push(Some(key!(char 'y')));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path =
         create_root_temp_dir("move_down_and_enter_folder").expect("failed to create temp dir");
@@ -1053,10 +1025,9 @@ fn move_down_and_enter_folder() {
         .expect("could not acquire lock on terminal events");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear,
-        ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-
     assert_eq!(
         &terminal_events
             .lock()
@@ -1077,20 +1048,20 @@ fn noop_when_entering_file() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('j')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'j'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('j'))));
+    events.push(Some(key!(char 'j')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('\n'))));
+    events.push(Some(key!(char '\n')));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    events.push(Some(key!(char 'y')));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path =
         create_root_temp_dir("noop_when_entering_file").expect("failed to create temp dir");
@@ -1120,7 +1091,8 @@ fn noop_when_entering_file() {
         .expect("could not acquire lock on terminal events");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
 
     assert_eq!(
@@ -1142,22 +1114,22 @@ fn move_up_and_enter_folder() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('j')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'j'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('j'))));
+    events.push(Some(key!(char 'j')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('k'))));
+    events.push(Some(key!(char 'k')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('\n'))));
+    events.push(Some(key!(char '\n')));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    events.push(Some(key!(char 'y')));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path =
         create_root_temp_dir("move_up_and_enter_folder").expect("failed to create temp dir");
@@ -1192,10 +1164,10 @@ fn move_up_and_enter_folder() {
         .expect("could not acquire lock on terminal events");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear,
+        ShowCursor,
     ];
-
     assert_eq!(
         &terminal_events
             .lock()
@@ -1217,20 +1189,20 @@ fn move_right_and_enter_folder() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('l'))));
+    events.push(Some(key!(char 'l')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('\n'))));
+    events.push(Some(key!(char '\n')));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    events.push(Some(key!(char 'y')));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path =
         create_root_temp_dir("move_right_and_enter_folder").expect("failed to create temp dir");
@@ -1265,10 +1237,9 @@ fn move_right_and_enter_folder() {
         .expect("could not acquire lock on terminal events");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear,
-        ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-
     assert_eq!(
         &terminal_events
             .lock()
@@ -1289,22 +1260,22 @@ fn move_left_and_enter_folder() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('l'))));
+    events.push(Some(key!(char 'l')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('h'))));
+    events.push(Some(key!(char 'h')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('\n'))));
+    events.push(Some(key!(char '\n')));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    events.push(Some(key!(char 'y')));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path =
         create_root_temp_dir("move_left_and_enter_folder").expect("failed to create temp dir");
@@ -1339,10 +1310,10 @@ fn move_left_and_enter_folder() {
         .expect("could not acquire lock on terminal events");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear,
+        ShowCursor,
     ];
-
     assert_eq!(
         &terminal_events
             .lock()
@@ -1364,16 +1335,16 @@ fn enter_largest_folder_with_no_selected_tile() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('\n'))));
+    events.push(Some(key!(char '\n')));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    events.push(Some(key!(char 'y')));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("enter_largest_folder_with_no_selected_tile")
         .expect("failed to create temp dir");
@@ -1408,7 +1379,8 @@ fn enter_largest_folder_with_no_selected_tile() {
         .expect("could not acquire lock on terminal events");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Clear, ShowCursor,
     ];
 
     assert_eq!(
@@ -1429,16 +1401,16 @@ fn clear_selection_when_moving_off_screen_edges() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('l'))));
+    events.push(Some(key!(char 'l')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('l'))));
+    events.push(Some(key!(char 'l')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    events.push(Some(key!(char 'y')));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("noop_when_moving_off_screen_edges")
         .expect("failed to create temp dir");
@@ -1468,8 +1440,8 @@ fn clear_selection_when_moving_off_screen_edges() {
         .expect("could not acquire lock on terminal events");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear,
-        ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
     assert_eq!(
         &terminal_events
@@ -1491,13 +1463,13 @@ fn esc_to_go_up() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('l'))));
+    events.push(Some(key!(char 'l')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('\n'))));
+    events.push(Some(key!(char '\n')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Esc)));
+    events.push(Some(key!(Esc)));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
@@ -1505,10 +1477,10 @@ fn esc_to_go_up() {
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    events.push(Some(key!(char 'y')));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("esc_to_go_up").expect("failed to create temp dir");
 
@@ -1542,10 +1514,10 @@ fn esc_to_go_up() {
         .expect("could not acquire lock on terminal events");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear,
+        ShowCursor,
     ];
-
     assert_eq!(
         &terminal_events
             .lock()
@@ -1567,28 +1539,28 @@ fn noop_when_pressing_esc_at_base_folder() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('l'))));
+    events.push(Some(key!(char 'l')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('\n'))));
+    events.push(Some(key!(char '\n')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Esc)));
-    events.push(None);
-    events.push(None);
+    events.push(Some(key!(Esc)));
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Esc)));
+    events.push(None);
+    events.push(None);
+    events.push(Some(key!(Esc)));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    events.push(Some(key!(char 'y')));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("noop_when_pressing_esc_at_base_folder")
         .expect("failed to create temp dir");
@@ -1623,10 +1595,10 @@ fn noop_when_pressing_esc_at_base_folder() {
         .expect("could not acquire lock on terminal events");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
+        HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-
     assert_eq!(
         &terminal_events
             .lock()
@@ -1651,19 +1623,19 @@ fn delete_file() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Backspace)));
+    events.push(Some(key!(Backspace)));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    events.push(None);
-    events.push(None);
+    events.push(Some(key!(char 'y')));
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    events.push(None);
+    events.push(Some(key!(ctrl 'c')));
+    events.push(None);
+    events.push(Some(key!(char 'y')));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("delete_file").expect("failed to create temp dir");
 
@@ -1696,8 +1668,9 @@ fn delete_file() {
         .expect("could not acquire lock on terminal events");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
+        HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
     assert_eq!(
         &terminal_events
@@ -1742,17 +1715,17 @@ fn delete_file_no_confirmation() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Backspace)));
-    events.push(None);
-    events.push(None);
+    events.push(Some(key!(Backspace)));
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    events.push(None);
+    events.push(Some(key!(ctrl 'c')));
+    events.push(None);
+    events.push(Some(key!(char 'y')));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path =
         create_root_temp_dir("delete_file_no_confirmation").expect("failed to create temp dir");
@@ -1786,8 +1759,9 @@ fn delete_file_no_confirmation() {
         .expect("could not acquire lock on terminal events");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
+        HideCursor, Flush, Clear, ShowCursor,
     ];
     assert_eq!(
         &terminal_events
@@ -1832,19 +1806,19 @@ fn cant_delete_file_with_term_too_small() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(49, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Backspace)));
+    events.push(Some(key!(Backspace)));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    events.push(None);
-    events.push(None);
+    events.push(Some(key!(char 'y')));
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    events.push(None);
+    events.push(Some(key!(ctrl 'c')));
+    events.push(None);
+    events.push(Some(key!(char 'y')));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("cant_delete_file_with_term_too_small")
         .expect("failed to create temp dir");
@@ -1877,7 +1851,9 @@ fn cant_delete_file_with_term_too_small() {
         .lock()
         .expect("could not acquire lock on terminal events");
 
-    let expected_terminal_events = vec![Clear, HideCursor, Draw, Flush, Clear, ShowCursor];
+    let expected_terminal_events = vec![
+        Clear, HideCursor, Draw, HideCursor, Flush, Clear, ShowCursor,
+    ];
     assert_eq!(
         &terminal_events
             .lock()
@@ -1915,23 +1891,23 @@ fn delete_folder() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('l'))));
+    events.push(Some(key!(char 'l')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Backspace)));
+    events.push(Some(key!(Backspace)));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    events.push(Some(key!(char 'y')));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("delete_folder").expect("failed to create temp dir");
 
@@ -1964,8 +1940,9 @@ fn delete_folder() {
         .expect("could not acquire lock on terminal events");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
+        HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
     assert_eq!(
         &terminal_events
@@ -2012,21 +1989,21 @@ fn delete_folder_no_confirmation() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('l'))));
+    events.push(Some(key!(char 'l')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Backspace)));
+    events.push(Some(key!(Backspace)));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    events.push(Some(key!(char 'y')));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path =
         create_root_temp_dir("delete_folder_no_confirmation").expect("failed to create temp dir");
@@ -2060,8 +2037,9 @@ fn delete_folder_no_confirmation() {
         .expect("could not acquire lock on terminal events");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
+        HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
     assert_eq!(
         &terminal_events
@@ -2108,25 +2086,25 @@ fn delete_folder_small_window() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(60, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('j')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'j'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('j'))));
+    events.push(Some(key!(char 'j')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('j'))));
+    events.push(Some(key!(char 'j')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Backspace)));
+    events.push(Some(key!(Backspace)));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    events.push(Some(key!(char 'y')));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path =
         create_root_temp_dir("delete_folder_small_window").expect("failed to create temp dir");
@@ -2160,8 +2138,10 @@ fn delete_folder_small_window() {
         .expect("could not acquire lock on terminal events");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
+        HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Clear, ShowCursor,
     ];
     assert_eq!(
         &terminal_events
@@ -2210,23 +2190,23 @@ fn delete_folder_small_window_no_confirmation() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(60, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('j')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'j'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('j'))));
+    events.push(Some(key!(char 'j')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('j'))));
+    events.push(Some(key!(char 'j')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Backspace)));
+    events.push(Some(key!(Backspace)));
     events.push(None);
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    events.push(Some(key!(char 'y')));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("delete_folder_small_window_no_confirmation")
         .expect("failed to create temp dir");
@@ -2260,8 +2240,9 @@ fn delete_folder_small_window_no_confirmation() {
         .expect("could not acquire lock on terminal events");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
+        HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
     assert_eq!(
         &terminal_events
@@ -2308,23 +2289,23 @@ fn delete_folder_with_multiple_children() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('l'))));
+    events.push(Some(key!(char 'l')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Backspace)));
+    events.push(Some(key!(Backspace)));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    events.push(Some(key!(char 'y')));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("delete_folder_with_multiple_children")
         .expect("failed to create temp dir");
@@ -2375,9 +2356,11 @@ fn delete_folder_with_multiple_children() {
         .expect("could not acquire lock on terminal events");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
+        HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
+
     assert_eq!(
         &terminal_events
             .lock()
@@ -2438,21 +2421,21 @@ fn delete_folder_with_multiple_children_no_confirmation() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('l'))));
+    events.push(Some(key!(char 'l')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Backspace)));
+    events.push(Some(key!(Backspace)));
     events.push(None);
     // here we sleep extra to allow the blink events to happen and be tested before the app exits
     // with the following ctrl-c
     events.push(None);
     events.push(None);
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    events.push(Some(key!(char 'y')));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path =
         create_root_temp_dir("delete_folder_with_multiple_children_no_confirmation")
@@ -2504,8 +2487,9 @@ fn delete_folder_with_multiple_children_no_confirmation() {
         .expect("could not acquire lock on terminal events");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
+        HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
     assert_eq!(
         &terminal_events
@@ -2566,12 +2550,12 @@ fn pressing_delete_with_no_selected_tile() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Backspace)));
+    events.push(Some(key!(Backspace)));
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    events.push(Some(key!(char 'y')));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("pressing_delete_with_no_selected_tile")
         .expect("failed to create temp dir");
@@ -2605,7 +2589,7 @@ fn pressing_delete_with_no_selected_tile() {
         .expect("could not acquire lock on terminal events");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
     assert_eq!(
         &terminal_events
@@ -2645,16 +2629,16 @@ fn delete_file_press_n() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Backspace)));
+    events.push(Some(key!(Backspace)));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('n'))));
+    events.push(Some(key!(char 'n')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    events.push(Some(key!(char 'y')));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path =
         create_root_temp_dir("delete_file_press_n").expect("failed to create temp dir");
@@ -2688,8 +2672,8 @@ fn delete_file_press_n() {
         .expect("could not acquire lock on terminal events");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear,
-        ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
     assert_eq!(
         &terminal_events
@@ -2755,15 +2739,9 @@ fn files_with_size_zero() {
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-    println!(
-        "terminal_draw_events_mirror[0] {:?}",
-        terminal_draw_events_mirror[0]
-    );
-
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -2789,15 +2767,9 @@ fn empty_folder() {
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-    println!(
-        "terminal_draw_events_mirror[0] {:?}",
-        terminal_draw_events_mirror[0]
-    );
-
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -2807,28 +2779,28 @@ fn empty_folder() {
     assert_snapshot!(&terminal_draw_events_mirror[0]);
     assert_snapshot!(&terminal_draw_events_mirror[1]);
 }
-
+#[cfg(not(target_os = "windows"))]
 #[test]
 fn permission_denied_when_deleting() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('\n'))));
+    events.push(Some(key!(char '\n')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Backspace)));
+    events.push(Some(key!(Backspace)));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
+    events.push(Some(key!(char 'y')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Esc)));
+    events.push(Some(key!(Esc)));
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    events.push(Some(key!(char 'y')));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path =
         create_root_temp_dir("permission_denied_when_deleting").expect("failed to create temp dir");
@@ -2873,8 +2845,9 @@ fn permission_denied_when_deleting() {
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
+        HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
 
     assert_eq!(
@@ -2895,26 +2868,26 @@ fn permission_denied_when_deleting() {
     assert_snapshot!(&terminal_draw_events_mirror[7]);
     assert_snapshot!(&terminal_draw_events_mirror[8]);
 }
-
+#[cfg(not(target_os = "windows"))]
 #[test]
 fn permission_denied_when_deleting_no_confirmation() {
     let (terminal_events, terminal_draw_events, backend) = test_backend_factory(190, 50);
 
     let mut events: Vec<Option<Event>> = iter::repeat(None).take(1).collect();
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('\n'))));
+    events.push(Some(key!(char '\n')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('l')))); // once to place selected marker on screen
+    events.push(Some(key!(char 'l'))); // once to place selected marker on screen
     events.push(None);
-    events.push(Some(Event::Key(Key::Backspace)));
+    events.push(Some(key!(Backspace)));
     events.push(None);
-    events.push(Some(Event::Key(Key::Esc)));
+    events.push(Some(key!(Esc)));
     events.push(None);
-    events.push(Some(Event::Key(Key::Ctrl('c'))));
+    events.push(Some(key!(ctrl 'c')));
     events.push(None);
-    events.push(Some(Event::Key(Key::Char('y'))));
-    let keyboard_events = Box::new(KeyboardEvents::new(events));
+    events.push(Some(key!(char 'y')));
+    let keyboard_events = Box::new(TerminalEvents::new(events));
 
     let temp_dir_path = create_root_temp_dir("permission_denied_when_deleting_no_confirmation")
         .expect("failed to create temp dir");
@@ -2959,8 +2932,9 @@ fn permission_denied_when_deleting_no_confirmation() {
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
 
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw, Flush, Draw,
-        Flush, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor,
+        Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Draw,
+        HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
 
     assert_eq!(
@@ -3007,15 +2981,9 @@ fn small_files_with_y_as_zero() {
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-    println!(
-        "terminal_draw_events_mirror[0] {:?}",
-        terminal_draw_events_mirror[0]
-    );
-
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
@@ -3056,15 +3024,9 @@ fn small_files_with_x_as_zero() {
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
-    println!(
-        "terminal_draw_events_mirror[0] {:?}",
-        terminal_draw_events_mirror[0]
-    );
-
     let expected_terminal_events = vec![
-        Clear, HideCursor, Draw, Flush, Draw, Flush, Clear, ShowCursor,
+        Clear, HideCursor, Draw, HideCursor, Flush, Draw, HideCursor, Flush, Clear, ShowCursor,
     ];
-
     assert_eq!(
         &terminal_events.lock().unwrap()[..],
         &expected_terminal_events[..]
