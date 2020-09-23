@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+## [0.11.0] - 2020-09-23
+
 ### Added
 * Windows support (https://github.com/imsnif/diskonaut/pull/74) - [@pm100](https://github.com/pm100)
 
