@@ -100,6 +100,7 @@ fn render_controls_legend(buf: &mut Buffer, hide_delete: bool, max_len: u16, y: 
 
 pub struct BottomLine<'a> {
     hide_delete: bool,
+    hide_small_files_legend: bool,
     currently_selected: Option<&'a Tile>,
     last_read_path: Option<&'a PathBuf>,
 }
@@ -108,12 +109,17 @@ impl<'a> BottomLine<'a> {
     pub fn new() -> Self {
         Self {
             hide_delete: false,
+            hide_small_files_legend: false,
             currently_selected: None,
             last_read_path: None,
         }
     }
     pub fn hide_delete(mut self) -> Self {
         self.hide_delete = true;
+        self
+    }
+    pub fn hide_small_files_legend(mut self, hide_small_files_legend: bool) -> Self {
+        self.hide_small_files_legend = hide_small_files_legend;
         self
     }
     pub fn currently_selected(mut self, currently_selected: Option<&'a Tile>) -> Self {
@@ -129,7 +135,11 @@ impl<'a> BottomLine<'a> {
 impl<'a> Widget for BottomLine<'a> {
     fn render(self, area: Rect, buf: &mut Buffer) {
         let small_files_legend = "(x = Small files)";
-        let small_files_len = small_files_legend.chars().count() as u16;
+        let small_files_len = if self.hide_small_files_legend {
+            0
+        } else {
+            small_files_legend.chars().count() as u16
+        };
         let max_status_len = area.width - small_files_len - 1;
         let max_controls_len = area.width - 1;
         let status_line_y = area.y + area.height - 2;
@@ -140,17 +150,21 @@ impl<'a> Widget for BottomLine<'a> {
             render_last_read_path(buf, last_read_path, max_status_len, status_line_y);
         }
 
-        buf.set_string(
-            area.width - small_files_len - 1,
-            status_line_y,
-            small_files_legend,
-            Style::default()
-                .fg(Color::Reset)
-                .bg(Color::Reset)
-                .remove_modifier(Modifier::all()),
-        );
-        let small_files_legend_character = buf.get_mut(area.width - small_files_len, status_line_y);
-        small_files_legend_character.set_style(Style::default().bg(Color::White).fg(Color::Black));
+        if !self.hide_small_files_legend {
+            buf.set_string(
+                area.width - small_files_len - 1,
+                status_line_y,
+                small_files_legend,
+                Style::default()
+                    .fg(Color::Reset)
+                    .bg(Color::Reset)
+                    .remove_modifier(Modifier::all()),
+            );
+            let small_files_legend_character =
+                buf.get_mut(area.width - small_files_len, status_line_y);
+            small_files_legend_character
+                .set_style(Style::default().bg(Color::White).fg(Color::Black));
+        }
 
         render_controls_legend(buf, self.hide_delete, max_controls_len, controls_line_y);
     }
