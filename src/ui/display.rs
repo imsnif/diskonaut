@@ -109,7 +109,10 @@ where
                             BottomLine::new()
                                 .currently_selected(board.currently_selected())
                                 .last_read_path(ui_effects.last_read_path.as_ref())
-                                .hide_delete(),
+                                .hide_delete()
+                                .hide_small_files_legend(
+                                    board.unrenderable_tile_coordinates.is_none(),
+                                ),
                             chunks[2],
                         );
                     }
@@ -135,7 +138,11 @@ where
                             chunks[1],
                         );
                         f.render_widget(
-                            BottomLine::new().currently_selected(board.currently_selected()),
+                            BottomLine::new()
+                                .currently_selected(board.currently_selected())
+                                .hide_small_files_legend(
+                                    board.unrenderable_tile_coordinates.is_none(),
+                                ),
                             chunks[2],
                         );
                     }
@@ -163,7 +170,11 @@ where
                             chunks[1],
                         );
                         f.render_widget(
-                            BottomLine::new().currently_selected(board.currently_selected()),
+                            BottomLine::new()
+                                .currently_selected(board.currently_selected())
+                                .hide_small_files_legend(
+                                    board.unrenderable_tile_coordinates.is_none(),
+                                ),
                             chunks[2],
                         );
                         f.render_widget(
@@ -193,7 +204,11 @@ where
                             chunks[1],
                         );
                         f.render_widget(
-                            BottomLine::new().currently_selected(board.currently_selected()),
+                            BottomLine::new()
+                                .currently_selected(board.currently_selected())
+                                .hide_small_files_legend(
+                                    board.unrenderable_tile_coordinates.is_none(),
+                                ),
                             chunks[2],
                         );
                         f.render_widget(ErrorBox::new(message), full_screen);
@@ -214,7 +229,11 @@ where
                                 chunks[0],
                             );
                             f.render_widget(
-                                BottomLine::new().currently_selected(board.currently_selected()),
+                                BottomLine::new()
+                                    .currently_selected(board.currently_selected())
+                                    .hide_small_files_legend(
+                                        board.unrenderable_tile_coordinates.is_none(),
+                                    ),
                                 chunks[2],
                             );
                         } else {
@@ -236,7 +255,10 @@ where
                                 BottomLine::new()
                                     .currently_selected(board.currently_selected())
                                     .last_read_path(ui_effects.last_read_path.as_ref())
-                                    .hide_delete(),
+                                    .hide_delete()
+                                    .hide_small_files_legend(
+                                        board.unrenderable_tile_coordinates.is_none(),
+                                    ),
                                 chunks[2],
                             );
                         }
@@ -276,7 +298,10 @@ where
                             BottomLine::new()
                                 .currently_selected(board.currently_selected())
                                 .last_read_path(ui_effects.last_read_path.as_ref())
-                                .hide_delete(),
+                                .hide_delete()
+                                .hide_small_files_legend(
+                                    board.unrenderable_tile_coordinates.is_none(),
+                                ),
                             chunks[2],
                         );
                         f.render_widget(WarningBox::new(), full_screen);
