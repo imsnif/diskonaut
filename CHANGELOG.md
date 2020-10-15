@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+### Added
+* Only show "Small Files" legend when there are small files on screen (https://github.com/imsnif/diskonaut/pull/75) - [@pjsier](https://github.com/pjsier)
+
 ## [0.11.0] - 2020-09-23
 
 ### Added
