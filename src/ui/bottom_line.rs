@@ -98,6 +98,20 @@ fn render_controls_legend(buf: &mut Buffer, hide_delete: bool, max_len: u16, y: 
     }
 }
 
+fn render_small_files_legend(buf: &mut Buffer, x: u16, y: u16, small_files_legend: &str) {
+    buf.set_string(
+        x,
+        y,
+        small_files_legend,
+        Style::default()
+            .fg(Color::Reset)
+            .bg(Color::Reset)
+            .remove_modifier(Modifier::all()),
+    );
+    let small_files_legend_character = buf.get_mut(x + 1, y);
+    small_files_legend_character.set_style(Style::default().bg(Color::White).fg(Color::Black));
+}
+
 pub struct BottomLine<'a> {
     hide_delete: bool,
     hide_small_files_legend: bool,
@@ -118,8 +132,8 @@ impl<'a> BottomLine<'a> {
         self.hide_delete = true;
         self
     }
-    pub fn hide_small_files_legend(mut self, hide_small_files_legend: bool) -> Self {
-        self.hide_small_files_legend = hide_small_files_legend;
+    pub fn hide_small_files_legend(mut self, should_hide_small_files_legend: bool) -> Self {
+        self.hide_small_files_legend = should_hide_small_files_legend;
         self
     }
     pub fn currently_selected(mut self, currently_selected: Option<&'a Tile>) -> Self {
@@ -151,19 +165,12 @@ impl<'a> Widget for BottomLine<'a> {
         }
 
         if !self.hide_small_files_legend {
-            buf.set_string(
+            render_small_files_legend(
+                buf,
                 area.width - small_files_len - 1,
                 status_line_y,
                 small_files_legend,
-                Style::default()
-                    .fg(Color::Reset)
-                    .bg(Color::Reset)
-                    .remove_modifier(Modifier::all()),
             );
-            let small_files_legend_character =
-                buf.get_mut(area.width - small_files_len, status_line_y);
-            small_files_legend_character
-                .set_style(Style::default().bg(Color::White).fg(Color::Black));
         }
 
         render_controls_legend(buf, self.hide_delete, max_controls_len, controls_line_y);
