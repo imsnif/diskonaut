@@ -38,9 +38,7 @@ yay diskonaut
 
 ### Gentoo
 
-Available through the following overlay as `sys-fs/diskonaut`:
-
-https://github.com/telans/EBUILDS
+Available through GURU as `sys-fs/diskonaut`
 
 ### Nix / NixOS
 Available in [nixpkgs](https://github.com/NixOS/nixpkgs/blob/master/pkgs/tools/misc/diskonaut/default.nix):
