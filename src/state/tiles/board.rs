@@ -2,7 +2,7 @@ use ::tui::layout::Rect;
 
 use crate::state::files::Folder;
 use crate::state::tiles::files_in_folder::FileType;
-use crate::state::tiles::{files_in_folder, FileMetadata, Tile, TreeMap};
+use crate::state::tiles::{files_in_folder, FileMetadata, Tile, TreeMap, HV, HV::*};
 
 pub struct Board {
     pub tiles: Vec<Tile>,
@@ -81,12 +81,7 @@ impl Board {
             self.set_selected_index(&index);
         }
     }
-    fn move_selected(
-        &mut self,
-        is_directly_beneath: impl Fn(&Tile, &Tile) -> bool,
-        overlaps: impl Fn(&Tile, &Tile) -> bool,
-        get_overlap: impl Fn(&Tile, &Tile) -> u16,
-    ) {
+    fn move_selected(&mut self, hv: HV, is_directly_beneath: impl Fn(&Tile, &Tile, HV) -> bool) {
         match self.currently_selected() {
             Some(currently_selected) => {
                 let next_index = self
@@ -94,11 +89,11 @@ impl Board {
                     .iter()
                     .enumerate()
                     .filter(|(_, c)| {
-                        is_directly_beneath(c, &currently_selected)
-                            && overlaps(c, &currently_selected)
+                        is_directly_beneath(c, &currently_selected, hv)
+                            && c.overlaps_with(&currently_selected, hv)
                     })
                     // get the index of the tile with the most overlap with currently selected
-                    .max_by_key(|(_, c)| get_overlap(c, &currently_selected))
+                    .max_by_key(|(_, c)| c.get_overlap_with(&currently_selected, hv))
                     .map(|(index, _)| index);
                 match next_index {
                     Some(i) => self.set_selected_index(&i),
@@ -109,32 +104,16 @@ impl Board {
         }
     }
     pub fn move_selected_right(&mut self) {
-        self.move_selected(
-            Tile::is_directly_right_of,
-            Tile::horizontally_overlaps_with,
-            Tile::get_horizontal_overlap_with,
-        )
+        self.move_selected(Horizontal, Tile::is_directly_after)
     }
     pub fn move_selected_left(&mut self) {
-        self.move_selected(
-            Tile::is_directly_left_of,
-            Tile::horizontally_overlaps_with,
-            Tile::get_horizontal_overlap_with,
-        )
+        self.move_selected(Horizontal, Tile::is_directly_before)
     }
     pub fn move_selected_down(&mut self) {
-        self.move_selected(
-            Tile::is_directly_below,
-            Tile::vertically_overlaps_with,
-            Tile::get_vertical_overlap_with,
-        )
+        self.move_selected(Vertical, Tile::is_directly_after)
     }
     pub fn move_selected_up(&mut self) {
-        self.move_selected(
-            Tile::is_directly_above,
-            Tile::vertically_overlaps_with,
-            Tile::get_vertical_overlap_with,
-        )
+        self.move_selected(Vertical, Tile::is_directly_before)
     }
     pub fn zoom_in(&mut self, folder: &Folder) {
         if self.zoom_level < self.files.len() {

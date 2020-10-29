@@ -2,6 +2,12 @@ use ::std::ffi::OsString;
 
 use crate::state::tiles::{FileMetadata, FileType, RectFloat};
 
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub enum HV {
+    Horizontal,
+    Vertical,
+}
+
 #[derive(Clone, Debug)]
 pub struct Tile {
     pub x: u16,
@@ -30,42 +36,53 @@ impl Tile {
             file_type: file_metadata.file_type,
         }
     }
-    pub fn is_directly_right_of(&self, other: &Tile) -> bool {
-        self.x == other.x + other.width
+    pub fn position(&self, hv: HV) -> u16 {
+        if hv == HV::Horizontal {
+            self.x
+        } else {
+            self.y
+        }
+    }
+    pub fn extent(&self, hv: HV) -> u16 {
+        if hv == HV::Horizontal {
+            self.width
+        } else {
+            self.height
+        }
+    }
+    pub fn is_directly_after(&self, other: &Tile, hv: HV) -> bool {
+        self.position(hv) == other.position(hv) + other.extent(hv)
     }
 
-    pub fn is_directly_left_of(&self, other: &Tile) -> bool {
-        self.x + self.width == other.x
+    pub fn is_directly_before(&self, other: &Tile, hv: HV) -> bool {
+        self.position(hv) + self.extent(hv) == other.position(hv)
     }
 
-    pub fn is_directly_below(&self, other: &Tile) -> bool {
-        self.y == other.y + other.height
+    pub fn overlaps_with(&self, other: &Tile, hv: HV) -> bool {
+        let hv = if HV::Horizontal == hv {
+            HV::Vertical
+        } else {
+            HV::Horizontal
+        };
+        (self.position(hv) >= other.position(hv)
+            && self.position(hv) <= (other.position(hv) + other.extent(hv)))
+            || ((self.position(hv) + self.extent(hv)) <= (other.position(hv) + other.extent(hv))
+                && (self.position(hv) + self.extent(hv)) > other.position(hv))
+            || (self.position(hv) <= other.position(hv)
+                && (self.position(hv) + self.extent(hv) >= (other.position(hv) + other.extent(hv))))
+            || (other.position(hv) <= self.position(hv)
+                && (other.position(hv) + other.extent(hv) >= (self.position(hv) + self.extent(hv))))
     }
 
-    pub fn is_directly_above(&self, other: &Tile) -> bool {
-        self.y + self.height == other.y
-    }
-
-    pub fn horizontally_overlaps_with(&self, other: &Tile) -> bool {
-        (self.y >= other.y && self.y <= (other.y + other.height))
-            || ((self.y + self.height) <= (other.y + other.height)
-                && (self.y + self.height) > other.y)
-            || (self.y <= other.y && (self.y + self.height >= (other.y + other.height)))
-            || (other.y <= self.y && (other.y + other.height >= (self.y + self.height)))
-    }
-
-    pub fn vertically_overlaps_with(&self, other: &Tile) -> bool {
-        (self.x >= other.x && self.x <= (other.x + other.width))
-            || ((self.x + self.width) <= (other.x + other.width) && (self.x + self.width) > other.x)
-            || (self.x <= other.x && (self.x + self.width >= (other.x + other.width)))
-            || (other.x <= self.x && (other.x + other.width >= (self.x + self.width)))
-    }
-
-    pub fn get_vertical_overlap_with(&self, other: &Tile) -> u16 {
-        std::cmp::min(self.x + self.width, other.x + other.width) - std::cmp::max(self.x, other.x)
-    }
-
-    pub fn get_horizontal_overlap_with(&self, other: &Tile) -> u16 {
-        std::cmp::min(self.y + self.height, other.y + other.height) - std::cmp::max(self.y, other.y)
+    pub fn get_overlap_with(&self, other: &Tile, hv: HV) -> u16 {
+        let hv = if HV::Horizontal == hv {
+            HV::Vertical
+        } else {
+            HV::Horizontal
+        };
+        std::cmp::min(
+            self.position(hv) + self.extent(hv),
+            other.position(hv) + other.extent(hv),
+        ) - std::cmp::max(self.position(hv), other.position(hv))
     }
 }
