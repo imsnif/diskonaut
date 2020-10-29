@@ -2,7 +2,7 @@ use ::tui::layout::Rect;
 
 use crate::state::files::Folder;
 use crate::state::tiles::files_in_folder::FileType;
-use crate::state::tiles::{files_in_folder, FileMetadata, Tile, TreeMap};
+use crate::state::tiles::{files_in_folder, FileMetadata, Tile, TreeMap, HV, HV::*};
 
 pub struct Board {
     pub tiles: Vec<Tile>,
@@ -81,7 +81,7 @@ impl Board {
             self.set_selected_index(&index);
         }
     }
-    pub fn move_selected_right(&mut self) {
+    fn move_selected(&mut self, hv: HV, is_directly_beneath: impl Fn(&Tile, &Tile, HV) -> bool) {
         match self.currently_selected() {
             Some(currently_selected) => {
                 let next_index = self
@@ -89,11 +89,11 @@ impl Board {
                     .iter()
                     .enumerate()
                     .filter(|(_, c)| {
-                        c.is_directly_right_of(&currently_selected)
-                            && c.horizontally_overlaps_with(&currently_selected)
+                        is_directly_beneath(c, &currently_selected, hv)
+                            && c.overlaps_with(&currently_selected, hv)
                     })
                     // get the index of the tile with the most overlap with currently selected
-                    .max_by_key(|(_, c)| c.get_horizontal_overlap_with(&currently_selected))
+                    .max_by_key(|(_, c)| c.get_overlap_with(&currently_selected, hv))
                     .map(|(index, _)| index);
                 match next_index {
                     Some(i) => self.set_selected_index(&i),
@@ -102,72 +102,18 @@ impl Board {
             }
             None => self.set_selected_index(&0),
         }
+    }
+    pub fn move_selected_right(&mut self) {
+        self.move_selected(Horizontal, Tile::is_directly_after)
     }
     pub fn move_selected_left(&mut self) {
-        match self.currently_selected() {
-            Some(currently_selected) => {
-                let next_index = self
-                    .tiles
-                    .iter()
-                    .enumerate()
-                    .filter(|(_, c)| {
-                        c.is_directly_left_of(&currently_selected)
-                            && c.horizontally_overlaps_with(&currently_selected)
-                    })
-                    // get the index of the tile with the most overlap with currently selected
-                    .max_by_key(|(_, c)| c.get_horizontal_overlap_with(&currently_selected))
-                    .map(|(index, _)| index);
-                match next_index {
-                    Some(i) => self.set_selected_index(&i),
-                    None => self.reset_selected_index(), // move off the edge of the screen resets selection
-                }
-            }
-            None => self.set_selected_index(&0),
-        }
+        self.move_selected(Horizontal, Tile::is_directly_before)
     }
     pub fn move_selected_down(&mut self) {
-        match self.currently_selected() {
-            Some(currently_selected) => {
-                let next_index = self
-                    .tiles
-                    .iter()
-                    .enumerate()
-                    .filter(|(_, c)| {
-                        c.is_directly_below(&currently_selected)
-                            && c.vertically_overlaps_with(&currently_selected)
-                    })
-                    // get the index of the tile with the most overlap with currently selected
-                    .max_by_key(|(_, c)| c.get_vertical_overlap_with(&currently_selected))
-                    .map(|(index, _)| index);
-                match next_index {
-                    Some(i) => self.set_selected_index(&i),
-                    None => self.reset_selected_index(), // move off the edge of the screen resets selection
-                }
-            }
-            None => self.set_selected_index(&0),
-        }
+        self.move_selected(Vertical, Tile::is_directly_after)
     }
     pub fn move_selected_up(&mut self) {
-        match self.currently_selected() {
-            Some(currently_selected) => {
-                let next_index = self
-                    .tiles
-                    .iter()
-                    .enumerate()
-                    .filter(|(_, c)| {
-                        c.is_directly_above(&currently_selected)
-                            && c.vertically_overlaps_with(&currently_selected)
-                    })
-                    // get the index of the tile with the most overlap with currently selected
-                    .max_by_key(|(_, c)| c.get_vertical_overlap_with(&currently_selected))
-                    .map(|(index, _)| index);
-                match next_index {
-                    Some(i) => self.set_selected_index(&i),
-                    None => self.reset_selected_index(), // move off the edge of the screen resets selection
-                }
-            }
-            None => self.set_selected_index(&0),
-        }
+        self.move_selected(Vertical, Tile::is_directly_before)
     }
     pub fn zoom_in(&mut self, folder: &Folder) {
         if self.zoom_level < self.files.len() {
