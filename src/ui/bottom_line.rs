@@ -1,4 +1,4 @@
-use ::std::path::PathBuf;
+use ::std::path::{Path, PathBuf};
 use ::tui::buffer::Buffer;
 use ::tui::layout::Rect;
 use ::tui::style::{Color, Modifier, Style};
@@ -45,7 +45,7 @@ fn render_currently_selected(buf: &mut Buffer, currently_selected: &Tile, max_le
     }
 }
 
-fn render_last_read_path(buf: &mut Buffer, last_read_path: &PathBuf, max_len: u16, y: u16) {
+fn render_last_read_path(buf: &mut Buffer, last_read_path: &Path, max_len: u16, y: u16) {
     let last_read_path = last_read_path.to_string_lossy();
     if (last_read_path.chars().count() as u16) < max_len {
         buf.set_string(1, y, last_read_path, Style::default());

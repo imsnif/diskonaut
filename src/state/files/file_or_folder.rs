@@ -1,7 +1,7 @@
 use ::std::collections::{HashMap, VecDeque};
 use ::std::ffi::OsString;
 use ::std::fs::Metadata;
-use ::std::path::PathBuf;
+use ::std::path::{Path, PathBuf};
 
 use ::filesize::PathExt;
 
@@ -45,7 +45,7 @@ impl From<OsString> for Folder {
     }
 }
 impl Folder {
-    pub fn new(path: &PathBuf) -> Self {
+    pub fn new(path: &Path) -> Self {
         let base_folder_name = path.iter().last().expect("could not get path base name");
         Self {
             name: base_folder_name.to_os_string(),
