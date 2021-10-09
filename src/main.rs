@@ -230,7 +230,7 @@ pub fn start<B>(
             thread::Builder::new()
                 .name("loading_loop".to_string())
                 .spawn({
-                    let instruction_sender = instruction_sender.clone();
+                    let instruction_sender = instruction_sender;
                     let running = running.clone();
                     move || {
                         while running.load(Ordering::Acquire) && !loaded.load(Ordering::Acquire) {

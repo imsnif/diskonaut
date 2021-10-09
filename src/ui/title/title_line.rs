@@ -75,7 +75,7 @@ impl<'a> TitleLine<'a> {
 
 impl<'a> Widget for TitleLine<'a> {
     fn render(self, rect: Rect, buf: &mut Buffer) {
-        let base_path = &self
+        let base_path = self
             .base_path_info
             .path
             .clone()
@@ -152,7 +152,7 @@ impl<'a> Widget for TitleLine<'a> {
                 CellSizeOpt::new(" (root)".to_string()).style(default_style.fg(Color::Red)),
             ]);
         }
-        title_telescope.append_to_right_side(vec![CellSizeOpt::new(base_path.to_string())]);
+        title_telescope.append_to_right_side(vec![CellSizeOpt::new(base_path)]);
         if !current_path.is_empty() {
             title_telescope.append_to_right_side(vec![
                 CellSizeOpt::new(format!(
