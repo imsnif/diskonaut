@@ -37,7 +37,7 @@ impl FileTree {
         } else if let Some(FileOrFolder::Folder(current_folder)) =
             self.base_folder.path(self.current_folder_names.clone())
         {
-            &current_folder
+            current_folder
         } else {
             // here we have something in current_folder_names but the last
             // one is somehow not a folder... this is a corrupted state
@@ -67,7 +67,7 @@ impl FileTree {
     }
     pub fn delete_file(&mut self, file_to_delete: &FileToDelete) {
         let path_to_delete = &file_to_delete.path_to_file;
-        self.base_folder.delete_path(&path_to_delete);
+        self.base_folder.delete_path(path_to_delete);
     }
     pub fn add_entry(&mut self, entry_metadata: &Metadata, entry_full_path: &Path) {
         let base_path_length = self.path_in_filesystem.components().count();

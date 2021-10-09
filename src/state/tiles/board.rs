@@ -89,11 +89,11 @@ impl Board {
                     .iter()
                     .enumerate()
                     .filter(|(_, c)| {
-                        c.is_directly_right_of(&currently_selected)
-                            && c.horizontally_overlaps_with(&currently_selected)
+                        c.is_directly_right_of(currently_selected)
+                            && c.horizontally_overlaps_with(currently_selected)
                     })
                     // get the index of the tile with the most overlap with currently selected
-                    .max_by_key(|(_, c)| c.get_horizontal_overlap_with(&currently_selected))
+                    .max_by_key(|(_, c)| c.get_horizontal_overlap_with(currently_selected))
                     .map(|(index, _)| index);
                 match next_index {
                     Some(i) => self.set_selected_index(&i),
@@ -111,11 +111,11 @@ impl Board {
                     .iter()
                     .enumerate()
                     .filter(|(_, c)| {
-                        c.is_directly_left_of(&currently_selected)
-                            && c.horizontally_overlaps_with(&currently_selected)
+                        c.is_directly_left_of(currently_selected)
+                            && c.horizontally_overlaps_with(currently_selected)
                     })
                     // get the index of the tile with the most overlap with currently selected
-                    .max_by_key(|(_, c)| c.get_horizontal_overlap_with(&currently_selected))
+                    .max_by_key(|(_, c)| c.get_horizontal_overlap_with(currently_selected))
                     .map(|(index, _)| index);
                 match next_index {
                     Some(i) => self.set_selected_index(&i),
@@ -133,11 +133,11 @@ impl Board {
                     .iter()
                     .enumerate()
                     .filter(|(_, c)| {
-                        c.is_directly_below(&currently_selected)
-                            && c.vertically_overlaps_with(&currently_selected)
+                        c.is_directly_below(currently_selected)
+                            && c.vertically_overlaps_with(currently_selected)
                     })
                     // get the index of the tile with the most overlap with currently selected
-                    .max_by_key(|(_, c)| c.get_vertical_overlap_with(&currently_selected))
+                    .max_by_key(|(_, c)| c.get_vertical_overlap_with(currently_selected))
                     .map(|(index, _)| index);
                 match next_index {
                     Some(i) => self.set_selected_index(&i),
@@ -155,11 +155,11 @@ impl Board {
                     .iter()
                     .enumerate()
                     .filter(|(_, c)| {
-                        c.is_directly_above(&currently_selected)
-                            && c.vertically_overlaps_with(&currently_selected)
+                        c.is_directly_above(currently_selected)
+                            && c.vertically_overlaps_with(currently_selected)
                     })
                     // get the index of the tile with the most overlap with currently selected
-                    .max_by_key(|(_, c)| c.get_vertical_overlap_with(&currently_selected))
+                    .max_by_key(|(_, c)| c.get_vertical_overlap_with(currently_selected))
                     .map(|(index, _)| index);
                 match next_index {
                     Some(i) => self.set_selected_index(&i),

@@ -103,21 +103,21 @@ pub fn draw_rect_on_grid(buf: &mut Buffer, coords: (u16, u16), dimensions: (u16,
     // top, bottom and corners
     for x in coords_x..(coords_x + width + 1) {
         if x == coords_x {
-            draw_next_symbol(buf, x, coords_y, &boundaries::TOP_LEFT);
-            draw_next_symbol(buf, x, coords_y + height, &boundaries::BOTTOM_LEFT);
+            draw_next_symbol(buf, x, coords_y, boundaries::TOP_LEFT);
+            draw_next_symbol(buf, x, coords_y + height, boundaries::BOTTOM_LEFT);
         } else if x == coords_x + width {
-            draw_next_symbol(buf, x, coords_y, &boundaries::TOP_RIGHT);
-            draw_next_symbol(buf, x, coords_y + height, &boundaries::BOTTOM_RIGHT);
+            draw_next_symbol(buf, x, coords_y, boundaries::TOP_RIGHT);
+            draw_next_symbol(buf, x, coords_y + height, boundaries::BOTTOM_RIGHT);
         } else {
-            draw_next_symbol(buf, x, coords_y, &boundaries::HORIZONTAL);
-            draw_next_symbol(buf, x, coords_y + height, &boundaries::HORIZONTAL);
+            draw_next_symbol(buf, x, coords_y, boundaries::HORIZONTAL);
+            draw_next_symbol(buf, x, coords_y + height, boundaries::HORIZONTAL);
         }
     }
 
     // left and right
     for y in (coords_y + 1)..(coords_y + height) {
-        draw_next_symbol(buf, coords_x, y, &boundaries::VERTICAL);
-        draw_next_symbol(buf, coords_x + width, y, &boundaries::VERTICAL);
+        draw_next_symbol(buf, coords_x, y, boundaries::VERTICAL);
+        draw_next_symbol(buf, coords_x + width, y, boundaries::VERTICAL);
     }
 }
 
@@ -135,24 +135,24 @@ pub fn draw_filled_rect(buf: &mut Buffer, fill_style: Style, rect: &Rect) {
     for x in rect.x..(rect.x + rect.width + 1) {
         if x == rect.x {
             buf.get_mut(x, rect.y)
-                .set_symbol(&boundaries::TOP_LEFT)
+                .set_symbol(boundaries::TOP_LEFT)
                 .set_style(fill_style);
             buf.get_mut(x, rect.y + rect.height)
-                .set_symbol(&boundaries::BOTTOM_LEFT)
+                .set_symbol(boundaries::BOTTOM_LEFT)
                 .set_style(fill_style);
         } else if x == rect.x + rect.width {
             buf.get_mut(x, rect.y)
-                .set_symbol(&boundaries::TOP_RIGHT)
+                .set_symbol(boundaries::TOP_RIGHT)
                 .set_style(fill_style);
             buf.get_mut(x, rect.y + rect.height)
-                .set_symbol(&boundaries::BOTTOM_RIGHT)
+                .set_symbol(boundaries::BOTTOM_RIGHT)
                 .set_style(fill_style);
         } else {
             buf.get_mut(x, rect.y)
-                .set_symbol(&boundaries::HORIZONTAL)
+                .set_symbol(boundaries::HORIZONTAL)
                 .set_style(fill_style);
             buf.get_mut(x, rect.y + rect.height)
-                .set_symbol(&boundaries::HORIZONTAL)
+                .set_symbol(boundaries::HORIZONTAL)
                 .set_style(fill_style);
         }
     }
@@ -160,24 +160,24 @@ pub fn draw_filled_rect(buf: &mut Buffer, fill_style: Style, rect: &Rect) {
     // left and right
     for y in (rect.y + 1)..(rect.y + rect.height) {
         buf.get_mut(rect.x, y)
-            .set_symbol(&boundaries::VERTICAL)
+            .set_symbol(boundaries::VERTICAL)
             .set_style(fill_style);
         buf.get_mut(rect.x + rect.width, y)
-            .set_symbol(&boundaries::VERTICAL)
+            .set_symbol(boundaries::VERTICAL)
             .set_style(fill_style);
     }
 }
 
 pub fn draw_tile_text_on_grid(buf: &mut Buffer, tile: &Tile, selected: bool) {
-    let first_line = tile_first_line(&tile);
+    let first_line = tile_first_line(tile);
     let first_line_length = first_line.width() as u16;
     let first_line_start_position =
         ((tile.width - first_line_length) as f64 / 2.0).ceil() as u16 + tile.x;
-    let second_line = tile_second_line(&tile);
+    let second_line = tile_second_line(tile);
     let second_line_length = second_line.width();
     let second_line_start_position =
         ((tile.width - second_line_length as u16) as f64 / 2.0).ceil() as u16 + tile.x;
-    let (background_style, first_line_style, second_line_style) = tile_style(&tile, selected);
+    let (background_style, first_line_style, second_line_style) = tile_style(tile, selected);
 
     if let Some(background_style) = background_style {
         for x in tile.x + 1..tile.x + tile.width {

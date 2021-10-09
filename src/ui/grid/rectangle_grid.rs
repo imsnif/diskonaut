@@ -71,7 +71,7 @@ impl<'a> Widget for RectangleGrid<'a> {
                 } else {
                     false
                 };
-                draw_tile_text_on_grid(buf, &tile, selected);
+                draw_tile_text_on_grid(buf, tile, selected);
                 draw_rect_on_grid(buf, (tile.x, tile.y), (tile.width, tile.height));
             }
         }

@@ -71,7 +71,7 @@ impl Folder {
                 entry_metadata.len() as u128
             } else {
                 relative_path
-                    .size_on_disk_fast(&entry_metadata)
+                    .size_on_disk_fast(entry_metadata)
                     .unwrap_or(entry_metadata.len()) as u128
             };
             self.add_file(relative_path, size);

@@ -76,7 +76,7 @@ where
     }
     pub fn render_and_update_board(&mut self) {
         let current_folder = self.file_tree.get_current_folder();
-        self.board.change_files(&current_folder);
+        self.board.change_files(current_folder);
         self.render();
     }
     pub fn increment_loading_progress_indicator(&mut self) {
@@ -175,10 +175,10 @@ where
         self.board.record_current_index_and_zoom_level();
         if let Some(tile) = &self.board.currently_selected() {
             let selected_name = &tile.name;
-            if let Some(file_or_folder) = self.file_tree.item_in_current_folder(&selected_name) {
+            if let Some(file_or_folder) = self.file_tree.item_in_current_folder(selected_name) {
                 match file_or_folder {
                     FileOrFolder::Folder(_) => {
-                        self.file_tree.enter_folder(&selected_name);
+                        self.file_tree.enter_folder(selected_name);
                         self.board.reset_zoom_index();
                         self.board.reset_selected_index();
                         self.render_and_update_board();

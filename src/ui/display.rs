@@ -60,7 +60,7 @@ where
                 };
                 let path_in_filesystem = &file_tree.path_in_filesystem;
                 let base_path_info = FolderInfo {
-                    path: &path_in_filesystem,
+                    path: path_in_filesystem,
                     size: base_path_size,
                     num_descendants: base_path_descendants,
                 };

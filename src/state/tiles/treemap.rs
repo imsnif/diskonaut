@@ -78,7 +78,7 @@ impl TreeMap {
             };
             progress_in_row += tile_length_first_side;
 
-            let tile = Tile::new(&rect, &file_metadata);
+            let tile = Tile::new(&rect, file_metadata);
             if tile.height < MINIMUM_HEIGHT || tile.width < MINIMUM_WIDTH {
                 self.add_unrenderable_tile(&tile);
             } else {

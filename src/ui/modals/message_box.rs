@@ -162,9 +162,9 @@ impl<'a> Widget for MessageBox<'a> {
 
         draw_filled_rect(buf, fill_style, &message_rect);
         if self.deletion_in_progress {
-            render_deletion_in_progress(buf, &message_rect, &self.file_to_delete);
+            render_deletion_in_progress(buf, &message_rect, self.file_to_delete);
         } else {
-            render_deletion_prompt(buf, &message_rect, &self.file_to_delete);
+            render_deletion_prompt(buf, &message_rect, self.file_to_delete);
         }
     }
 }
