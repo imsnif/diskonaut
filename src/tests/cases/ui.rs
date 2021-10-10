@@ -1852,10 +1852,7 @@ fn cant_delete_file_with_term_too_small() {
             .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
-    assert!(
-        std::fs::metadata(&file_2_path).is_ok(),
-        "file not deleted"
-    );
+    assert!(std::fs::metadata(&file_2_path).is_ok(), "file not deleted");
     assert!(
         std::fs::metadata(&subfolder_1_path).is_ok(),
         "different folder stayed the same"
@@ -2555,10 +2552,7 @@ fn pressing_delete_with_no_selected_tile() {
             .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
-    assert!(
-        std::fs::metadata(&file_2_path).is_ok(),
-        "file not deleted"
-    );
+    assert!(std::fs::metadata(&file_2_path).is_ok(), "file not deleted");
     assert!(
         std::fs::metadata(&subfolder_1_path).is_ok(),
         "different folder stayed the same"
@@ -2635,10 +2629,7 @@ fn delete_file_press_n() {
             .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
-    assert!(
-        std::fs::metadata(&file_2_path).is_ok(),
-        "file not deleted"
-    );
+    assert!(std::fs::metadata(&file_2_path).is_ok(), "file not deleted");
     assert!(
         std::fs::metadata(&subfolder_1_path).is_ok(),
         "different folder stayed the same"

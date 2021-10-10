@@ -148,7 +148,8 @@ impl<'a> Widget for TitleLine<'a> {
             title_telescope.append_to_left_side(vec![
                 CellSizeOpt::new(" (CAUTION: running as root)".to_string())
                     .style(default_style.fg(Color::Red)),
-                CellSizeOpt::new(" (running as root)".to_string()).style(default_style.fg(Color::Red)),
+                CellSizeOpt::new(" (running as root)".to_string())
+                    .style(default_style.fg(Color::Red)),
                 CellSizeOpt::new(" (root)".to_string()).style(default_style.fg(Color::Red)),
             ]);
         }
