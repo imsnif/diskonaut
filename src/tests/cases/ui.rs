@@ -1678,24 +1678,20 @@ fn delete_file() {
             .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_2_path).is_err(),
-        true,
         "file successfully deleted"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&subfolder_1_path).is_ok(),
-        true,
         "different folder stayed the same"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_1_path).is_ok(),
-        true,
         "different file was untoucehd"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_3_path).is_ok(),
-        true,
         "second different file was untouched"
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
@@ -1769,24 +1765,20 @@ fn delete_file_no_confirmation() {
             .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_2_path).is_err(),
-        true,
         "file successfully deleted"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&subfolder_1_path).is_ok(),
-        true,
         "different folder stayed the same"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_1_path).is_ok(),
-        true,
         "different file was untoucehd"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_3_path).is_ok(),
-        true,
         "second different file was untouched"
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
@@ -1860,24 +1852,20 @@ fn cant_delete_file_with_term_too_small() {
             .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_2_path).is_ok(),
-        true,
         "file not deleted"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&subfolder_1_path).is_ok(),
-        true,
         "different folder stayed the same"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_1_path).is_ok(),
-        true,
         "different file was untoucehd"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_3_path).is_ok(),
-        true,
         "second different file was untouched"
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
@@ -1950,24 +1938,20 @@ fn delete_folder() {
             .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&subfolder_1_path).is_err(),
-        true,
         "folder successfully deleted"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_1_path).is_err(),
-        true,
         "internal file successfully deleted"
     ); // can't really fail on its own, but left here for clarity
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_2_path).is_ok(),
-        true,
         "different file was untouched"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_3_path).is_ok(),
-        true,
         "second different file was untouched"
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
@@ -2047,24 +2031,20 @@ fn delete_folder_no_confirmation() {
             .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&subfolder_1_path).is_err(),
-        true,
         "folder successfully deleted"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_1_path).is_err(),
-        true,
         "internal file successfully deleted"
     ); // can't really fail on its own, but left here for clarity
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_2_path).is_ok(),
-        true,
         "different file was untouched"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_3_path).is_ok(),
-        true,
         "second different file was untouched"
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
@@ -2149,24 +2129,20 @@ fn delete_folder_small_window() {
             .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_2_path).is_ok(),
-        true,
         "different file was untouched"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&subfolder_1_path).is_err(),
-        true,
         "file successfully deleted"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_1_path).is_err(),
-        true,
         "file in folder deleted"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_3_path).is_ok(),
-        true,
         "second different file was untouched"
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
@@ -2250,24 +2226,20 @@ fn delete_folder_small_window_no_confirmation() {
             .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_2_path).is_ok(),
-        true,
         "different file was untouched"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&subfolder_1_path).is_err(),
-        true,
         "file successfully deleted"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_1_path).is_err(),
-        true,
         "file in folder deleted"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_3_path).is_ok(),
-        true,
         "second different file was untouched"
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
@@ -2367,39 +2339,32 @@ fn delete_folder_with_multiple_children() {
             .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&subfolder_1_path).is_err(),
-        true,
         "folder successfully deleted"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&subfolder_2_path).is_err(),
-        true,
         "folder inside deleted folder successfully deleted"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_1_path).is_ok(),
-        true,
         "different file was untouched"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_2_path).is_ok(),
-        true,
         "different file was untouched"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_3_path).is_err(),
-        true,
         "internal file in folder deleted"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_4_path).is_err(),
-        true,
         "internal file in folder deleted"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_5_path).is_err(),
-        true,
         "internal file in folder deleted"
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
@@ -2497,39 +2462,32 @@ fn delete_folder_with_multiple_children_no_confirmation() {
             .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&subfolder_1_path).is_err(),
-        true,
         "folder successfully deleted"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&subfolder_2_path).is_err(),
-        true,
         "folder inside deleted folder successfully deleted"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_1_path).is_ok(),
-        true,
         "different file was untouched"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_2_path).is_ok(),
-        true,
         "different file was untouched"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_3_path).is_err(),
-        true,
         "internal file in folder deleted"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_4_path).is_err(),
-        true,
         "internal file in folder deleted"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_5_path).is_err(),
-        true,
         "internal file in folder deleted"
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
@@ -2597,24 +2555,20 @@ fn pressing_delete_with_no_selected_tile() {
             .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_2_path).is_ok(),
-        true,
         "file not deleted"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&subfolder_1_path).is_ok(),
-        true,
         "different folder stayed the same"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_1_path).is_ok(),
-        true,
         "different file was untoucehd"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_3_path).is_ok(),
-        true,
         "second different file was untouched"
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
@@ -2681,24 +2635,20 @@ fn delete_file_press_n() {
             .expect("could not acquire lock on terminal_events")[..],
         &expected_terminal_events[..]
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_2_path).is_ok(),
-        true,
         "file not deleted"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&subfolder_1_path).is_ok(),
-        true,
         "different folder stayed the same"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_1_path).is_ok(),
-        true,
         "different file was untoucehd"
     );
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_3_path).is_ok(),
-        true,
         "second different file was untouched"
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
@@ -2829,14 +2779,12 @@ fn permission_denied_when_deleting() {
         .lock()
         .expect("could not acquire lock on terminal events");
 
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_1_path).is_ok(),
-        true,
         "file was not deleted"
     ); // can't really fail on its own, but left here for clarity
-    assert_eq!(
+    assert!(
         std::fs::metadata(&subfolder_1_path).is_ok(),
-        true,
         "containing folder was not deleted"
     );
 
@@ -2916,14 +2864,12 @@ fn permission_denied_when_deleting_no_confirmation() {
         .lock()
         .expect("could not acquire lock on terminal events");
 
-    assert_eq!(
+    assert!(
         std::fs::metadata(&file_1_path).is_ok(),
-        true,
         "file was not deleted"
     ); // can't really fail on its own, but left here for clarity
-    assert_eq!(
+    assert!(
         std::fs::metadata(&subfolder_1_path).is_ok(),
-        true,
         "containing folder was not deleted"
     );
 
