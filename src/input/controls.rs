@@ -169,10 +169,10 @@ pub fn handle_keypress_exiting_mode<B: Backend>(evt: Event, app: &mut App<B>) {
     };
 }
 
-pub fn handle_keypress_warning_message<B: Backend>(evt: Event, app: &mut App<B>) {
-    match evt {
-        _ => {
+pub fn handle_keypress_warning_message<B: Backend>(_evt: Event, app: &mut App<B>) {
+    // match evt {
+    //     _ => {
             app.reset_ui_mode();
-        }
-    }
+    //     }
+    // }
 }
