@@ -13,7 +13,7 @@ pub(crate) fn is_user_admin() -> bool {
         Value: SECURITY_NT_AUTHORITY,
     };
     let mut admingroup = 0 as PVOID;
-    let ismember = unsafe {
+    unsafe {
         assert!(
             AllocateAndInitializeSid(
                 &mut auth_nt,
@@ -32,8 +32,7 @@ pub(crate) fn is_user_admin() -> bool {
         let mut member: i32 = 0;
         assert!(CheckTokenMembership(0 as PVOID, admingroup, &mut member) != 0);
         member != 0
-    };
-    ismember
+    }
 }
 #[cfg(test)]
 pub(crate) fn is_user_admin() -> bool {
