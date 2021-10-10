@@ -86,8 +86,8 @@ jobs:
   style_lint:
     name: Style/lint
     runs-on: ${{ matrix.job.os }}
-    env:
-      STYLE_FAIL_ON_FAULT: false # overrides workflow default
+    # env:
+    #   STYLE_FAIL_ON_FAULT: false # overrides workflow default
     strategy:
       fail-fast: false
       matrix:
