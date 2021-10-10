@@ -49,7 +49,7 @@ pub fn files_in_folder(folder: &Folder, offset: usize) -> Vec<FileMetadata> {
         });
     }
     files.sort_by(|a, b| {
-        if a.percentage == b.percentage {
+        if (a.percentage - b.percentage).abs() < f64::EPSILON {
             a.name.partial_cmp(&b.name).expect("could not compare name")
         } else {
             b.percentage
