@@ -72,7 +72,7 @@ impl Folder {
             } else {
                 relative_path
                     .size_on_disk_fast(entry_metadata)
-                    .unwrap_or(entry_metadata.len()) as u128
+                    .unwrap_or_else(|_| entry_metadata.len()) as u128
             };
             self.add_file(relative_path, size);
         }
@@ -92,7 +92,7 @@ impl Folder {
             let path_entry = self
                 .contents
                 .entry(name.clone())
-                .or_insert(FileOrFolder::Folder(Folder::from(name)));
+                .or_insert_with(|| FileOrFolder::Folder(Folder::from(name)));
             self.num_descendants += 1;
             match path_entry {
                 FileOrFolder::Folder(folder) => folder.add_folder(path.iter().skip(1).collect()),
@@ -123,7 +123,7 @@ impl Folder {
             let path_entry = self
                 .contents
                 .entry(name.clone())
-                .or_insert(FileOrFolder::Folder(Folder::from(name)));
+                .or_insert_with(|| FileOrFolder::Folder(Folder::from(name)));
             self.size += size;
             self.num_descendants += 1;
             match path_entry {
