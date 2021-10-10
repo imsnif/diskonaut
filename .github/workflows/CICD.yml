@@ -495,95 +495,95 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  coverage:
-    name: Code Coverage
-    runs-on: ${{ matrix.job.os }}
-    strategy:
-      fail-fast: true
-      matrix:
-        job:
-          # { os }
-          - { os: ubuntu-latest }
-          - { os: macos-latest }
-          - { os: windows-latest }
-    steps:
-      - uses: actions/checkout@v2
-      # - name: Reattach HEAD ## may be needed for accurate code coverage info
-      #   run: git checkout ${{ github.head_ref }}
-      - name: Initialize workflow variables
-        id: vars
-        shell: bash
-        run: |
-          ## VARs setup
-          outputs() { step_id="vars"; for var in "$@" ; do echo steps.${step_id}.outputs.${var}="${!var}"; echo ::set-output name=${var}::${!var}; done; }
-          # toolchain
-          TOOLCHAIN="nightly" ## default to "nightly" toolchain (required for certain required unstable compiler flags)
-          # * specify gnu-type TOOLCHAIN for windows; `grcov` requires gnu-style code coverage data files
-          case ${{ matrix.job.os }} in windows-*) TOOLCHAIN="$TOOLCHAIN-x86_64-pc-windows-gnu" ;; esac;
-          # * use requested TOOLCHAIN if specified
-          if [ -n "${{ matrix.job.toolchain }}" ]; then TOOLCHAIN="${{ matrix.job.toolchain }}" ; fi
-          outputs TOOLCHAIN
-          # staging directory
-          STAGING='_staging'
-          outputs STAGING
-          ## # check for CODECOV_TOKEN availability (work-around for inaccessible 'secrets' object for 'if'; see <https://github.community/t5/GitHub-Actions/jobs-lt-job-id-gt-if-does-not-work-with-env-secrets/m-p/38549>)
-          ## # note: CODECOV_TOKEN / HAS_CODECOV_TOKEN is not needed for public repositories when using AppVeyor, Azure Pipelines, CircleCI, GitHub Actions, Travis (see <https://docs.codecov.io/docs/about-the-codecov-bash-uploader#section-upload-token>)
-          ## unset HAS_CODECOV_TOKEN
-          ## if [ -n $CODECOV_TOKEN ]; then HAS_CODECOV_TOKEN='true' ; fi
-          ## outputs HAS_CODECOV_TOKEN
-          # target-specific options
-          # * CARGO_FEATURES_OPTION
-          unset CARGO_FEATURES_OPTION ;  ## default empty features option
-          if [ -n "${{ matrix.job.features }}" ]; then CARGO_FEATURES_OPTION='--features "${{ matrix.job.features }}"' ; fi
-          outputs CARGO_FEATURES_OPTION
-          # * CODECOV_FLAGS
-          CODECOV_FLAGS=$( echo "${{ matrix.job.os }}" | sed 's/[^[:alnum:]]/_/g' )
-          outputs CODECOV_FLAGS
-      - name: rust toolchain ~ install
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: ${{ steps.vars.outputs.TOOLCHAIN }}
-          default: true
-          profile: minimal # minimal component installation (ie, no documentation)
-      - name: Test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: ${{ steps.vars.outputs.CARGO_FEATURES_OPTION }} --no-fail-fast
-        env:
-          CARGO_INCREMENTAL: "0"
-          RUSTC_WRAPPER: ""
-          # RUSTFLAGS: '-Zprofile -Ccodegen-units=1 -Copt-level=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests -Cpanic=abort'
-          RUSTFLAGS: "-Zprofile"
-          RUSTDOCFLAGS: "-Cpanic=abort"
-      - name: "`grcov` ~ install"
-        uses: actions-rs/install@v0.1
-        with:
-          crate: grcov
-          version: latest
-          use-tool-cache: false
-      - name: Generate coverage data (via `grcov`)
-        id: coverage
-        shell: bash
-        run: |
-          ## Generate coverage data
-          COVERAGE_REPORT_DIR="target/debug"
-          COVERAGE_REPORT_FILE="${COVERAGE_REPORT_DIR}/lcov.info"
-          # GRCOV_IGNORE_OPTION='--ignore build.rs --ignore "/*" --ignore "[a-zA-Z]:/*"' ## `grcov` ignores these params when passed as an environment variable (why?)
-          # GRCOV_EXCLUDE_OPTION='--excl-br-line "^\s*((debug_)?assert(_eq|_ne)?!|#\[derive\()"' ## `grcov` ignores these params when passed as an environment variable (why?)
-          mkdir -p "${COVERAGE_REPORT_DIR}"
-          # display coverage files
-          grcov . --output-type files --ignore build.rs --ignore "/*" --ignore "[a-zA-Z]:/*" --excl-br-line "^\s*((debug_)?assert(_eq|_ne)?!|#\[derive\()" | sort --unique
-          # generate coverage report
-          grcov . --output-type lcov --output-path "${COVERAGE_REPORT_FILE}" --branch --ignore build.rs --ignore "/*" --ignore "[a-zA-Z]:/*" --excl-br-line "^\s*((debug_)?assert(_eq|_ne)?!|#\[derive\()"
-          echo ::set-output name=report::${COVERAGE_REPORT_FILE}
-      - name: Upload coverage results (to Codecov.io)
-        uses: codecov/codecov-action@v1
-        # if: steps.vars.outputs.HAS_CODECOV_TOKEN
-        with:
-          # token: ${{ secrets.CODECOV_TOKEN }}
-          file: ${{ steps.coverage.outputs.report }}
-          ## flags: IntegrationTests, UnitTests, ${{ steps.vars.outputs.CODECOV_FLAGS }}
-          flags: ${{ steps.vars.outputs.CODECOV_FLAGS }}
-          name: codecov-umbrella
-          fail_ci_if_error: false
+  # coverage:
+  #   name: Code Coverage
+  #   runs-on: ${{ matrix.job.os }}
+  #   strategy:
+  #     fail-fast: true
+  #     matrix:
+  #       job:
+  #         # { os }
+  #         - { os: ubuntu-latest }
+  #         - { os: macos-latest }
+  #         - { os: windows-latest }
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     # - name: Reattach HEAD ## may be needed for accurate code coverage info
+  #     #   run: git checkout ${{ github.head_ref }}
+  #     - name: Initialize workflow variables
+  #       id: vars
+  #       shell: bash
+  #       run: |
+  #         ## VARs setup
+  #         outputs() { step_id="vars"; for var in "$@" ; do echo steps.${step_id}.outputs.${var}="${!var}"; echo ::set-output name=${var}::${!var}; done; }
+  #         # toolchain
+  #         TOOLCHAIN="nightly" ## default to "nightly" toolchain (required for certain required unstable compiler flags)
+  #         # * specify gnu-type TOOLCHAIN for windows; `grcov` requires gnu-style code coverage data files
+  #         case ${{ matrix.job.os }} in windows-*) TOOLCHAIN="$TOOLCHAIN-x86_64-pc-windows-gnu" ;; esac;
+  #         # * use requested TOOLCHAIN if specified
+  #         if [ -n "${{ matrix.job.toolchain }}" ]; then TOOLCHAIN="${{ matrix.job.toolchain }}" ; fi
+  #         outputs TOOLCHAIN
+  #         # staging directory
+  #         STAGING='_staging'
+  #         outputs STAGING
+  #         ## # check for CODECOV_TOKEN availability (work-around for inaccessible 'secrets' object for 'if'; see <https://github.community/t5/GitHub-Actions/jobs-lt-job-id-gt-if-does-not-work-with-env-secrets/m-p/38549>)
+  #         ## # note: CODECOV_TOKEN / HAS_CODECOV_TOKEN is not needed for public repositories when using AppVeyor, Azure Pipelines, CircleCI, GitHub Actions, Travis (see <https://docs.codecov.io/docs/about-the-codecov-bash-uploader#section-upload-token>)
+  #         ## unset HAS_CODECOV_TOKEN
+  #         ## if [ -n $CODECOV_TOKEN ]; then HAS_CODECOV_TOKEN='true' ; fi
+  #         ## outputs HAS_CODECOV_TOKEN
+  #         # target-specific options
+  #         # * CARGO_FEATURES_OPTION
+  #         unset CARGO_FEATURES_OPTION ;  ## default empty features option
+  #         if [ -n "${{ matrix.job.features }}" ]; then CARGO_FEATURES_OPTION='--features "${{ matrix.job.features }}"' ; fi
+  #         outputs CARGO_FEATURES_OPTION
+  #         # * CODECOV_FLAGS
+  #         CODECOV_FLAGS=$( echo "${{ matrix.job.os }}" | sed 's/[^[:alnum:]]/_/g' )
+  #         outputs CODECOV_FLAGS
+  #     - name: rust toolchain ~ install
+  #       uses: actions-rs/toolchain@v1
+  #       with:
+  #         toolchain: ${{ steps.vars.outputs.TOOLCHAIN }}
+  #         default: true
+  #         profile: minimal # minimal component installation (ie, no documentation)
+  #     - name: Test
+  #       uses: actions-rs/cargo@v1
+  #       with:
+  #         command: test
+  #         args: ${{ steps.vars.outputs.CARGO_FEATURES_OPTION }} --no-fail-fast
+  #       env:
+  #         CARGO_INCREMENTAL: "0"
+  #         RUSTC_WRAPPER: ""
+  #         # RUSTFLAGS: '-Zprofile -Ccodegen-units=1 -Copt-level=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests -Cpanic=abort'
+  #         RUSTFLAGS: "-Zprofile"
+  #         RUSTDOCFLAGS: "-Cpanic=abort"
+  #     - name: "`grcov` ~ install"
+  #       uses: actions-rs/install@v0.1
+  #       with:
+  #         crate: grcov
+  #         version: latest
+  #         use-tool-cache: false
+  #     - name: Generate coverage data (via `grcov`)
+  #       id: coverage
+  #       shell: bash
+  #       run: |
+  #         ## Generate coverage data
+  #         COVERAGE_REPORT_DIR="target/debug"
+  #         COVERAGE_REPORT_FILE="${COVERAGE_REPORT_DIR}/lcov.info"
+  #         # GRCOV_IGNORE_OPTION='--ignore build.rs --ignore "/*" --ignore "[a-zA-Z]:/*"' ## `grcov` ignores these params when passed as an environment variable (why?)
+  #         # GRCOV_EXCLUDE_OPTION='--excl-br-line "^\s*((debug_)?assert(_eq|_ne)?!|#\[derive\()"' ## `grcov` ignores these params when passed as an environment variable (why?)
+  #         mkdir -p "${COVERAGE_REPORT_DIR}"
+  #         # display coverage files
+  #         grcov . --output-type files --ignore build.rs --ignore "/*" --ignore "[a-zA-Z]:/*" --excl-br-line "^\s*((debug_)?assert(_eq|_ne)?!|#\[derive\()" | sort --unique
+  #         # generate coverage report
+  #         grcov . --output-type lcov --output-path "${COVERAGE_REPORT_FILE}" --branch --ignore build.rs --ignore "/*" --ignore "[a-zA-Z]:/*" --excl-br-line "^\s*((debug_)?assert(_eq|_ne)?!|#\[derive\()"
+  #         echo ::set-output name=report::${COVERAGE_REPORT_FILE}
+  #     - name: Upload coverage results (to Codecov.io)
+  #       uses: codecov/codecov-action@v1
+  #       # if: steps.vars.outputs.HAS_CODECOV_TOKEN
+  #       with:
+  #         # token: ${{ secrets.CODECOV_TOKEN }}
+  #         file: ${{ steps.coverage.outputs.report }}
+  #         ## flags: IntegrationTests, UnitTests, ${{ steps.vars.outputs.CODECOV_FLAGS }}
+  #         flags: ${{ steps.vars.outputs.CODECOV_FLAGS }}
+  #         name: codecov-umbrella
+  #         fail_ci_if_error: false
