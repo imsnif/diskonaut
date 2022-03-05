@@ -60,6 +60,10 @@ Available in [Homebrew](https://formulae.brew.sh/formula/diskonaut)
 ```
 brew install diskonaut
 ```
+...as well as [MacPorts](https://ports.macports.org/port/diskonaut/)
+```
+sudo port install diskonaut
+```
 Also available in [nixpkgs](https://github.com/NixOS/nixpkgs/blob/master/pkgs/tools/misc/diskonaut/default.nix): see Nix section for more details.
 
 ## Supported platforms
