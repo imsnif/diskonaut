@@ -30,10 +30,10 @@ sudo dnf install diskonaut
 
 ### Arch Linux
 
-Available in the [AUR](https://aur.archlinux.org/packages/diskonaut):
+Available in the [Community repository](https://archlinux.org/packages/community/x86_64/diskonaut/):
 
 ```
-yay diskonaut
+sudo pacman -S diskonaut
 ```
 
 ### Gentoo
