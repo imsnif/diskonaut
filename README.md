@@ -28,12 +28,10 @@ sudo dnf copr enable atim/diskonaut -y
 sudo dnf install diskonaut
 ```
 
-### Arch Linux
-
-Available in the [AUR](https://aur.archlinux.org/packages/diskonaut):
+#### Arch Linux
 
 ```
-yay diskonaut
+pacman -S diskonaut
 ```
 
 ### Gentoo
