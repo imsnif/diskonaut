@@ -17,6 +17,11 @@ If you're using linux, you can check out the "releases" of this repository to do
 cargo install diskonaut
 ```
 
+### With pkgx (linux / macOS)
+```
+pkgx install diskonaut # or run directly `pkgx diskonaut`
+```
+
 ### Fedora/CentOS
 
 ```
