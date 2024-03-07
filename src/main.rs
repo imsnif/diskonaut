@@ -13,6 +13,8 @@ use ::jwalk::Parallelism::{RayonDefaultPool, Serial};
 use ::jwalk::WalkDir;
 use ::std::env;
 use ::std::io;
+use ::std::io::Write;
+use ::std::panic;
 use ::std::path::PathBuf;
 use ::std::process;
 use ::std::sync::atomic::{AtomicBool, Ordering};
@@ -26,7 +28,10 @@ use ::structopt::StructOpt;
 use ::tui::backend::Backend;
 use crossterm::event::KeyModifiers;
 use crossterm::event::{Event as BackEvent, KeyCode, KeyEvent};
-use crossterm::terminal::{disable_raw_mode, enable_raw_mode};
+use crossterm::execute;
+use crossterm::terminal::{
+    disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen,
+};
 use tui::backend::CrosstermBackend;
 
 use app::{App, UiMode};
@@ -61,6 +66,15 @@ pub struct Opt {
 }
 
 fn main() {
+    // Define a custom panic hook to reset the terminal properties.
+    // This way, you won't have your terminal messed up if an unexpected error happens.
+    let panic_hook = panic::take_hook();
+    panic::set_hook(Box::new(move |panic| {
+        disable_raw_mode().expect("couldn't disable raw_mode");
+        execute!(io::stdout(), LeaveAlternateScreen).expect("couldn't leave alternate screen");
+        panic_hook(panic);
+    }));
+
     if let Err(err) = try_main() {
         println!("Error: {}", err);
         process::exit(2);
@@ -76,6 +90,7 @@ fn try_main() -> Result<(), failure::Error> {
     match get_stdout() {
         Ok(stdout) => {
             enable_raw_mode()?;
+            execute!(io::stdout(), EnterAlternateScreen)?;
             let terminal_backend = CrosstermBackend::new(stdout);
             let terminal_events = TerminalEvents {};
             let folder = match opts.folder {
@@ -95,6 +110,7 @@ fn try_main() -> Result<(), failure::Error> {
         }
         Err(_) => failure::bail!("Failed to get stdout: are you trying to pipe 'diskonaut'?"),
     }
+    execute!(io::stdout(), LeaveAlternateScreen)?;
     disable_raw_mode()?;
     Ok(())
 }
