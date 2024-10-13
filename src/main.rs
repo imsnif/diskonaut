@@ -21,7 +21,7 @@ use ::std::sync::mpsc::{Receiver, SyncSender};
 use ::std::sync::Arc;
 use ::std::thread::park_timeout;
 use ::std::{thread, time};
-use ::structopt::StructOpt;
+use ::clap::Parser;
 
 use ::tui::backend::Backend;
 use crossterm::event::KeyModifiers;
@@ -46,16 +46,16 @@ const SHOULD_SCAN_HD_FILES_IN_MULTIPLE_THREADS: bool = true;
 #[cfg(test)]
 const SHOULD_SCAN_HD_FILES_IN_MULTIPLE_THREADS: bool = false;
 
-#[derive(StructOpt, Debug)]
-#[structopt(name = "diskonaut")]
+#[derive(Debug, Parser)]
+#[clap(name = "diskonaut")]
 pub struct Opt {
-    #[structopt(name = "folder", parse(from_os_str))]
+    #[clap(name = "folder")]
     /// The folder to scan
     folder: Option<PathBuf>,
-    #[structopt(short, long)]
+    #[clap(short, long)]
     /// Show file sizes rather than their block usage on disk
     apparent_size: bool,
-    #[structopt(short, long)]
+    #[clap(short, long)]
     /// Don't ask for confirmation before deleting
     disable_delete_confirmation: bool,
 }
@@ -71,7 +71,7 @@ fn get_stdout() -> io::Result<io::Stdout> {
 }
 
 fn try_main() -> Result<(), failure::Error> {
-    let opts = Opt::from_args();
+    let opts = Opt::parse();
 
     match get_stdout() {
         Ok(stdout) => {
@@ -149,14 +149,17 @@ pub fn start<B>(
                         if let BackEvent::Key(KeyEvent {
                             code: KeyCode::Char('y'),
                             modifiers: KeyModifiers::NONE,
+                            ..
                         })
                         | BackEvent::Key(KeyEvent {
                             code: KeyCode::Char('q'),
                             modifiers: KeyModifiers::NONE,
+                            ..
                         })
                         | BackEvent::Key(KeyEvent {
                             code: KeyCode::Char('c'),
                             modifiers: KeyModifiers::CONTROL,
+                            ..
                         }) = evt
                         {
                             // not ideal, but works in a pinch
@@ -189,7 +192,7 @@ pub fn start<B>(
                 move || {
                     'scanning: for entry in WalkDir::new(&path)
                         .parallelism(if SHOULD_SCAN_HD_FILES_IN_MULTIPLE_THREADS {
-                            RayonDefaultPool
+                            RayonDefaultPool { busy_timeout: std::time::Duration::from_secs(1) }
                         } else {
                             Serial
                         })

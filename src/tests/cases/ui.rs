@@ -6,7 +6,7 @@ use ::std::path::{Path, PathBuf};
 
 use ::insta::assert_snapshot;
 use crossterm::event::KeyModifiers;
-use crossterm::event::{Event, KeyCode, KeyEvent};
+use crossterm::event::{Event, KeyCode, KeyEvent, KeyEventKind, KeyEventState};
 
 use crate::start;
 use crate::tests::cases::test_utils::*;
@@ -18,18 +18,24 @@ macro_rules! key {
         Event::Key(KeyEvent {
             code: KeyCode::Char($x),
             modifiers: KeyModifiers::NONE,
+            kind: KeyEventKind::Press,
+            state: KeyEventState::empty(),
         })
     };
     (ctrl $x:expr) => {
         Event::Key(KeyEvent {
             code: KeyCode::Char($x),
             modifiers: KeyModifiers::CONTROL,
+            kind: KeyEventKind::Press,
+            state: KeyEventState::empty(),
         })
     };
     ($x:ident) => {
         Event::Key(KeyEvent {
             code: KeyCode::$x,
             modifiers: KeyModifiers::NONE,
+            kind: KeyEventKind::Press,
+            state: KeyEventState::empty(),
         })
     };
 }

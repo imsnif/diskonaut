@@ -1,9 +1,9 @@
 use ::std::collections::HashMap;
 use ::std::io;
 use ::std::sync::{Arc, Mutex};
-use ::tui::backend::Backend;
+use ::tui::backend::{Backend, WindowSize};
 use ::tui::buffer::Cell;
-use ::tui::layout::Rect;
+use ::tui::layout::{Rect, Size};
 
 #[derive(Hash, Debug, PartialEq)]
 pub enum TerminalEvent {
@@ -87,7 +87,7 @@ impl Backend for TestBackend {
                     Some(cell) => {
                         // this will contain no style information at all
                         // should be good enough for testing
-                        string.push_str(&cell.symbol);
+                        string.push_str(cell.symbol());
                     }
                     None => {
                         string.push_str(" ");
@@ -110,5 +110,18 @@ impl Backend for TestBackend {
     fn flush(&mut self) -> io::Result<()> {
         self.events.lock().unwrap().push(TerminalEvent::Flush);
         Ok(())
+    }
+
+    fn window_size(&mut self) -> io::Result<WindowSize> {
+        Ok(WindowSize { 
+            columns_rows: Size {
+                width: 80,
+                height: 24,
+            },
+            pixels: Size {
+                width: 0,
+                height: 0,
+            }
+        })
     }
 }

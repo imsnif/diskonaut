@@ -1,7 +1,7 @@
 use ::std::iter;
 use ::std::sync::{Arc, Mutex};
 use crossterm::event::KeyModifiers;
-use crossterm::event::{Event, KeyCode, KeyEvent};
+use crossterm::event::{Event, KeyCode, KeyEvent, KeyEventKind, KeyEventState};
 
 use crate::tests::fakes::{TerminalEvent, TerminalEvents, TestBackend};
 
@@ -10,18 +10,24 @@ macro_rules! key {
         Event::Key(KeyEvent {
             code: KeyCode::Char($x),
             modifiers: KeyModifiers::NONE,
+            kind: KeyEventKind::Press,
+            state: KeyEventState::empty(),
         })
     };
     (ctrl $x:expr) => {
         Event::Key(KeyEvent {
             code: KeyCode::Char($x),
             modifiers: KeyModifiers::CONTROL,
+            kind: KeyEventKind::Press,
+            state: KeyEventState::empty(),
         })
     };
     ($x:ident) => {
         Event::Key(KeyEvent {
             code: KeyCode::$x,
             modifiers: KeyModifiers::NONE,
+            kind: KeyEventKind::Press,
+            state: KeyEventState::empty(),
         })
     };
 }

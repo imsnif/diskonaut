@@ -75,7 +75,8 @@ where
                         ]
                         .as_ref(),
                     )
-                    .split(full_screen);
+                    .split(full_screen)
+                    .to_vec();
 
                 // -1 cos we draw starting at offset 1 in both x and y directions
 
