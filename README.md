@@ -62,6 +62,25 @@ brew install diskonaut
 ```
 Also available in [nixpkgs](https://github.com/NixOS/nixpkgs/blob/master/pkgs/tools/misc/diskonaut/default.nix): see Nix section for more details.
 
+### Conda-forge
+
+Available on [conda-forge](https://github.com/conda-forge/diskonaut-feedstock), either globally with [`pixi`](https://pixi.sh/)
+```
+pixi global install diskonaut
+```
+
+or as a project dependency
+
+```
+pixi add diskonaut
+```
+
+or [`conda`](https://docs.conda.io/projects/conda/) environment dependency
+
+```
+conda install --channel conda-forge diskonaut
+```
+
 ## Supported platforms
 Right now `diskonaut` supports linux, macos and windows.
 
