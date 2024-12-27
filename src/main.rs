@@ -53,6 +53,9 @@ pub struct Opt {
     /// The folder to scan
     folder: Option<PathBuf>,
     #[structopt(short, long)]
+    /// The directories to ignore
+    ignore: Vec<PathBuf>,
+    #[structopt(short, long)]
     /// Show file sizes rather than their block usage on disk
     apparent_size: bool,
     #[structopt(short, long)]
@@ -85,10 +88,16 @@ fn try_main() -> Result<(), failure::Error> {
             if !folder.as_path().is_dir() {
                 failure::bail!("Folder '{}' does not exist", folder.to_string_lossy())
             }
+            for ignore_path in &opts.ignore {
+                if !ignore_path.as_path().is_dir() {
+                    failure::bail!("Ignored path '{}' is not a directory", ignore_path.to_string_lossy())
+                }
+            }
             start(
                 terminal_backend,
                 Box::new(terminal_events),
                 folder,
+                opts.ignore,
                 opts.apparent_size,
                 opts.disable_delete_confirmation,
             );
@@ -103,6 +112,7 @@ pub fn start<B>(
     terminal_backend: B,
     terminal_events: Box<dyn Iterator<Item = BackEvent> + Send>,
     path: PathBuf,
+    ignore: Vec<PathBuf>,
     show_apparent_size: bool,
     disable_delete_confirmation: bool,
 ) where
@@ -188,6 +198,24 @@ pub fn start<B>(
                 let loaded = loaded.clone();
                 move || {
                     'scanning: for entry in WalkDir::new(&path)
+                        .process_read_dir({
+                            let ignore = ignore.clone();
+                            move |_read_dir_state, children| {
+                                if !ignore.is_empty() {
+                                    children.retain(|dir_entry_result| {
+                                        dir_entry_result
+                                            .as_ref()
+                                            .map(|dir_entry| {
+                                                let entry_path = dir_entry.path();
+                                                !ignore.iter().any(|ignore_path| {
+                                                    entry_path.starts_with(&ignore_path)
+                                                })
+                                            })
+                                            .unwrap_or(false)
+                                    });
+                                }
+                            }
+                        })
                         .parallelism(if SHOULD_SCAN_HD_FILES_IN_MULTIPLE_THREADS {
                             RayonDefaultPool
                         } else {
