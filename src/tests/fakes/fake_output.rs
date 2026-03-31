@@ -1,7 +1,7 @@
 use ::std::collections::HashMap;
 use ::std::io;
 use ::std::sync::{Arc, Mutex};
-use ratatui::backend::{Backend, WindowSize};
+use ratatui::backend::{Backend, ClearType, WindowSize};
 use ratatui::buffer::Cell;
 use ratatui::layout::{Position, Size};
 
@@ -45,6 +45,16 @@ struct Point {
 }
 
 impl Backend for TestBackend {
+    type Error = io::Error;
+
+    fn clear_region(&mut self, clear_type: ClearType) -> io::Result<()> {
+        if clear_type == ClearType::All {
+            self.clear()
+        } else {
+            Ok(())
+        }
+    }
+
     fn clear(&mut self) -> io::Result<()> {
         self.events
             .lock()

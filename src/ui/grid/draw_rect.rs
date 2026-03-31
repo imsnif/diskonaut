@@ -258,7 +258,7 @@ pub fn draw_tile_text_on_grid(buf: &mut Buffer, tile: &Tile, selected: bool) {
     }
 
     if tile.height > 5 {
-        let line_gap = if tile.height % 2 == 0 { 1 } else { 2 };
+        let line_gap = if tile.height.is_multiple_of(2) { 1 } else { 2 };
         buf.set_string(
             first_line_start_position,
             (tile.height / 2) + tile.y - 1,

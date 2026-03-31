@@ -26,7 +26,7 @@ pub fn truncate_middle(row: &str, max_length: u16) -> String {
                 .rev()
                 .collect::<String>();
 
-        if max_length % 2 == 0 {
+        if max_length.is_multiple_of(2) {
             format!("{first_slice}[...]{second_slice}")
         } else {
             format!("{first_slice}[..]{second_slice}")

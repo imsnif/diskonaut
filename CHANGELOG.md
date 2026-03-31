@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+## [0.12.2] - 2026-03-31
+
+### Changed
+* Update all dependencies to latest versions
+* Switch from custom build script to goreleaser for easier builds
+* Add GitHub CI pipelines
+* Rewrite README to be standard-readme compatible
+
+### Fixed
+* Fixed remaining test and linting errors
+
 ## [0.12.1] - 2025-12-09
 
 ### Fixed
