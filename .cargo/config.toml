@@ -20,12 +20,12 @@ rustflags = [
   "-C", "target-feature=+crt-static",
   "-C", "link-self-contained=yes",
 ]
-[target.armv7-unknown-linux-musleabi]
+[target.armv7-unknown-linux-musleabihf]
 rustflags = [
   "-C", "target-feature=+crt-static",
   "-C", "link-self-contained=yes",
 ]
-[target.armv7-unknown-linux-musleabihf]
+[target.arm-unknown-linux-musleabi]
 rustflags = [
   "-C", "target-feature=+crt-static",
   "-C", "link-self-contained=yes",

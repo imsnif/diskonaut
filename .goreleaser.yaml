@@ -1,0 +1,67 @@
+version: 2
+
+project_name: diskonaut
+
+before:
+  hooks:
+    - rustup toolchain install nightly-2026-03-31
+    - rustup component add rust-src
+    - cargo install --locked cargo-zigbuild
+
+builds:
+  - id: diskonaut
+    builder: rust
+    binary: diskonaut
+    env:
+      - RUSTFLAGS=-Zlocation-detail=none -Zfmt-debug=none
+      - RUSTUP_TOOLCHAIN=nightly-2026-03-31
+    flags:
+      - --release
+      - -Z
+      - build-std=std,panic_abort
+      - -Z
+      - build-std-features=optimize_for_size
+    targets:
+      - x86_64-unknown-linux-musl
+      - aarch64-unknown-linux-musl
+      - arm-unknown-linux-gnueabihf
+      - arm-unknown-linux-gnueabi
+      - armv7-unknown-linux-gnueabihf
+      - x86_64-apple-darwin
+      - aarch64-apple-darwin
+      - x86_64-pc-windows-gnu
+
+archives:
+  - formats:
+      - tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Target }}"
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+    files:
+      - none*
+
+checksum:
+  name_template: checksums.txt
+  algorithm: sha256
+
+changelog:
+  sort: asc
+  use: github
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^ci:"
+      - "^chore:"
+      - Merge pull request
+      - Merge branch
+
+release:
+  github:
+    owner: kfkonrad
+    name: diskonaut
+  draft: false
+  prerelease: auto
+  name_template: "v{{ .Version }}"

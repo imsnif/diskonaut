@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  pull_request:
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6.0.2
+      - uses: moonrepo/setup-rust@v1.3.0
+      - uses: Swatinem/rust-cache@v2.9.1
+      - name: cargo test
+        run: cargo test
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6.0.2
+      - uses: moonrepo/setup-rust@v1.3.0
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2.9.1
+      - name: cargo clippy
+        run: cargo clippy -- -D warnings

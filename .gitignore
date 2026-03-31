@@ -4,3 +4,4 @@ target/
 vendor/
 vendor.tar
 **/*.rs.bk
+dist/
