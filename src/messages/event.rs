@@ -13,9 +13,11 @@ use std::sync::mpsc::{Receiver, SyncSender};
 
 pub fn handle_events(event_receiver: Receiver<Event>, instruction_sender: SyncSender<Instruction>) {
     loop {
-        let event = event_receiver
-            .recv()
-            .expect("failed to receive event on channel");
+        let event = match event_receiver.recv() {
+            Ok(event) => event,
+            // the channel is closed, meaning the app exited - so should we
+            Err(_) => break,
+        };
         match event {
             Event::PathError => {
                 let _ = instruction_sender.send(Instruction::SetPathToRed);
