@@ -13,6 +13,7 @@ use ::jwalk::Parallelism::{RayonDefaultPool, Serial};
 use ::jwalk::WalkDir;
 use ::std::env;
 use ::std::io;
+use ::std::io::Write;
 use ::std::path::PathBuf;
 use ::std::process;
 use ::std::sync::atomic::{AtomicBool, Ordering};
@@ -27,6 +28,7 @@ use ::tui::backend::Backend;
 use crossterm::event::KeyModifiers;
 use crossterm::event::{Event as BackEvent, KeyCode, KeyEvent};
 use crossterm::terminal::{disable_raw_mode, enable_raw_mode};
+use crossterm::tty::IsTty;
 use tui::backend::CrosstermBackend;
 
 use app::{App, UiMode};
@@ -62,12 +64,17 @@ pub struct Opt {
 
 fn main() {
     if let Err(err) = try_main() {
-        println!("Error: {}", err);
+        let _ = writeln!(io::stderr(), "Error: {}", err);
         process::exit(2);
     }
 }
 fn get_stdout() -> io::Result<io::Stdout> {
-    Ok(io::stdout())
+    let stdout = io::stdout();
+    if stdout.is_tty() {
+        Ok(stdout)
+    } else {
+        Err(io::Error::new(io::ErrorKind::Other, "stdout is not a tty"))
+    }
 }
 
 fn try_main() -> Result<(), failure::Error> {
