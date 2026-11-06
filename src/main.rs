@@ -5,15 +5,15 @@ mod app;
 mod input;
 mod messages;
 mod os;
+mod scan;
 mod state;
 mod ui;
 
 use ::failure;
-use ::jwalk::Parallelism::{RayonDefaultPool, Serial};
-use ::jwalk::WalkDir;
 use ::std::env;
+use ::std::ffi::{OsStr, OsString};
 use ::std::io;
-use ::std::path::PathBuf;
+use ::std::path::{Component, Path, PathBuf};
 use ::std::process;
 use ::std::sync::atomic::{AtomicBool, Ordering};
 use ::std::sync::mpsc;
@@ -58,6 +58,32 @@ pub struct Opt {
     #[structopt(short, long)]
     /// Don't ask for confirmation before deleting
     disable_delete_confirmation: bool,
+    #[structopt(
+        short = "i",
+        long = "ignore",
+        value_name = "PATH",
+        number_of_values = 1,
+        use_delimiter = false,
+        parse(try_from_os_str = parse_ignored_path)
+    )]
+    /// Skip a path relative to the scanned folder (repeat for multiple paths)
+    ignore: Vec<PathBuf>,
+}
+
+fn parse_ignored_path(value: &OsStr) -> Result<PathBuf, OsString> {
+    let mut path = PathBuf::new();
+    for component in Path::new(value).components() {
+        match component {
+            Component::Normal(name) => path.push(name),
+            Component::CurDir => (),
+            Component::ParentDir if path.pop() => (),
+            _ => return Err("Ignore paths must be relative to the scanned folder".into()),
+        }
+    }
+    if value.is_empty() {
+        return Err("Ignore paths must not be empty".into());
+    }
+    Ok(path)
 }
 
 fn main() {
@@ -91,6 +117,7 @@ fn try_main() -> Result<(), failure::Error> {
                 folder,
                 opts.apparent_size,
                 opts.disable_delete_confirmation,
+                opts.ignore,
             );
         }
         Err(_) => failure::bail!("Failed to get stdout: are you trying to pipe 'diskonaut'?"),
@@ -105,6 +132,7 @@ pub fn start<B>(
     path: PathBuf,
     show_apparent_size: bool,
     disable_delete_confirmation: bool,
+    ignored_paths: Vec<PathBuf>,
 ) where
     B: Backend + Send + 'static,
 {
@@ -187,16 +215,7 @@ pub fn start<B>(
                 let instruction_sender = instruction_sender.clone();
                 let loaded = loaded.clone();
                 move || {
-                    'scanning: for entry in WalkDir::new(&path)
-                        .parallelism(if SHOULD_SCAN_HD_FILES_IN_MULTIPLE_THREADS {
-                            RayonDefaultPool
-                        } else {
-                            Serial
-                        })
-                        .skip_hidden(false)
-                        .follow_links(false)
-                        .into_iter()
-                    {
+                    'scanning: for entry in scan::walk_dir(&path, ignored_paths) {
                         let instruction_sent = match entry {
                             Ok(entry) => match entry.metadata() {
                                 Ok(file_metadata) => {
@@ -257,5 +276,83 @@ pub fn start<B>(
 
     for thread_handler in active_threads {
         thread_handler.join().unwrap();
+    }
+}
+
+#[cfg(test)]
+mod cli_tests {
+    use super::Opt;
+    use std::path::PathBuf;
+    use structopt::StructOpt;
+
+    #[test]
+    fn no_ignore_paths_by_default() {
+        let opts = Opt::from_iter_safe(&["diskonaut"]).unwrap();
+        assert!(opts.folder.is_none());
+        assert!(opts.ignore.is_empty());
+    }
+
+    #[test]
+    fn repeated_ignores_preserve_folder_argument() {
+        let opts = Opt::from_iter_safe(&[
+            "diskonaut",
+            "--ignore",
+            "cache",
+            "scanned-folder",
+            "--ignore",
+            "nested/output",
+        ])
+        .unwrap();
+        assert_eq!(opts.folder, Some(PathBuf::from("scanned-folder")));
+        assert_eq!(
+            opts.ignore,
+            vec![PathBuf::from("cache"), PathBuf::from("nested/output")]
+        );
+    }
+
+    #[test]
+    fn short_ignores_work_without_explicit_folder() {
+        let opts = Opt::from_iter_safe(&["diskonaut", "-i", "cache", "-i", "output"]).unwrap();
+        assert!(opts.folder.is_none());
+        assert_eq!(
+            opts.ignore,
+            vec![PathBuf::from("cache"), PathBuf::from("output")]
+        );
+    }
+
+    #[test]
+    fn ignore_values_are_literal_paths() {
+        let opts = Opt::from_iter_safe(&["diskonaut", "--ignore", "cache,output"]).unwrap();
+        assert_eq!(opts.ignore, vec![PathBuf::from("cache,output")]);
+    }
+
+    #[test]
+    fn ignore_paths_normalize_relative_components() {
+        let opts = Opt::from_iter_safe(&[
+            "diskonaut",
+            "--ignore",
+            "./cache/",
+            "--ignore",
+            "nested/../output",
+        ])
+        .unwrap();
+        assert_eq!(
+            opts.ignore,
+            vec![PathBuf::from("cache"), PathBuf::from("output")]
+        );
+    }
+
+    #[test]
+    fn ignore_requires_a_value_inside_scanned_folder() {
+        assert!(Opt::from_iter_safe(&["diskonaut", "--ignore"]).is_err());
+        assert!(Opt::from_iter_safe(&["diskonaut", "--ignore", ""]).is_err());
+        assert!(Opt::from_iter_safe(&["diskonaut", "--ignore", "../cache"]).is_err());
+        let absolute_path = std::env::temp_dir().join("cache");
+        assert!(Opt::from_iter_safe(&[
+            std::ffi::OsStr::new("diskonaut"),
+            std::ffi::OsStr::new("--ignore"),
+            absolute_path.as_os_str(),
+        ])
+        .is_err());
     }
 }
