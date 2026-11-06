@@ -88,6 +88,7 @@ fn two_large_files_one_small_file() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -128,6 +129,7 @@ fn medium_width() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -168,6 +170,7 @@ fn small_width() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -209,6 +212,7 @@ fn small_width_long_folder_name() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -250,6 +254,7 @@ fn too_small_width_one() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -290,6 +295,7 @@ fn too_small_width_two() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -318,6 +324,7 @@ fn too_small_width_three() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -346,6 +353,7 @@ fn too_small_width_four() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -374,6 +382,7 @@ fn too_small_width_five() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -402,6 +411,7 @@ fn too_small_height() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -473,6 +483,7 @@ fn eleven_files() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -534,6 +545,7 @@ fn enter_folder() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
@@ -603,6 +615,7 @@ fn enter_folder_medium_width() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
@@ -673,6 +686,7 @@ fn enter_folder_small_width() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
@@ -729,6 +743,7 @@ fn small_files() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -797,6 +812,7 @@ fn zoom_into_small_files() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -895,6 +911,7 @@ fn cannot_move_into_small_files() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -954,6 +971,7 @@ fn minimum_tile_sides() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -1018,6 +1036,7 @@ fn move_down_and_enter_folder() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
@@ -1084,6 +1103,7 @@ fn noop_when_entering_file() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
@@ -1157,6 +1177,7 @@ fn move_up_and_enter_folder() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
@@ -1230,6 +1251,7 @@ fn move_right_and_enter_folder() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
@@ -1303,6 +1325,7 @@ fn move_left_and_enter_folder() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
@@ -1372,6 +1395,7 @@ fn enter_largest_folder_with_no_selected_tile() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
@@ -1433,6 +1457,7 @@ fn clear_selection_when_moving_off_screen_edges() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
@@ -1507,6 +1532,7 @@ fn esc_to_go_up() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
@@ -1588,6 +1614,7 @@ fn noop_when_pressing_esc_at_base_folder() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events
@@ -1662,6 +1689,7 @@ fn delete_file() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -1753,6 +1781,7 @@ fn delete_file_no_confirmation() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_DISABLED,
+        vec![],
     );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -1846,6 +1875,7 @@ fn cant_delete_file_with_term_too_small() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -1934,6 +1964,7 @@ fn delete_folder() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -2031,6 +2062,7 @@ fn delete_folder_no_confirmation() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_DISABLED,
+        vec![],
     );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -2132,6 +2164,7 @@ fn delete_folder_small_window() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -2234,6 +2267,7 @@ fn delete_folder_small_window_no_confirmation() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_DISABLED,
+        vec![],
     );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -2350,6 +2384,7 @@ fn delete_folder_with_multiple_children() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -2481,6 +2516,7 @@ fn delete_folder_with_multiple_children_no_confirmation() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_DISABLED,
+        vec![],
     );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -2583,6 +2619,7 @@ fn pressing_delete_with_no_selected_tile() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -2666,6 +2703,7 @@ fn delete_file_press_n() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -2736,6 +2774,7 @@ fn files_with_size_zero() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -2764,6 +2803,7 @@ fn empty_folder() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -2824,6 +2864,7 @@ fn permission_denied_when_deleting() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -2911,6 +2952,7 @@ fn permission_denied_when_deleting_no_confirmation() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_DISABLED,
+        vec![],
     );
     let terminal_draw_events_mirror = terminal_draw_events
         .lock()
@@ -2978,6 +3020,7 @@ fn small_files_with_y_as_zero() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();
@@ -3021,6 +3064,7 @@ fn small_files_with_x_as_zero() {
         temp_dir_path.clone(),
         SHOW_APPARENT_SIZE,
         DELETE_CONFIRMATION_ENABLED,
+        vec![],
     );
     std::fs::remove_dir_all(temp_dir_path).expect("failed to remove temporary folder");
     let terminal_draw_events_mirror = terminal_draw_events.lock().unwrap();

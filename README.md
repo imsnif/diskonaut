@@ -71,6 +71,14 @@ Either start `diskonaut` in the folder you want to scan, or provide it with the 
 $ diskonaut /home/aram
 ```
 
+Use `--ignore PATH` to skip a file or folder during indexing. Paths are relative to
+the folder being scanned (the current folder if no argument is given). Ignoring a
+folder also skips all of its contents. Repeat the option to ignore multiple paths:
+
+```sh
+diskonaut /home/aram --ignore Downloads --ignore projects/build
+```
+
 ## Contributing
 Contributions of any kind are very much welcome. If you think `diskonaut` is cool and you'd like to hack at it, feel free to look through the issues. Take a look especially at ones marked "help wanted" or "good first issue".
 Also, if you found a bug or have an idea for a new feature, please feel free to open an issue to discuss it.
